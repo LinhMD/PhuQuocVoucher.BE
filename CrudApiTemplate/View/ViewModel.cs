@@ -60,22 +60,6 @@ public abstract class ViewModel<TModel> : IView<TModel> where TModel : class
     }*/
 
 
-    public ViewModel<TModel> InitData(TModel? model)
-    {
-        Expression<Func<TModel, ViewModel<TModel>>> mappingExpression;
-        var para = Expression.Parameter(this.GetType(), this.GetType().Name);
-
-
-
-
-        return null;
-    }
-
-    public static Expression<Func<TModel, TView>> NewExpression<TView>() where TView : class, IView<TModel>
-    {
-
-        return null;
-    }
     public IQueryable<TModel> DynamicInclude(IQueryable<TModel> dbSet)
     {
         return dbSet;
