@@ -20,18 +20,23 @@ public class UnitOfWork : IUnitOfWork
 
     public IRepository<T> Get<T>() where T : class
     {
+        if (!Repositories.ContainsKey(typeof(T)))
+        {
+            Repositories[typeof(T)] = new Repository<T>(DataContext);
+        }
+
         return (IRepository<T>) Repositories[typeof(T)];
     }
 
     public IRepository<object> Get(Type modelType)
     {
+        if (!Repositories.ContainsKey(modelType))
+        {
+            Repositories[modelType] = null;
+        }
         return (IRepository<object>) Repositories[modelType];
     }
 
-    public IRepository<TModel> Repository<TModel>() where TModel : class
-    {
-        return (Repositories[typeof(TModel)] as IRepository<TModel>)!;
-    }
 
 
     public int Complete()
@@ -42,6 +47,7 @@ public class UnitOfWork : IUnitOfWork
     public virtual void Dispose()
     {
         DataContext.Dispose();
+        Repositories.Clear();
     }
 
 }

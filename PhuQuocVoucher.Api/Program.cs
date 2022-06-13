@@ -12,10 +12,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PhuQuocDataContext>();
-
+builder.Services.AddScoped<IUnitOfWork, PqUnitOfWork>();
 builder.Services.InitServices();
 
-builder.Services.AddScoped<IUnitOfWork, PqUnitOfWork>();
 
 var app = builder.Build();
 
