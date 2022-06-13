@@ -1,6 +1,8 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class OrderStatus
+public enum OrderStatus
 {
-    
+    Processing,
+    Completed,
+    Canceled
 }

@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace PhuQuocVoucher.Data.Models;
 
+
+[Index(nameof(UserInfoId), IsUnique = true)]
 public class ServiceProvider
 {
     public int Id { get; set; }
@@ -15,7 +18,14 @@ public class ServiceProvider
 
     public string TaxCode { get; set; }
 
-    public User ProviderUser { get; set; }
+    public User UserInfo { get; set; }
+
+    public int UserInfoId { get; set; }
+
+    public Seller AssignedSeller { get; set; }
+
+    public IEnumerable<Service> Services { get; set; }
 
 
+    public ProviderType Type { get; set; }
 }

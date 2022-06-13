@@ -20,10 +20,10 @@ public class User
     [MaxLength(255)]
     public string UserName { get; set; }
 
+    [Required]
     public Role Role { get; set; }
 
     [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Must be a phone number")]
     public string? PhoneNumber { get; set; }
-
 
 }

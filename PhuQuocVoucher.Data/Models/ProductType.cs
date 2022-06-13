@@ -2,5 +2,6 @@
 
 public enum ProductType
 {
-    
+    Voucher,
+    Combo
 }

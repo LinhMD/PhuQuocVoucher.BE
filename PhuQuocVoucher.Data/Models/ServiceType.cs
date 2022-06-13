@@ -2,7 +2,7 @@
 
 namespace PhuQuocVoucher.Data.Models;
 
-public class VoucherType
+public class ServiceType
 {
     [Required]
     public int Id { get; set; }
@@ -11,5 +11,5 @@ public class VoucherType
     [MaxLength(255)]
     public string Name { get; set; }
 
-    public VoucherType?  ParentType { get; set; }
+    public ServiceType?  ParentType { get; set; }
 }
