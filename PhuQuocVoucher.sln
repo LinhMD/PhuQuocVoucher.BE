@@ -1,12 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhuQuocVoucher.Controller", "PhuQuocVoucher.Controller\PhuQuocVoucher.Controller.csproj", "{3EEF2003-0E16-4BF2-AA57-462356D95158}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhuQuocVoucher.Api", "PhuQuocVoucher.Api\PhuQuocVoucher.Api.csproj", "{3EEF2003-0E16-4BF2-AA57-462356D95158}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrudApiTemplate", "CrudApiTemplate\CrudApiTemplate.csproj", "{0AF27F19-9F06-41DD-9C78-3D52AD51DB38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhuQuocVoucher.Data", "PhuQuocVoucher.Data\PhuQuocVoucher.Data.csproj", "{5D4E1793-9D67-4938-AD1F-CB2CDBAFCB7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhuQuocVoucher.Service", "PhuQuocVoucher.Service\PhuQuocVoucher.Service.csproj", "{4FD5114F-F1D7-4DC5-A8FB-711BA76D0632}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhuQuocVoucher.Business", "PhuQuocVoucher.Business\PhuQuocVoucher.Business.csproj", "{4FD5114F-F1D7-4DC5-A8FB-711BA76D0632}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

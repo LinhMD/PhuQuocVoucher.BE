@@ -18,8 +18,4 @@ public class Product
 
     public ProductType Type { get; set; }
 
-    public Product? SiblingProduct { get; set; }
-
-    public int? SiblingProductId { get; set; }
-
 }
