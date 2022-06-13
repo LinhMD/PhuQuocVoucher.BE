@@ -15,7 +15,6 @@ public interface IFindRequest<TModel> where TModel: class
             var value = property?.GetValue(this);
             if(value is null) continue;
 
-
             Expression tProperty;
             FilterAttribute[] filters = Attribute.GetCustomAttributes(property!, typeof(FilterAttribute)) as FilterAttribute[] ?? Array.Empty<FilterAttribute>();
             if (filters.Any())
@@ -43,8 +42,9 @@ public interface IFindRequest<TModel> where TModel: class
 
     private static Expression Navigate(Expression param, IList<string>? list, MemberInfo? property)
     {
-        Expression tProperty = Expression.Property(param, list?[0] ?? property!.Name);
         //if have more member navigation like t.Role.Name
+        Expression tProperty = Expression.Property(param, list?[0] ?? property!.Name);
+
         if (list == null) return tProperty;
 
         foreach (var propertyName in list.Skip(1))

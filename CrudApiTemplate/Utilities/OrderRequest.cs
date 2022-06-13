@@ -7,7 +7,7 @@ public class OrderRequest<TModel> : IOrderRequest<TModel> where TModel: class
 {
     public IList<OrderModel<TModel>> OrderModels { get; set; } = new List<OrderModel<TModel>>();
 
-    public PagingRequest PagingRequest { get; set; }
+    private PagingRequest PagingRequest { get; set; } = new();
 
     public PagingRequest GetPaging()
     {

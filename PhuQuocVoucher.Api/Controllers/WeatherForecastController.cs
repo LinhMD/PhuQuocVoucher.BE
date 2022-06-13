@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace PhuQuocVoucher.Controller.Controllers;
+namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]

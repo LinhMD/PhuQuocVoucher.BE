@@ -3,13 +3,14 @@ using CrudApiTemplate.Repositories;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
 using CrudApiTemplate.View;
+using Mapster;
 
 namespace CrudApiTemplate.Services;
 
 public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : class
 {
     protected readonly IRepository<TModel> Repository;
-    protected IUnitOfWork UnitOfWork;
+    protected readonly IUnitOfWork UnitOfWork;
 
     public ServiceCrud(IRepository<TModel> repository, IUnitOfWork work)
     {
@@ -77,19 +78,26 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
 
     public (IEnumerable<TModel> models, int total) FindSortedPaging(IOrderRequest<TModel> orderRequest)
     {
-        PagingRequest paging = orderRequest.GetPaging();
-        return Repository.FindOrderedPaging(orderRequest.ToPredicate(), orderRequest, paging.Page, paging.PageSize);
+        var result = Repository.Find(orderRequest.ToPredicate())
+            .OrderBy(orderRequest)
+            .Paging(orderRequest.GetPaging()).ToList();
+
+        return (result, result.Count);
     }
 
     public (IEnumerable<TView> models, int total) FindSortedPaging<TView>(IOrderRequest<TModel> orderRequest) where TView : class, IView<TModel>, new()
     {
-        PagingRequest paging = orderRequest.GetPaging();
 
-        return Repository.FindOrderedPaging<TView>(orderRequest.ToPredicate(), orderRequest, paging.Page, paging.PageSize);
+        var result = Repository.Find(orderRequest.ToPredicate())
+            .OrderBy(orderRequest)
+            .Paging(orderRequest.GetPaging())
+            .ProjectToType<TView>().ToList();
+
+        return (result, result.Count);
     }
     public TModel Get(int id)
     {
-        TModel? model = Repository.Get(id);
+        var model = Repository.Get(id);
 
         if (model == null) throw new ModelNotFoundException<TModel>(typeof(TModel).Name);
 

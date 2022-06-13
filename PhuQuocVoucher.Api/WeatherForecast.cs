@@ -1,4 +1,4 @@
-namespace PhuQuocVoucher.Controller;
+namespace PhuQuocVoucher.Api;
 
 public class WeatherForecast
 {

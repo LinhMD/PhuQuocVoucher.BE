@@ -4,7 +4,12 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>PhuQuocVoucher.Service</RootNamespace>
+        <RootNamespace>PhuQuocVoucher.Business</RootNamespace>
     </PropertyGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\CrudApiTemplate\CrudApiTemplate.csproj" />
+      <ProjectReference Include="..\PhuQuocVoucher.Data\PhuQuocVoucher.Data.csproj" />
+    </ItemGroup>
 
 </Project>
