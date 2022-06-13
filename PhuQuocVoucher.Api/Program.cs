@@ -1,3 +1,6 @@
+using CrudApiTemplate.Repositories;
+using PhuQuocVoucher.Business.Repositories;
+using PhuQuocVoucher.Business.Services;
 using PhuQuocVoucher.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +12,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PhuQuocDataContext>();
+
+builder.Services.InitServices();
+
+builder.Services.AddScoped<IUnitOfWork, PqUnitOfWork>();
 
 var app = builder.Build();
 

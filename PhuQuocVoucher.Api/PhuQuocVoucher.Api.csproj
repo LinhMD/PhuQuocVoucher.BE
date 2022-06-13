@@ -19,6 +19,8 @@
     </ItemGroup>
     
     <ItemGroup>
+      <ProjectReference Include="..\CrudApiTemplate\CrudApiTemplate.csproj" />
+      <ProjectReference Include="..\PhuQuocVoucher.Business\PhuQuocVoucher.Business.csproj" />
       <ProjectReference Include="..\PhuQuocVoucher.Data\PhuQuocVoucher.Data.csproj" />
     </ItemGroup>
 

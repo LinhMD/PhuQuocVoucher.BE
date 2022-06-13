@@ -76,21 +76,23 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         return Repository.Find<TView>(findRequest.ToPredicate());
     }
 
-    public (IEnumerable<TModel> models, int total) FindSortedPaging(IOrderRequest<TModel> orderRequest)
+    public (IEnumerable<TModel> models, int total) Get(GetRequest<TModel> getRequest)
     {
-        var result = Repository.Find(orderRequest.ToPredicate())
-            .OrderBy(orderRequest)
-            .Paging(orderRequest.GetPaging()).ToList();
+
+
+        var result = Repository.Find(getRequest.FindRequest.ToPredicate())
+            .OrderBy(getRequest.OrderRequest)
+            .Paging(getRequest.GetPaging()).ToList();
 
         return (result, result.Count);
     }
 
-    public (IEnumerable<TView> models, int total) FindSortedPaging<TView>(IOrderRequest<TModel> orderRequest) where TView : class, IView<TModel>, new()
+    public (IEnumerable<TView> models, int total) Get<TView>(GetRequest<TModel> getRequest) where TView : class, IView<TModel>, new()
     {
 
-        var result = Repository.Find(orderRequest.ToPredicate())
-            .OrderBy(orderRequest)
-            .Paging(orderRequest.GetPaging())
+        var result = Repository.Find(getRequest.FindRequest.ToPredicate())
+            .OrderBy(getRequest.OrderRequest)
+            .Paging(getRequest.GetPaging())
             .ProjectToType<TView>().ToList();
 
         return (result, result.Count);
