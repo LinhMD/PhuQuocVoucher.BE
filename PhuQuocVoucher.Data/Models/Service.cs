@@ -2,7 +2,7 @@
 
 namespace PhuQuocVoucher.Data.Models;
 
-public class Service
+public class Service : BaseModel
 {
     public int Id { get; set; }
 

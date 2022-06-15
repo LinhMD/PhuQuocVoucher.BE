@@ -1,6 +1,6 @@
-﻿using CrudApiTemplate.Request;
+﻿using CrudApiTemplate.Utilities;
 
-namespace CrudApiTemplate.Utilities;
+namespace CrudApiTemplate.Request;
 
 public class OrderRequest<TModel> : IOrderRequest<TModel> where TModel : class
 {

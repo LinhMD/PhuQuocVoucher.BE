@@ -3,7 +3,7 @@
 namespace PhuQuocVoucher.Data.Models;
 
 [Index(nameof(CustomerId), IsUnique = true)]
-public class Cart
+public class Cart : BaseModel
 {
     public int Id { get; set; }
 

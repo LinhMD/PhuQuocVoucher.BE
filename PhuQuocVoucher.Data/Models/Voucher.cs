@@ -6,18 +6,15 @@ namespace PhuQuocVoucher.Data.Models;
 
 [Index(nameof(ProductId), IsUnique = true)]
 [Index(nameof(VoucherName), IsUnique = true)]
-public class Voucher
+public class Voucher : BaseModel
 {
 
     public int Id { get; set; }
-
     public string VoucherName { get; set; }
 
     public double Price { get; set; }
 
     public int Inventory { get; set; }
-
-    public int  Status { get; set; }
 
     public int LimitPerDay { get; set; }
 

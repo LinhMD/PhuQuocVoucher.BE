@@ -1,7 +1,4 @@
-﻿using System.Linq.Expressions;
-using CrudApiTemplate.Request;
-
-namespace CrudApiTemplate.Utilities;
+﻿namespace CrudApiTemplate.Request;
 
 public class GetRequest<TModel>  where TModel: class
 {

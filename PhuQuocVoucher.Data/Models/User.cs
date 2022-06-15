@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PhuQuocVoucher.Data.Models;
 
-public class User
+public class User : BaseModel
 {
     public int Id { get; set; }
 
@@ -11,8 +12,6 @@ public class User
     public string Email { get; set; }
 
     public string? FireBaseUid { get; set; }
-
-    public int Status { get; set; }
 
     public string? AvatarLink { get; set; }
 

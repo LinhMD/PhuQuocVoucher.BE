@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace PhuQuocVoucher.Data.Models;
 
 [Index(nameof(UserInfoId), IsUnique = true)]
-public class Seller
+public class Seller : BaseModel
 {
     [Required]
     public int Id { get; set; }

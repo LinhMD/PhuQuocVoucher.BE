@@ -1,6 +1,6 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class CartItem
+public class CartItem : BaseModel
 {
     public int Id { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class ProviderType
+public class ProviderType : BaseModel
 {
     public int Id { get; set; }
 

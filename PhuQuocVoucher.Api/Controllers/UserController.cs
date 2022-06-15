@@ -27,7 +27,7 @@ public class UserController : ControllerBase
             FindRequest = request,
             OrderRequest = new OrderRequest<User>(),
             PagingRequest = paging
-        }).models);
+        }).ToPagingResponse(paging));
     }
 
     [HttpPost]

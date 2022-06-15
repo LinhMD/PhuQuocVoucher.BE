@@ -1,6 +1,6 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class OrderItem
+public class OrderItem  : BaseModel
 {
     public int Id { get; set;}
 

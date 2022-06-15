@@ -2,7 +2,7 @@
 
 namespace PhuQuocVoucher.Data.Models;
 
-public class ServiceType
+public class ServiceType : BaseModel
 {
     [Required]
     public int Id { get; set; }

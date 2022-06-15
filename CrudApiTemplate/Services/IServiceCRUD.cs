@@ -10,17 +10,17 @@ namespace CrudApiTemplate.Services
 
         TView Get<TView>(int id) where TView : class, IView<TModel>, new();
 
-        IEnumerable<TModel> GetAll();
+        IList<TModel> GetAll();
 
-        IEnumerable<TView> GetAll<TView>() where TView : class, IView<TModel>, new();
+        IList<TView> GetAll<TView>() where TView : class, IView<TModel>, new();
 
-        IEnumerable<TModel> Find(IFindRequest<TModel> findRequest);
+        IList<TModel> Find(IFindRequest<TModel> findRequest);
 
-        IEnumerable<TView> Find<TView>(IFindRequest<TModel> findRequest) where TView : class, IView<TModel>, new();
+        IList<TView> Find<TView>(IFindRequest<TModel> findRequest) where TView : class, IView<TModel>, new();
 
-        (IEnumerable<TModel> models, int total) Get(GetRequest<TModel> getRequest);
+        (IList<TModel> models, int total) Get(GetRequest<TModel> getRequest);
 
-        (IEnumerable<TView> models, int total) Get<TView>(GetRequest<TModel> getRequest) where TView : class, IView<TModel>, new();
+        (IList<TView> models, int total) Get<TView>(GetRequest<TModel> getRequest) where TView : class, IView<TModel>, new();
 
         TModel Create(ICreateRequest<TModel> createRequest);
 

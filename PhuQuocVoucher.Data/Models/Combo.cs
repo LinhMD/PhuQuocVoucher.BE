@@ -4,7 +4,7 @@ namespace PhuQuocVoucher.Data.Models;
 
 [Index(nameof(ProductId), IsUnique = true)]
 [Index(nameof(Name), IsUnique = true)]
-public class Combo
+public class Combo : BaseModel
 {
     public int Id { get; set; }
 

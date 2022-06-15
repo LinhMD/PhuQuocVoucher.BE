@@ -1,6 +1,6 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class Tag
+public class Tag : BaseModel
 {
     public int Id { get; set; }
 

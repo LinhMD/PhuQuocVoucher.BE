@@ -1,6 +1,6 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class PaymentDetail
+public class PaymentDetail  : BaseModel
 {
     public int Id { get; set; }
 

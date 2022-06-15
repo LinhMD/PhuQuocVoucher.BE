@@ -1,6 +1,6 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class Place
+public class Place  : BaseModel
 {
     public int Id { get; set; }
 

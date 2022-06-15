@@ -1,6 +1,6 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class Blog
+public class Blog : BaseModel
 {
     public int Id { get; set; }
 

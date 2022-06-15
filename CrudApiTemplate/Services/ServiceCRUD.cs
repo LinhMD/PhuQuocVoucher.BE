@@ -12,7 +12,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     protected readonly IRepository<TModel> Repository;
     protected readonly IUnitOfWork UnitOfWork;
 
-    public ServiceCrud(IRepository<TModel> repository, IUnitOfWork work)
+    protected ServiceCrud(IRepository<TModel> repository, IUnitOfWork work)
     {
         Repository = repository;
         UnitOfWork = work;
@@ -66,36 +66,39 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
 
 
 
-    public IEnumerable<TModel> Find(IFindRequest<TModel> findRequest)
+    public IList<TModel> Find(IFindRequest<TModel> findRequest)
     {
-        return Repository.Find(findRequest.ToPredicate());
+        return Repository.Find(findRequest.ToPredicate()).ToList();
     }
 
-    public IEnumerable<TView> Find<TView>(IFindRequest<TModel> findRequest) where TView : class, IView<TModel>, new()
+    public IList<TView> Find<TView>(IFindRequest<TModel> findRequest) where TView : class, IView<TModel>, new()
     {
-        return Repository.Find<TView>(findRequest.ToPredicate());
+        return Repository.Find<TView>(findRequest.ToPredicate()).ToList();
     }
 
-    public (IEnumerable<TModel> models, int total) Get(GetRequest<TModel> getRequest)
+    public (IList<TModel> models, int total) Get(GetRequest<TModel> getRequest)
     {
-
-
-        var result = Repository.Find(getRequest.FindRequest.ToPredicate())
+        var filter = Repository.Find(getRequest.FindRequest.ToPredicate());
+        var total = filter.Count();
+        var result = filter
             .OrderBy(getRequest.OrderRequest)
             .Paging(getRequest.GetPaging()).ToList();
 
-        return (result, result.Count);
+        return (result, total);
     }
 
-    public (IEnumerable<TView> models, int total) Get<TView>(GetRequest<TModel> getRequest) where TView : class, IView<TModel>, new()
+    public (IList<TView> models, int total) Get<TView>(GetRequest<TModel> getRequest) where TView : class, IView<TModel>, new()
     {
+        var queryable = Repository.Find(getRequest.FindRequest.ToPredicate());
 
-        var result = Repository.Find(getRequest.FindRequest.ToPredicate())
+        var total = queryable.Count();
+
+        var result = queryable
             .OrderBy(getRequest.OrderRequest)
             .Paging(getRequest.GetPaging())
             .ProjectToType<TView>().ToList();
 
-        return (result, result.Count);
+        return (result, total);
     }
     public TModel Get(int id)
     {
@@ -106,14 +109,14 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         return model;
     }
 
-    public IEnumerable<TModel> GetAll()
+    public IList<TModel> GetAll()
     {
-        return Repository.GetAll();
+        return Repository.GetAll().ToList();
     }
 
-    public IEnumerable<TView> GetAll<TView>() where TView : class, IView<TModel>, new()
+    public IList<TView> GetAll<TView>() where TView : class, IView<TModel>, new()
     {
-        return Repository.GetAll<TView>();
+        return Repository.GetAll<TView>().ToList();
     }
 
     public TModel Update(int id, IUpdateRequest<TModel> updateRequest)

@@ -5,7 +5,7 @@ namespace PhuQuocVoucher.Data.Models;
 
 
 [Index(nameof(UserInfoId), IsUnique = true)]
-public class ServiceProvider
+public class ServiceProvider : BaseModel
 {
     public int Id { get; set; }
 
@@ -13,8 +13,6 @@ public class ServiceProvider
     public string ProviderName { get; set; }
 
     public string? Address { get; set; }
-
-    public int Status { get; set; }
 
     public string TaxCode { get; set; }
 

@@ -45,13 +45,6 @@ public interface IFindRequest<TModel> where TModel: class
         //if have more member navigation like t.Role.Name
         Expression tProperty = Expression.Property(param, list?[0] ?? property!.Name);
 
-        if (list == null) return tProperty;
-
-        foreach (var propertyName in list.Skip(1))
-        {
-            tProperty = Expression.PropertyOrField(tProperty, propertyName);
-        }
-
-        return tProperty;
+        return list == null ? tProperty : list.Skip(1).Aggregate(tProperty, Expression.Property);
     }
 }

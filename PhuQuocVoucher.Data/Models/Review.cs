@@ -1,6 +1,6 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class Review
+public class Review : BaseModel
 {
     public int Id { get; set; }
 

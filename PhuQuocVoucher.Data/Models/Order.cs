@@ -1,8 +1,9 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class Order
+public class Order : BaseModel
 {
     public int Id { get; set; }
+
 
     public double TotalPrice { get; set; }
 
@@ -10,7 +11,7 @@ public class Order
 
     public DateTime CompleteDate { get; set; }
 
-    public OrderStatus Status { get; set; } = OrderStatus.Processing;
+    public OrderStatus OrderStatus { get; set; } = OrderStatus.Processing;
 
     public Customer? Customer { get; set; }
 
