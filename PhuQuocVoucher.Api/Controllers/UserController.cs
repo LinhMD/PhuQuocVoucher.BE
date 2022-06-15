@@ -11,7 +11,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-
     private readonly IUserService _userService;
 
     public UserController(IUserService userService)
@@ -20,19 +19,19 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetUser([FromQuery]FindUserRequest request, [FromQuery]PagingRequest paging, string? orderBy)
+    public async Task<IActionResult> GetUser([FromQuery]FindUserRequest request, [FromQuery]PagingRequest paging, string? orderBy)
     {
-        return Ok(_userService.Get(new GetRequest<User>
+        return Ok((await _userService.GetAsync(new GetRequest<User>
         {
             FindRequest = request,
             OrderRequest = new OrderRequest<User>(),
             PagingRequest = paging
-        }).ToPagingResponse(paging));
+        })).ToPagingResponse(paging));
     }
 
     [HttpPost]
-    public IActionResult CreateUser(CreateUserRequest request)
+    public async Task<IActionResult> CreateUser(CreateUserRequest request)
     {
-        return Ok(_userService.Create(request));
+        return Ok(await _userService.CreateAsync(request));
     }
 }

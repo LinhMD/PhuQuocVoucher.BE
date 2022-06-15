@@ -17,12 +17,13 @@ public static class ExtensionMethods
 
     public static PagingResponse<T> ToPagingResponse<T>(this (IList<T> models, int total) tuple, PagingRequest request)
     {
+        var (models, total) = tuple;
         return new PagingResponse<T>
         {
             Page = request.Page,
-            Payload = tuple.models,
+            Payload = models,
             Size = request.PageSize,
-            Total = tuple.total
+            Total = total
         };
     }
 }

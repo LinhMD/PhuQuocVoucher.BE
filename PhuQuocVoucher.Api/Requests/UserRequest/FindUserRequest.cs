@@ -28,8 +28,4 @@ public class FindUserRequest : IFindRequest<User>
     [Contain]
     public string? PhoneNumber { get; set; }
 
-    public void SetupMapper()
-    {
-
-    }
 }
