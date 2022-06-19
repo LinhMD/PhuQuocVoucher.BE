@@ -1,4 +1,4 @@
-﻿using CrudApiTemplate.Repositories;
+﻿using CrudApiTemplate.Repository;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Repositories.Core;

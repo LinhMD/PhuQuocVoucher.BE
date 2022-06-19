@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace CrudApiTemplate.Repositories;
+namespace CrudApiTemplate.Repository;
 
 public class UnitOfWork : IUnitOfWork
 {
@@ -24,7 +24,6 @@ public class UnitOfWork : IUnitOfWork
         {
             Repositories[typeof(T)] = new Repository<T>(DataContext);
         }
-
         return (IRepository<T>) Repositories[typeof(T)];
     }
 
@@ -32,7 +31,7 @@ public class UnitOfWork : IUnitOfWork
     {
         if (!Repositories.ContainsKey(modelType))
         {
-            Repositories[modelType] = null;
+            throw new Exception("Hey fuck you, add it your self");
         }
         return (IRepository<object>) Repositories[modelType];
     }
@@ -42,12 +41,6 @@ public class UnitOfWork : IUnitOfWork
     public int Complete()
     {
         return DataContext.SaveChanges();
-    }
-
-    public virtual void Dispose()
-    {
-        DataContext.Dispose();
-        Repositories.Clear();
     }
 
 }

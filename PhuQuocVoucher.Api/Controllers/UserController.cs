@@ -19,7 +19,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetUser([FromQuery]FindUserRequest request, [FromQuery]PagingRequest paging, string? orderBy)
+    public async Task<IActionResult> Get([FromQuery]FindUserRequest request, [FromQuery]PagingRequest paging, string? orderBy)
     {
         return Ok((await _userService.GetAsync(new GetRequest<User>
         {
@@ -29,9 +29,27 @@ public class UserController : ControllerBase
         })).ToPagingResponse(paging));
     }
 
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        return Ok(await _userService.GetAsync(id));
+    }
+
     [HttpPost]
-    public async Task<IActionResult> CreateUser(CreateUserRequest request)
+    public async Task<IActionResult> Create(CreateUserRequest request)
     {
         return Ok(await _userService.CreateAsync(request));
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update([FromBody] UpdateUserRequest request, int id)
+    {
+        return Ok(await _userService.UpdateAsync(id, request));
+    }
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        return Ok(await _userService.DeleteAsync(id));
     }
 }

@@ -1,7 +1,7 @@
 ﻿
-namespace CrudApiTemplate.Repositories;
+namespace CrudApiTemplate.Repository;
 
-public interface IUnitOfWork : IDisposable
+public interface IUnitOfWork
 {
     public void Add<T>(IRepository<T> repository) where T : class;
 

@@ -1,5 +1,5 @@
 ﻿using CrudApiTemplate.CustomException;
-using CrudApiTemplate.Repositories;
+using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
 using CrudApiTemplate.View;
@@ -81,7 +81,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
 
         try
         {
-            Repository.CommitAsync();
+            await Repository.CommitAsync();
         }
         catch(Exception ex)
         {
@@ -127,7 +127,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     {
         var model = Repository.Get(id);
 
-        if (model == null) throw new ModelNotFoundException<TModel>(typeof(TModel).Name);
+        if (model == null) throw new ModelNotFoundException<TModel>(nameof(ServiceCrud<TModel>));
 
         return model;
     }
@@ -135,7 +135,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     {
         var model = await Repository.GetAsync(id);
 
-        if (model == null) throw new ModelNotFoundException<TModel>(typeof(TModel).Name);
+        if (model == null) throw new ModelNotFoundException<TModel>(nameof(ServiceCrud<TModel>));
 
         return model;
     }
@@ -144,7 +144,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     {
         var view = Repository.Get<TView>(id);
 
-        if (view == null) throw new ModelNotFoundException<TModel>(typeof(TModel).Name);
+        if (view == null) throw new ModelNotFoundException<TModel>($"Id not found: {id}");
 
         return view;
     }

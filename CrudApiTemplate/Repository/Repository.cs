@@ -1,12 +1,9 @@
 ﻿using System.Linq.Expressions;
-using CrudApiTemplate.Request;
 using CrudApiTemplate.View;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using CrudApiTemplate.Utilities;
 
-
-namespace CrudApiTemplate.Repositories;
+namespace CrudApiTemplate.Repository;
 
 public class Repository<TModel> : IRepository<TModel> where TModel : class
 {
@@ -51,12 +48,10 @@ public class Repository<TModel> : IRepository<TModel> where TModel : class
         return Models.ProjectToType<TView>();
     }
 
-
     public IQueryable<TModel> Find(Expression<Func<TModel, bool>> predicate)
     {
         return Models.Where(predicate);
     }
-
 
     public IQueryable<TView> Find<TView>(Expression<Func<TModel, bool>> predicate)
         where TView : class, IView<TModel>, new()
@@ -122,15 +117,16 @@ public class Repository<TModel> : IRepository<TModel> where TModel : class
     public async void RemoveAllAsync(IEnumerable<TModel> models)
     {
         Models.RemoveRange(models);
-
         await Context.SaveChangesAsync();
     }
 
-    public async void CommitAsync()
+    public async Task CommitAsync()
     {
         await Context.SaveChangesAsync();
     }
 
-
-
+    public IQueryable<TModel> IncludeAll()
+    {
+        return Models.AsQueryable();
+    }
 }

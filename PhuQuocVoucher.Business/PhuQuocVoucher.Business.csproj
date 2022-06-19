@@ -11,5 +11,10 @@
       <ProjectReference Include="..\CrudApiTemplate\CrudApiTemplate.csproj" />
       <ProjectReference Include="..\PhuQuocVoucher.Data\PhuQuocVoucher.Data.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.6" />
+    </ItemGroup>
 
 </Project>

@@ -1,9 +1,7 @@
 ﻿using System.Linq.Expressions;
-using CrudApiTemplate.Request;
-using CrudApiTemplate.Utilities;
 using CrudApiTemplate.View;
 
-namespace CrudApiTemplate.Repositories;
+namespace CrudApiTemplate.Repository;
 
 public interface IRepository<TModel> where TModel : class
 {
@@ -37,5 +35,7 @@ public interface IRepository<TModel> where TModel : class
     void RemoveAsync(TModel model);
     void RemoveAllAsync(IEnumerable<TModel> models);
 
-    public void CommitAsync();
+    public Task CommitAsync();
+
+    public IQueryable<TModel> IncludeAll();
 }

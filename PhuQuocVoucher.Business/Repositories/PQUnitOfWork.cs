@@ -1,4 +1,4 @@
-﻿using CrudApiTemplate.Repositories;
+﻿using CrudApiTemplate.Repository;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Business.Repositories.Core;
 using PhuQuocVoucher.Business.Repositories.Implements;
