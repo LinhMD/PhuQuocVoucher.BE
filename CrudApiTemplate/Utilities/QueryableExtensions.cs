@@ -5,6 +5,15 @@ namespace CrudApiTemplate.Utilities;
 
 public static class QueryableExtensions
 {
+    public static IQueryable<TModel> Paging<TModel>(this IQueryable<TModel> queryable, int page = 1, int size = 20)
+    {
+        return queryable.Skip((page-1) * size).Take(size);
+    }
+
+    public static IQueryable<TModel> Paging<TModel>(this IQueryable<TModel> queryable, PagingRequest paging)
+    {
+        return queryable.Skip((paging.Page-1) * paging.PageSize).Take(paging.PageSize);
+    }
 
     public static IQueryable<TModel> OrderBy<TModel>(this IQueryable<TModel> models, IOrderRequest<TModel> orderRequest)
         where TModel : class
@@ -14,12 +23,7 @@ public static class QueryableExtensions
         var firstSort = orderRequest.OrderModels[0];
         var sortModels = Order(models, firstSort);
 
-        foreach (var sort in orderRequest.OrderModels)
-        {
-            sortModels = ThenOrder(sortModels, sort);
-        }
-
-        return sortModels;
+        return orderRequest.OrderModels.Aggregate(sortModels, ThenOrder);
     }
 
     public static IOrderedQueryable<TModel> Order<TModel, TKey>(this IQueryable<TModel> models, OrderModel<TModel> orderModel) where TModel: class
