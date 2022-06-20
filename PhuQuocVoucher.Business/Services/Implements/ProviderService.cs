@@ -5,9 +5,9 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Services.Implements;
 
-public class CartItemService : ServiceCrud<CartItem>, ICartItemService
+public class ProviderService : ServiceCrud<ServiceProvider>, IProviderService
 {
-    public CartItemService(IUnitOfWork work) : base(work.Get<CartItem>(), work)
+    public ProviderService( IUnitOfWork work) : base(work.Get<ServiceProvider>(), work)
     {
     }
 }

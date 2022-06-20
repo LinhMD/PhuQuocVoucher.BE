@@ -14,7 +14,6 @@ public class Customer : BaseModel
     public string CustomerName { get; set; }
 
     public User? UserInfo { get; set; }
-
     public int? UserInfoId { get; set; }
 
     public IEnumerable<Profile> Profiles { get; set; }

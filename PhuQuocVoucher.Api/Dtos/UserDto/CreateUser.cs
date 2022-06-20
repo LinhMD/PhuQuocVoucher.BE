@@ -2,9 +2,9 @@
 using CrudApiTemplate.Request;
 using PhuQuocVoucher.Data.Models;
 
-namespace PhuQuocVoucher.Api.Requests.UserRequest;
+namespace PhuQuocVoucher.Api.Dtos.UserDto;
 
-public class CreateUserRequest: ICreateRequest<User>
+public class CreateUser : CreateDTO, ICreateRequest<User>
 {
 
     [Required]
@@ -25,5 +25,4 @@ public class CreateUserRequest: ICreateRequest<User>
     [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Must be a phone number")]
     public string? PhoneNumber { get; set; }
 
-    public  DateTime CreateAt { get; } = DateTime.Now;
 }

@@ -6,10 +6,10 @@ namespace PhuQuocVoucher.Business.Services;
 
 public static class ServicesInitDi
 {
-    public static IServiceCollection InitServices(
+    public static void InitServices(
         this IServiceCollection serviceCollection)
     {
         serviceCollection.AddScoped<IUserService, UserService>();
-        return serviceCollection;
+        serviceCollection.AddScoped<ICustomerService, CustomerService>();
     }
 }
