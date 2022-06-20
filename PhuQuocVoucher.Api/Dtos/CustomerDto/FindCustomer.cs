@@ -15,14 +15,11 @@ public class FindCustomer : IFindRequest<Customer>
     [Equal("UserInfoId")]
     public int? UserId { get; set; }
 
-    [Contain(target:"UserInfo.Email")]
+    [Contain(target:"UserInfo.UserName")]
     public string? UserName { get; set; }
 
     [Contain(target:"UserInfo.Email")]
     public string? Email { get; set; }
-
-    [Equal("UserInfo.Role")]
-    public Role? Role { get; } = Data.Models.Role.Customer;
 
     [Contain(target:"UserInfo.PhoneNumber")]
     public string? PhoneNumber { get; set; }

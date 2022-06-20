@@ -25,5 +25,10 @@
       <ProjectReference Include="..\PhuQuocVoucher.Business\PhuQuocVoucher.Business.csproj" />
       <ProjectReference Include="..\PhuQuocVoucher.Data\PhuQuocVoucher.Data.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Dtos\ProfileDto" />
+      <Folder Include="Dtos\ServiceDto" />
+    </ItemGroup>
 
 </Project>

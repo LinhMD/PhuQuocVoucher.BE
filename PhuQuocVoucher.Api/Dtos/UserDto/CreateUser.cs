@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CrudApiTemplate.Request;
+using Mapster;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Api.Dtos.UserDto;
@@ -25,4 +26,8 @@ public class CreateUser : CreateDTO, ICreateRequest<User>
     [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Must be a phone number")]
     public string? PhoneNumber { get; set; }
 
+    public override void InitMapper()
+    {
+        TypeAdapterConfig<CreateUser, User>.NewConfig();
+    }
 }

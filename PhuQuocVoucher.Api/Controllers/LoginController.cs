@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Extensions;
 using PhuQuocVoucher.Api.CustomBinding;
 using PhuQuocVoucher.Api.Ultility;
 using PhuQuocVoucher.Business.Repositories;
@@ -49,25 +50,16 @@ public class LoginController : ControllerBase
         return user == null ? BadRequest() : Ok(GenerateJwt(user));
     }
 
-    [HttpGet("stuff")]
-    [Authorize]
-    public async Task<IActionResult> Test([FromClaim("Role")] string role)
-    {
-
-        return Ok(role);
-    }
-
     [HttpGet("random")]
-    [Authorize]
+    [Authorize(policy:"Admin")]
     public Task<IActionResult> Random()
     {
-
         return Task.FromResult<IActionResult>(Ok(new Random().NextInt64()));
     }
 
     private async Task<User> SignUpAsync(UserRecord userRecord)
     {
-        var user = new User()
+        var user = new User
         {
             FireBaseUid = userRecord.Uid,
             UserName = userRecord.DisplayName ?? userRecord.Email,
