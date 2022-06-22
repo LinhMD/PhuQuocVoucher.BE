@@ -8,6 +8,7 @@
     </PropertyGroup>
     
     <ItemGroup>
+        <PackageReference Include="Mapster" Version="7.3.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.6" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.3" />
@@ -23,6 +24,11 @@
       <ProjectReference Include="..\CrudApiTemplate\CrudApiTemplate.csproj" />
       <ProjectReference Include="..\PhuQuocVoucher.Business\PhuQuocVoucher.Business.csproj" />
       <ProjectReference Include="..\PhuQuocVoucher.Data\PhuQuocVoucher.Data.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Dtos\ProfileDto" />
+      <Folder Include="Dtos\ServiceDto" />
     </ItemGroup>
 
 </Project>

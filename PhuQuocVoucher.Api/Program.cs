@@ -1,11 +1,17 @@
+using System.Text;
 using CrudApiTemplate.Repository;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PhuQuocVoucher.Api.CustomBinding;
+using PhuQuocVoucher.Api.Dtos;
 using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services;
 using PhuQuocVoucher.Data;
+using PhuQuocVoucher.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,9 +21,35 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Database
 builder.Services.AddDbContext<PhuQuocDataContext>();
-builder.Services.AddScoped<IUnitOfWork, PqUnitOfWork>();
+builder.Services.AddScoped<IUnitOfWork ,PqUnitOfWork>();
+
+//Services
 builder.Services.InitServices();
+
+
+var configuration = builder.Configuration;
+
+//Authenticate
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = configuration["JwtSetting:Issuer"],
+            ValidAudience = configuration["JwtSetting:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSetting:SecurityKey"]))
+        };
+    });
+
+//Swagger
 builder.Services.AddSwaggerGen(
     c =>
     {
@@ -45,17 +77,33 @@ builder.Services.AddSwaggerGen(
             {jwtSecurityScheme, Array.Empty<string>()}
         });
     });
-var builderConfiguration = builder.Configuration;
+
+//Authorization
+builder.Services.AddAuthorization(o =>
+{
+    o.AddPolicy("Admin", policy => policy.RequireClaim("role", Role.Admin.ToString()));
+});
+
+//Firebase
 FirebaseApp.Create(new AppOptions()
 {
-    Credential = GoogleCredential.FromFile(builderConfiguration["FireBaseConfig"])
+    Credential = GoogleCredential.FromFile(configuration["FireBaseConfig"])
 });
+
+//Mapper
+DtoConfig.Config();
+
+//Custom Binding
+builder.Services.AddControllersWithViews(options => options.ValueProviderFactories.Add(new ClaimValueProviderFactory()));
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseAuthentication();
 
 app.UseHttpsRedirection();
 

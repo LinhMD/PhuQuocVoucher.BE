@@ -1,10 +1,14 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using CrudApiTemplate.Repository;
 using FirebaseAdmin.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Extensions;
+using PhuQuocVoucher.Api.CustomBinding;
 using PhuQuocVoucher.Api.Ultility;
 using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Data.Models;
@@ -13,7 +17,7 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/v1/login")]
 public class LoginController : ControllerBase
 {
     private readonly IConfiguration _config;
@@ -21,10 +25,10 @@ public class LoginController : ControllerBase
     private readonly PqUnitOfWork _work;
 
 
-    public LoginController(IConfiguration config, PqUnitOfWork work )
+    public LoginController(IConfiguration config, IUnitOfWork work )
     {
         _config = config;
-        _work = work;
+        _work = (PqUnitOfWork?) work ?? throw new InvalidOperationException();
     }
 
     [HttpPost("firebase")]
@@ -38,9 +42,24 @@ public class LoginController : ControllerBase
 
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetUser( string username)
+    {
+        var user = await _work.Users.Find(u => u.UserName == username && u.Status == ModelStatus.Active)
+            .FirstOrDefaultAsync();
+        return user == null ? BadRequest() : Ok(GenerateJwt(user));
+    }
+
+    [HttpGet("random")]
+    [Authorize(policy:"Admin")]
+    public Task<IActionResult> Random()
+    {
+        return Task.FromResult<IActionResult>(Ok(new Random().NextInt64()));
+    }
+
     private async Task<User> SignUpAsync(UserRecord userRecord)
     {
-        var user = new User()
+        var user = new User
         {
             FireBaseUid = userRecord.Uid,
             UserName = userRecord.DisplayName ?? userRecord.Email,

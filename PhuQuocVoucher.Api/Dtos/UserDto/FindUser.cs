@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CrudApiTemplate.Attributes.Search;
 using CrudApiTemplate.Request;
-using PhuQuocVoucher.Data.Models;
 
-namespace PhuQuocVoucher.Api.Requests.UserRequest;
+namespace PhuQuocVoucher.Api.Dtos.UserDto;
 
-public class FindUserRequest : IFindRequest<User>
+public class FindUser : IFindRequest<Data.Models.User>, IDto
 {
     public int? Id { get; set; }
 

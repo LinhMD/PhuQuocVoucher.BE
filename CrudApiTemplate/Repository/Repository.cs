@@ -50,7 +50,7 @@ public class Repository<TModel> : IRepository<TModel> where TModel : class
 
     public IQueryable<TModel> Find(Expression<Func<TModel, bool>> predicate)
     {
-        return Models.Where(predicate);
+        return IncludeAll().Where(predicate);
     }
 
     public IQueryable<TView> Find<TView>(Expression<Func<TModel, bool>> predicate)
@@ -125,7 +125,7 @@ public class Repository<TModel> : IRepository<TModel> where TModel : class
         await Context.SaveChangesAsync();
     }
 
-    public IQueryable<TModel> IncludeAll()
+    public virtual IQueryable<TModel> IncludeAll()
     {
         return Models.AsQueryable();
     }

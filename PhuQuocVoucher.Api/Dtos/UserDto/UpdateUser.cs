@@ -2,9 +2,9 @@
 using CrudApiTemplate.Request;
 using PhuQuocVoucher.Data.Models;
 
-namespace PhuQuocVoucher.Api.Requests.UserRequest;
+namespace PhuQuocVoucher.Api.Dtos.UserDto;
 
-public class UpdateUserRequest : IUpdateRequest<User>
+public class UpdateUser : UpdateDTO, IUpdateRequest<User>
 {
     public string? Email { get; set; }
 
@@ -21,6 +21,5 @@ public class UpdateUserRequest : IUpdateRequest<User>
 
     public ModelStatus? Status { get; set; }
 
-    public DateTime UpdateAt { get; } = DateTime.Now;
 
 }
