@@ -18,15 +18,13 @@ public class CreateUser : CreateDto, ICreateRequest<User>
     [MaxLength(255)]
     public string UserName { get; set; }
 
-    public int Status => 1;
-
     [Required]
     public Role Role { get; set; }
 
     [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Must be a phone number")]
     public string? PhoneNumber { get; set; }
 
-    public override void InitMapper()
+    public void InitMapper()
     {
         TypeAdapterConfig<CreateUser, User>.NewConfig();
     }

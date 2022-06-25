@@ -17,7 +17,7 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/login")]
-[ModelNotFoundExceptionFilter]
+[CrudExceptionFilter]
 public class LoginController : ControllerBase
 {
     private readonly IConfiguration _config;

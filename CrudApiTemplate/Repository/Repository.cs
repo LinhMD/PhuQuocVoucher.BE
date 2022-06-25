@@ -19,12 +19,13 @@ public class Repository<TModel> : IRepository<TModel> where TModel : class
 
     public TModel? Get(int id)
     {
-        return Context.Set<TModel>().Find(id);
+        return Models.Find(id);
     }
 
     public async ValueTask<TModel?> GetAsync(int id)
     {
-        return await Context.Set<TModel>().FindAsync(id);
+        var model = await Models.FindAsync(id);
+        return model;
     }
 
     public TView? Get<TView>(int id) where TView : class, IView<TModel>, new()

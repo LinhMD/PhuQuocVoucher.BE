@@ -1,6 +1,9 @@
-﻿using CrudApiTemplate.Request;
+﻿using CrudApiTemplate.CustomException;
+using CrudApiTemplate.Repository;
+using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.Dtos.UserDto;
 using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Services.Core;
@@ -11,14 +14,17 @@ namespace PhuQuocVoucher.Api.Controllers;
 [ApiController]
 [Route("api/v1/user")]
 
-[ModelNotFoundExceptionFilter]
+[CrudExceptionFilter]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
 
-    public UserController(IUserService userService)
+    private readonly IRepository<User> _repository;
+
+    public UserController(IUserService userService, IUnitOfWork work)
     {
         _userService = userService;
+        _repository = work.Get<User>();
     }
 
     [HttpGet]
@@ -36,7 +42,8 @@ public class UserController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
-        return Ok(await _userService.GetAsync<UserView>(id));
+        return Ok(await _repository.Find<UserView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
+                  throw new ModelNotFoundException($"Not Found {nameof(Data.Models.User)} with id {id}"));
     }
 
     [HttpPost]

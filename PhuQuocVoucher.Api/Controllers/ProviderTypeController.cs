@@ -12,7 +12,7 @@ namespace PhuQuocVoucher.Api.Controllers;
 [ApiController]
 [Route("api/v1/providerType")]
 
-[ModelNotFoundExceptionFilter]
+[CrudExceptionFilter]
 public class ProviderTypeController : ControllerBase
 {
     private readonly IProviderTypeService _providerTypeService;
@@ -33,17 +33,16 @@ public class ProviderTypeController : ControllerBase
         })).ToPagingResponse(paging));
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateProviderType request)
+    {
+        return Ok(await _providerTypeService.CreateAsync(request));
+    }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
         return Ok(await _providerTypeService.GetAsync(id));
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Create(CreateProviderType request)
-    {
-        return Ok(await _providerTypeService.CreateAsync(request));
     }
 
     [HttpPut("{id:int}")]

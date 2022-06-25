@@ -14,6 +14,4 @@ public class CreateCustomer : CreateDto, ICreateRequest<Customer>
     [Required]
     public int UserInfoId { get; set; }
 
-
-
 }

@@ -1,6 +1,7 @@
 ﻿using PhuQuocVoucher.Api.Dtos.CustomerDto;
 using PhuQuocVoucher.Api.Dtos.ProviderDto;
 using PhuQuocVoucher.Api.Dtos.ProviderTypeDto;
+using PhuQuocVoucher.Api.Dtos.ServiceDto;
 using PhuQuocVoucher.Api.Dtos.UserDto;
 using static PhuQuocVoucher.Api.Dtos.IDto;
 
@@ -13,7 +14,7 @@ public static class DtoConfig
         Config<UserView>();
         Config<ProviderSView>();
         Config<CustomerSView>();
-
+        Config<ServiceView>();
 
         Config<CreateUser>();
         Config<CreateProvider>();

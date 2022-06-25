@@ -1,9 +1,14 @@
-﻿using CrudApiTemplate.Request;
+﻿using CrudApiTemplate.CustomException;
+using CrudApiTemplate.Repository;
+using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.Dtos.CustomerDto;
 using PhuQuocVoucher.Api.ExceptionFilter;
+using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services.Core;
+using PhuQuocVoucher.Data;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Api.Controllers;
@@ -11,16 +16,20 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/customer")]
+[CrudExceptionFilter]
 public class CustomerController : ControllerBase
 {
     private readonly ICustomerService _customerService;
 
     private readonly ILogger<CustomerController> _logger;
 
-    public CustomerController(ICustomerService customerService, ILogger<CustomerController> logger)
+    private readonly IRepository<Customer> _repo;
+
+    public CustomerController(ICustomerService customerService, ILogger<CustomerController> logger, IUnitOfWork work)
     {
         _customerService = customerService;
         _logger = logger;
+        _repo = work.Get<Customer>();
     }
 
     [HttpGet]
@@ -34,26 +43,17 @@ public class CustomerController : ControllerBase
         })).ToPagingResponse(paging));
     }
 
-
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> Get(int id)
-    {
-        try
-        {
-            return Ok(await _customerService.GetAsync(id));
-        }
-        catch (Exception e)
-        {
-            return BadRequest(new {
-               errorMessage = e.Message
-            });
-        }
-    }
-
     [HttpPost]
     public async Task<IActionResult> Create([FromBody]CreateCustomer request)
     {
         return Ok(await _customerService.CreateAsync(request));
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        return Ok(await _repo.Find<CustomerSView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
+                  throw new ModelNotFoundException($"Not Found {nameof(Customer)} with id {id}"));
     }
 
     [HttpPut("{id:int}")]
@@ -61,6 +61,7 @@ public class CustomerController : ControllerBase
     {
         return Ok(await _customerService.UpdateAsync(id, request));
     }
+
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

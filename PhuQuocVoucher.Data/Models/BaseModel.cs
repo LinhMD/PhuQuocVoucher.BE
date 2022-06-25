@@ -9,7 +9,6 @@ public class BaseModel
     public DateTime? UpdateAt { get; set; }
 
     public DateTime? DeleteAt { get; set; }
-
     public ModelStatus Status { get; set; }
 
 }
@@ -18,6 +17,5 @@ public class BaseModel
 public enum ModelStatus
 {
     Active,
-    Deactivate,
-    Delete,
+    Delete
 }

@@ -1,11 +1,14 @@
-﻿namespace PhuQuocVoucher.Api.Dtos;
+﻿using PhuQuocVoucher.Data.Models;
 
-public abstract class CreateDto : IDto
+namespace PhuQuocVoucher.Api.Dtos;
+
+public class CreateDto : IDto
 {
     public DateTime CreateAt { get; set; }
 
+    public ModelStatus Status { get; } = ModelStatus.Active;
+
     public virtual void InitMapper()
     {
-
     }
 }

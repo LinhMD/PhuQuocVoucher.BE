@@ -14,11 +14,13 @@ public class Service : BaseModel
 
     public ServiceType Type { get; set; }
 
+    public int TypeId { get; set; }
     public Place ServiceLocation { get; set; }
+
+    public int ServiceLocationId { get; set; }
 
     public ServiceProvider Provider { get; set; }
 
     public int ProviderId { get; set; }
-
 
 }

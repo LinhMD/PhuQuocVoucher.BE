@@ -16,13 +16,16 @@ public class CreateProvider : CreateDto, ICreateRequest<Provider>
     [Required]
     public string TaxCode { get; set; }
 
+    [Required]
     public int UserInfoId { get; set; }
 
+    [Required]
     public int AssignedSellerId { get; set; }
 
+    [Required]
     public int TypeId { get; set; }
 
-    public override void InitMapper()
+    public void InitMapper()
     {
         TypeAdapterConfig<CreateProvider, Provider>.NewConfig();
     }

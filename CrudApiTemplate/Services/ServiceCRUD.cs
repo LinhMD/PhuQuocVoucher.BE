@@ -33,7 +33,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         catch(Exception ex)
         {
             ex.StackTrace.Dump();
-            throw new DbQueryException($"Create {typeof(TModel).Name} failed with message: {ex.Message}");
+            throw new DbQueryException($"Create {typeof(TModel).Name} failed with message: {ex.Message}", DbError.Create);
         }
         return model;
     }
@@ -51,7 +51,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         catch(Exception ex)
         {
             ex.StackTrace.Dump();
-            throw new DbQueryException($"Create {typeof(TModel).Name} failed with message: {ex.Message}");
+            throw new DbQueryException($"Create {typeof(TModel).Name} failed with message: {ex.Message}", DbError.Create);
         }
         return model;
     }
@@ -71,7 +71,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         catch(Exception ex)
         {
             ex.StackTrace.Dump();
-            throw new DbQueryException($"Update {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}");
+            throw new DbQueryException($"Update {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}", DbError.Update);
         }
 
         return model;
@@ -91,7 +91,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         catch(Exception ex)
         {
             ex.StackTrace.Dump();
-            throw new DbQueryException($"Update {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}");
+            throw new DbQueryException($"Update {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}", DbError.Update);
         }
 
         return model;
@@ -108,7 +108,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         catch (Exception ex)
         {
             ex.StackTrace.Dump();
-            throw new DbQueryException($"Delete {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}");
+            throw new DbQueryException($"Delete {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}", DbError.Delete);
         }
         return model;
     }
@@ -124,7 +124,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         catch (Exception ex)
         {
             ex.StackTrace.Dump();
-            throw new DbQueryException($"Delete {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}");
+            throw new DbQueryException($"Delete {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}", DbError.Delete);
         }
 
         return model;

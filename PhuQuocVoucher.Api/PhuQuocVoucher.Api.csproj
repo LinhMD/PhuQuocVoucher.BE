@@ -28,7 +28,6 @@
     
     <ItemGroup>
       <Folder Include="Dtos\ProfileDto" />
-      <Folder Include="Dtos\ServiceDto" />
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,9 @@
-﻿using CrudApiTemplate.Request;
+﻿using CrudApiTemplate.CustomException;
+using CrudApiTemplate.Repository;
+using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.Dtos.ProviderDto;
 using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Services.Core;
@@ -9,14 +12,15 @@ using ServiceProvider = PhuQuocVoucher.Data.Models.ServiceProvider;
 namespace PhuQuocVoucher.Api.Controllers;
 
 
-[ModelNotFoundExceptionFilter]
+[CrudExceptionFilter]
 public class ProviderController : ControllerBase
 {
     private readonly IProviderService _providerService;
-
-    public ProviderController(IProviderService provider)
+    private readonly IRepository<ServiceProvider> _repository;
+    public ProviderController(IProviderService provider, IUnitOfWork work)
     {
         _providerService = provider;
+        _repository = work.Get<ServiceProvider>();
     }
 
     [HttpGet]
@@ -30,17 +34,17 @@ public class ProviderController : ControllerBase
         })).ToPagingResponse(paging));
     }
 
-
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> Get(int id)
-    {
-        return Ok(await _providerService.GetAsync(id));
-    }
-
     [HttpPost]
     public async Task<IActionResult> Create(CreateProvider request)
     {
         return Ok(await _providerService.CreateAsync(request));
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        return Ok(await _repository.Find<ProviderSView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
+                  throw new ModelNotFoundException($"Not Found {nameof(ServiceProvider)} with id {id}"));
     }
 
     [HttpPut("{id:int}")]
