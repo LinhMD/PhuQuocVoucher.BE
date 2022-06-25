@@ -38,10 +38,13 @@ public class UnitOfWork : IUnitOfWork
     }
 
 
-
     public int Complete()
     {
         return DataContext.SaveChanges();
     }
 
+    public void Dispose()
+    {
+        this.Repositories.Clear();
+    }
 }
