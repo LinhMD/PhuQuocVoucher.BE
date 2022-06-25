@@ -2,6 +2,7 @@
 using CrudApiTemplate.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using PhuQuocVoucher.Api.Dtos.CustomerDto;
+using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 
@@ -14,9 +15,12 @@ public class CustomerController : ControllerBase
 {
     private readonly ICustomerService _customerService;
 
-    public CustomerController(ICustomerService customerService)
+    private readonly ILogger<CustomerController> _logger;
+
+    public CustomerController(ICustomerService customerService, ILogger<CustomerController> logger)
     {
         _customerService = customerService;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -34,11 +38,20 @@ public class CustomerController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
-        return Ok(await _customerService.GetAsync(id));
+        try
+        {
+            return Ok(await _customerService.GetAsync(id));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new {
+               errorMessage = e.Message
+            });
+        }
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateCustomer request)
+    public async Task<IActionResult> Create([FromBody]CreateCustomer request)
     {
         return Ok(await _customerService.CreateAsync(request));
     }

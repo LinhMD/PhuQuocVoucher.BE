@@ -1,11 +1,9 @@
 ﻿namespace PhuQuocVoucher.Api.Dtos;
 
-public class CreateDTO : IDto
+public class DeleteDto : IDto
 {
-    public DateTime CreateTime { get; } = DateTime.Now;
-
+    public DateTime DeleteAt { get; set; }
     public virtual void InitMapper()
     {
-
     }
 }

@@ -6,7 +6,7 @@ using Provider = PhuQuocVoucher.Data.Models.ServiceProvider;
 
 namespace PhuQuocVoucher.Api.Dtos.ProviderDto;
 
-public class CreateProvider : CreateDTO, ICreateRequest<Provider>
+public class CreateProvider : CreateDto, ICreateRequest<Provider>
 {
     [Required]
     public string ProviderName { get; set; }

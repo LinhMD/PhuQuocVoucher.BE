@@ -4,11 +4,10 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Api.Dtos.CustomerDto;
 
-public class UpdateCustomer : UpdateDTO, IUpdateRequest<Customer>
+public class UpdateCustomer : UpdateDto, IUpdateRequest<Customer>
 {
     [Required]
     [MaxLength(255)]
     public string CustomerName { get; set; }
-
 
 }

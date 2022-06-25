@@ -2,6 +2,7 @@
 using CrudApiTemplate.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using PhuQuocVoucher.Api.Dtos.UserDto;
+using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 
@@ -9,6 +10,8 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/user")]
+
+[ModelNotFoundExceptionFilter]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;

@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Extensions;
-using PhuQuocVoucher.Api.CustomBinding;
+using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Api.Ultility;
 using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Data.Models;
@@ -18,6 +17,7 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/login")]
+[ModelNotFoundExceptionFilter]
 public class LoginController : ControllerBase
 {
     private readonly IConfiguration _config;
@@ -37,7 +37,7 @@ public class LoginController : ControllerBase
         var userRecord = await FirebaseUtility.GetFireBaseUserByToken(token);
         var uid = userRecord.Uid;
         var user = await _work.Users.Find(u => u.FireBaseUid == uid && u.Status == ModelStatus.Active).FirstOrDefaultAsync() ??
-                   await SignUpAsync(userRecord);
+                   await SignUpFromFirebaseAsync(userRecord);
         return Ok(GenerateJwt(user));
 
     }
@@ -57,7 +57,7 @@ public class LoginController : ControllerBase
         return Task.FromResult<IActionResult>(Ok(new Random().NextInt64()));
     }
 
-    private async Task<User> SignUpAsync(UserRecord userRecord)
+    private async Task<User> SignUpFromFirebaseAsync(UserRecord userRecord)
     {
         var user = new User
         {

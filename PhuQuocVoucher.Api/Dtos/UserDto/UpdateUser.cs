@@ -4,8 +4,9 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Api.Dtos.UserDto;
 
-public class UpdateUser : UpdateDTO, IUpdateRequest<User>
+public class UpdateUser : UpdateDto, IUpdateRequest<User>
 {
+    [EmailAddress]
     public string? Email { get; set; }
 
     public string? AvatarLink { get; set; }

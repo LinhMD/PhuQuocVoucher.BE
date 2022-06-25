@@ -5,7 +5,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Api.Dtos.UserDto;
 
-public class CreateUser : CreateDTO, ICreateRequest<User>
+public class CreateUser : CreateDto, ICreateRequest<User>
 {
 
     [Required]

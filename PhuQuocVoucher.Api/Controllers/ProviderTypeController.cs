@@ -2,6 +2,7 @@
 using CrudApiTemplate.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using PhuQuocVoucher.Api.Dtos.ProviderTypeDto;
+using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 
@@ -10,6 +11,8 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/providerType")]
+
+[ModelNotFoundExceptionFilter]
 public class ProviderTypeController : ControllerBase
 {
     private readonly IProviderTypeService _providerTypeService;

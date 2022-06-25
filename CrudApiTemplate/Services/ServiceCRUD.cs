@@ -5,6 +5,7 @@ using CrudApiTemplate.Utilities;
 using CrudApiTemplate.View;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using PhuQuocVoucher.Api.Ultility;
 
 namespace CrudApiTemplate.Services;
 
@@ -31,7 +32,8 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         }
         catch(Exception ex)
         {
-            throw new DbQueryException(ex);
+            ex.StackTrace.Dump();
+            throw new DbQueryException($"Create {typeof(TModel).Name} failed with message: {ex.Message}");
         }
         return model;
     }
@@ -41,13 +43,15 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         var model = createRequest.CreateNew(UnitOfWork);
 
         model.Validate();
+
         try
         {
             model = await Repository.AddAsync(model);
         }
         catch(Exception ex)
         {
-            throw new DbQueryException(ex);
+            ex.StackTrace.Dump();
+            throw new DbQueryException($"Create {typeof(TModel).Name} failed with message: {ex.Message}");
         }
         return model;
     }
@@ -66,7 +70,8 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         }
         catch(Exception ex)
         {
-            throw new DbQueryException(ex);
+            ex.StackTrace.Dump();
+            throw new DbQueryException($"Update {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}");
         }
 
         return model;
@@ -85,7 +90,8 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         }
         catch(Exception ex)
         {
-            throw new DbQueryException(ex);
+            ex.StackTrace.Dump();
+            throw new DbQueryException($"Update {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}");
         }
 
         return model;
@@ -101,9 +107,9 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         }
         catch (Exception ex)
         {
-            throw new DbQueryException(ex);
+            ex.StackTrace.Dump();
+            throw new DbQueryException($"Delete {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}");
         }
-
         return model;
     }
 
@@ -117,7 +123,8 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         }
         catch (Exception ex)
         {
-            throw new DbQueryException(ex);
+            ex.StackTrace.Dump();
+            throw new DbQueryException($"Delete {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}");
         }
 
         return model;
@@ -127,7 +134,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     {
         var model = Repository.Get(id);
 
-        if (model == null) throw new ModelNotFoundException<TModel>(nameof(ServiceCrud<TModel>));
+        if (model == null) throw new ModelNotFoundException($"Not Found {typeof(TModel).Name} with id {id}");
 
         return model;
     }
@@ -135,7 +142,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     {
         var model = await Repository.GetAsync(id);
 
-        if (model == null) throw new ModelNotFoundException<TModel>(nameof(ServiceCrud<TModel>));
+        if (model == null) throw new ModelNotFoundException($"Not Found {typeof(TModel).Name} with id {id}");
 
         return model;
     }
@@ -144,7 +151,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     {
         var view = Repository.Get<TView>(id);
 
-        if (view == null) throw new ModelNotFoundException<TModel>($"Id not found: {id}");
+        if (view == null) throw new ModelNotFoundException($"Not Found {typeof(TModel).Name} with id {id}");
 
         return view;
     }
@@ -153,7 +160,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     {
         var view = await Repository.GetAsync<TView>(id);
 
-        if (view == null) throw new ModelNotFoundException<TModel>(typeof(TModel).Name);
+        if (view == null) throw new ModelNotFoundException($"Not Found {typeof(TModel).Name} with id {id}");
 
         return view;
     }

@@ -2,7 +2,7 @@
 {
     public class DbQueryException : Exception
     {
-        public DbQueryException(Exception exception)
+        public DbQueryException(string message) : base(message)
         {
 
         }
