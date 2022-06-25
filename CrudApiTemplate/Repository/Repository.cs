@@ -41,7 +41,7 @@ public class Repository<TModel> : IRepository<TModel> where TModel : class
 
     public IQueryable<TModel> GetAll()
     {
-        return Models;
+        return IncludeAll();
     }
 
     public IQueryable<TView> GetAll<TView>() where TView : class, IView<TModel>, new()

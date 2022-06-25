@@ -5,14 +5,14 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Repositories.Implements;
 
-public class UserRepository : Repository<User>, IUserRepository
+public class SellerRepository : Repository<Seller>, ISellerRepository
 {
-    public UserRepository(DbContext context) : base(context)
+    public SellerRepository(DbContext context) : base(context)
     {
     }
 
-    public override IQueryable<User> IncludeAll()
+    public override IQueryable<Seller> IncludeAll()
     {
-        return Models.AsQueryable();
+        return Models.Include(s => s.UserInfo);
     }
 }

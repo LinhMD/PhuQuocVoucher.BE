@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Business.Repositories.Core;
 using PhuQuocVoucher.Business.Repositories.Implements;
 using PhuQuocVoucher.Data;
+using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Repositories;
 
@@ -13,10 +14,64 @@ public class PqUnitOfWork : UnitOfWork
     public PqUnitOfWork(PhuQuocDataContext dataContext) : base(dataContext)
     {
         _dataContext = dataContext;
-        Users = new UserRepository(dataContext);
-        this.Add(Users);
+
+        Add(new BlogRepository(dataContext));
+        Add(new CartRepository(dataContext));
+        Add(new CartItemRepository(dataContext));
+        Add(new CustomerRepository(dataContext));
+        Add(new ComboRepository(dataContext));
+        Add(new OrderItemRepository(dataContext));
+        Add(new OrderRepository(dataContext));
+        Add(new PaymentDetailRepository(dataContext));
+        Add(new PlaceRepository(dataContext));
+        Add(new ProductRepository(dataContext));
+        Add(new ProfileRepository(dataContext));
+        Add(new ProviderRepository(dataContext));
+        Add(new ProviderTypeRepository(dataContext));
+        Add(new ReviewRepository(dataContext));
+        Add(new SellerRepository(dataContext));
+        Add(new ServiceRepository(dataContext));
+        Add(new ServiceTypeRepository(dataContext));
+        Add(new TagRepository(dataContext));
+        Add(new UserRepository(dataContext));
+        Add(new VoucherRepository(dataContext));
     }
 
-    public IUserRepository Users { get; }
+    public IBlogRepository Blogs => (IBlogRepository) Get<Blog>();
 
+    public ICartRepository Carts => (ICartRepository) Get<Cart>();
+
+    public ICartItemRepository CartItems => (ICartItemRepository) Get<CartItem>();
+
+    public IComboRepository Combos => (IComboRepository) Get<Combo>();
+
+    public IOrderItemRepository OrderItems => (IOrderItemRepository) Get<OrderItem>();
+
+    public IOrderRepository Orders => (IOrderRepository) Get<Order>();
+
+    public IPaymentDetailRepository PaymentDetails => (IPaymentDetailRepository) Get<PaymentDetail>();
+
+    public IPlaceRepository Places => (IPlaceRepository) Get<Place>();
+
+    public IProductRepository Products => (IProductRepository) Get<Product>();
+
+    public IProfileRepository Profiles => (IProfileRepository) Get<Profile>();
+
+    public IProviderRepository Providers => (IProviderRepository) Get<ServiceProvider>();
+
+    public IProviderTypeRepository ProviderTypes => (IProviderTypeRepository) Get<ProviderType>();
+
+    public IReviewRepository Reviews => (IReviewRepository) Get<Review>();
+
+    public ISellerRepository Sellers => (ISellerRepository) Get<Seller>();
+
+    public IServiceRepository Services => (IServiceRepository) Get<Service>();
+
+    public IServiceTypeRepository ServiceTypes => (IServiceTypeRepository) Get<ServiceType>();
+
+    public ITagRepository Tags => (ITagRepository) Get<Tag>();
+
+    public IUserRepository Users => (IUserRepository) Get<User>();
+
+    public IVoucherRepository Vouchers => (IVoucherRepository) Get<Voucher>();
 }

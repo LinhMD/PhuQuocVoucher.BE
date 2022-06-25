@@ -9,6 +9,7 @@ public class CrudExceptionFilterAttribute : ExceptionFilterAttribute
 {
     public override void OnException(ExceptionContext context)
     {
+        $"error message: {context.Exception.Message}".Dump();
         context.Exception.StackTrace.Dump();
         IActionResult result = new BadRequestResult();
 

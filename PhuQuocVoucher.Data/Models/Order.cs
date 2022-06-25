@@ -4,7 +4,6 @@ public class Order : BaseModel
 {
     public int Id { get; set; }
 
-
     public double TotalPrice { get; set; }
 
     public DateTime CreateDate { get; set; }
@@ -20,6 +19,5 @@ public class Order : BaseModel
     public PaymentDetail? PaymentDetail { get; set; }
 
     public IEnumerable<OrderItem> OrderItems { get; set; }
-
 
 }

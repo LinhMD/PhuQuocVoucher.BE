@@ -23,6 +23,7 @@ public static class ServicesInitDi
         serviceCollection.AddScoped<IProductService, ProductService>();
         serviceCollection.AddScoped<IProfileService, ProfileService>();
         serviceCollection.AddScoped<IProviderService, ProviderService>();
+        serviceCollection.AddScoped<IProviderTypeService, ProviderTypeService>();
         serviceCollection.AddScoped<IReviewService, ReviewService>();
         serviceCollection.AddScoped<ISellerService, SellerService>();
         serviceCollection.AddScoped<IServiceService, ServiceService>();

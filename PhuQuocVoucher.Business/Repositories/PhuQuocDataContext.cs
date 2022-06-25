@@ -16,7 +16,7 @@ public class PhuQuocDataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(_config["ConnectionStrings:PhuQuocDB"],
+        optionsBuilder.UseSqlServer(_config["ConnectionStrings:local"],
             b => b.MigrationsAssembly("PhuQuocVoucher.Api"));
     }
 

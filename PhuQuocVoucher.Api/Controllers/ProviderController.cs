@@ -12,6 +12,8 @@ using ServiceProvider = PhuQuocVoucher.Data.Models.ServiceProvider;
 namespace PhuQuocVoucher.Api.Controllers;
 
 
+[ApiController]
+[Route("api/v1/provider")]
 [CrudExceptionFilter]
 public class ProviderController : ControllerBase
 {
