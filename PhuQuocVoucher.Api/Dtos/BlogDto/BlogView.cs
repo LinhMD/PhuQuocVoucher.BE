@@ -1,7 +1,11 @@
-﻿namespace PhuQuocVoucher.Data.Models;
+﻿using CrudApiTemplate.View;
+using PhuQuocVoucher.Data.Models;
 
-public class Blog : BaseModel
+namespace PhuQuocVoucher.Api.Dtos.BlogDto;
+
+public class BlogView : IView<Blog>, IDto
 {
+
     public int Id { get; set; }
 
     public string Content { get; set; }
@@ -12,7 +16,7 @@ public class Blog : BaseModel
 
     public string Summary { get; set; }
 
-    public IEnumerable<Place> Places { get; set; }
-
     public IEnumerable<Tag> Tags { get; set; }
+
+    public IEnumerable<int> PlaceIds { get; set; }
 }

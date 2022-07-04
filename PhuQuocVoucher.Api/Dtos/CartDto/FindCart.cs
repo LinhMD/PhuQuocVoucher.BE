@@ -1,0 +1,13 @@
+﻿using CrudApiTemplate.Request;
+using PhuQuocVoucher.Data.Models;
+
+namespace PhuQuocVoucher.Api.Dtos.CartDto;
+
+public class FindCart : IFindRequest<Cart>, IDto
+{
+
+    public int? Id { get; set; }
+
+    public int? CustomerId { get; set; }
+
+}

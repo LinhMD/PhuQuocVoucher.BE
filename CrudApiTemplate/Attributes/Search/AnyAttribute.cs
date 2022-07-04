@@ -4,6 +4,7 @@ using System.Reflection;
 namespace CrudApiTemplate.Attributes.Search;
 
 ///Ex: User.Profiles.Any(Profile => Profile.Gender == ProfileGender)
+///     target                      property            value
 public class AnyAttribute : FilterAttribute
 {
     private static readonly MethodInfo AnyMethod = typeof(Enumerable).GetMethods().Single(m => m.Name == "Any" && m.GetParameters().Length == 2);
@@ -11,6 +12,7 @@ public class AnyAttribute : FilterAttribute
 
 
     private readonly string _property;
+
     public AnyAttribute(string target, string property, Type filterType) : base(target)
     {
 

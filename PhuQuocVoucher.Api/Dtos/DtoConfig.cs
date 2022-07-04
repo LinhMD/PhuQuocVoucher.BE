@@ -1,4 +1,5 @@
-﻿using PhuQuocVoucher.Api.Dtos.CustomerDto;
+﻿using PhuQuocVoucher.Api.Dtos.BlogDto;
+using PhuQuocVoucher.Api.Dtos.CustomerDto;
 using PhuQuocVoucher.Api.Dtos.ProviderDto;
 using PhuQuocVoucher.Api.Dtos.ProviderTypeDto;
 using PhuQuocVoucher.Api.Dtos.ServiceDto;
@@ -20,6 +21,6 @@ public static class DtoConfig
         Config<CreateProvider>();
         Config<CreateProviderType>();
         Config<CreateCustomer>();
-
+        Config<CreateBlog>();
     }
 }

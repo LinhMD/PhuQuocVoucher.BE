@@ -3,9 +3,9 @@ using Mapster;
 
 namespace CrudApiTemplate.Request;
 
-public interface ICreateRequest<out TModel> where TModel: class
+public interface ICreateRequest<TModel> where TModel: class
 {
-    virtual TModel CreateNew(IUnitOfWork work)
+    public  TModel CreateNew(IUnitOfWork work)
     {
         return this.Adapt<TModel>();
     }

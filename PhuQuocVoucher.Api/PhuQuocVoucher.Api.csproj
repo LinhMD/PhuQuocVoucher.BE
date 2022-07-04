@@ -27,21 +27,9 @@
     </ItemGroup>
     
     <ItemGroup>
-      <Folder Include="Dtos\BlogDto" />
-      <Folder Include="Dtos\CartDto" />
-      <Folder Include="Dtos\CartItemDto" />
-      <Folder Include="Dtos\ComboDto" />
-      <Folder Include="Dtos\OrderDto" />
-      <Folder Include="Dtos\OrderItemDto" />
       <Folder Include="Dtos\PaymentDetailDto" />
-      <Folder Include="Dtos\PlaceDto" />
-      <Folder Include="Dtos\ProductDto" />
-      <Folder Include="Dtos\ProfileDto" />
       <Folder Include="Dtos\ReviewDto" />
       <Folder Include="Dtos\SellerDto" />
-      <Folder Include="Dtos\ServiceTypeDto" />
-      <Folder Include="Dtos\TagDto" />
-      <Folder Include="Dtos\VoucherDto" />
     </ItemGroup>
 
 </Project>

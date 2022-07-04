@@ -10,8 +10,11 @@ public class OrderItem  : BaseModel
 
     public Product OrderProduct { get; set; }
 
+    public int OrderProductId { get; set; }
+
     public Profile? Profile { get; set; }
 
+    public int? ProfileId { get; set; }
     public Review? Review { get; set; }
 
     public DateTime UseDate { get; set; }

@@ -21,6 +21,8 @@ public class CustomerController : ControllerBase
 {
     private readonly ICustomerService _customerService;
 
+    private IUnitOfWork _work;
+
     private readonly ILogger<CustomerController> _logger;
 
     private readonly IRepository<Customer> _repo;
@@ -29,6 +31,7 @@ public class CustomerController : ControllerBase
     {
         _customerService = customerService;
         _logger = logger;
+        _work = work;
         _repo = work.Get<Customer>();
     }
 
@@ -67,4 +70,6 @@ public class CustomerController : ControllerBase
     {
         return Ok(await _customerService.DeleteAsync(id));
     }
+
+
 }

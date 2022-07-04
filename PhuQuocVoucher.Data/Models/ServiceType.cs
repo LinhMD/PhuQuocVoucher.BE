@@ -12,4 +12,6 @@ public class ServiceType : BaseModel
     public string Name { get; set; }
 
     public ServiceType?  ParentType { get; set; }
+
+    public int? ParentTypeId { get; set; }
 }

@@ -10,14 +10,11 @@ public class Combo : BaseModel
 
     public string Name { get; set; }
 
-    public DateTime StartDate { get; set; }
+    public DateTime? StartDate { get; set; }
 
-    public DateTime EndDate { get; set; }
-
-    public int Status { get; set; }
+    public DateTime? EndDate { get; set; }
 
     public double Price { get; set; }
-
     public Product Product { get; set; }
     public int ProductId { get; set; }
 
