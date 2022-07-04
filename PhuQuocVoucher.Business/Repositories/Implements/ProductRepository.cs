@@ -11,8 +11,4 @@ public class ProductRepository : Repository<Product>, IProductRepository
     {
     }
 
-    public override IQueryable<Product> IncludeAll()
-    {
-        return Models.Include(p => p.Type);
-    }
 }

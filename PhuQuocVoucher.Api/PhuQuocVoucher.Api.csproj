@@ -25,11 +25,5 @@
       <ProjectReference Include="..\PhuQuocVoucher.Business\PhuQuocVoucher.Business.csproj" />
       <ProjectReference Include="..\PhuQuocVoucher.Data\PhuQuocVoucher.Data.csproj" />
     </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Dtos\PaymentDetailDto" />
-      <Folder Include="Dtos\ReviewDto" />
-      <Folder Include="Dtos\SellerDto" />
-    </ItemGroup>
 
 </Project>

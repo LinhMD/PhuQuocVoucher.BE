@@ -4,9 +4,9 @@ using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PhuQuocVoucher.Api.Dtos.ProviderDto;
 using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Services.Core;
+using PhuQuocVoucher.Data.Dtos.ProviderDto;
 using ServiceProvider = PhuQuocVoucher.Data.Models.ServiceProvider;
 
 namespace PhuQuocVoucher.Api.Controllers;

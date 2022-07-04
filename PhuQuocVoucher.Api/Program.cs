@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PhuQuocVoucher.Api.CustomBinding;
-using PhuQuocVoucher.Api.Dtos;
 using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services;
 using PhuQuocVoucher.Data;
+using PhuQuocVoucher.Data.Dtos;
 using PhuQuocVoucher.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);

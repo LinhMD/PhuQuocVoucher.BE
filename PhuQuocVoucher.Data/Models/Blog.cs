@@ -14,5 +14,5 @@ public class Blog : BaseModel
 
     public IEnumerable<Place> Places { get; set; }
 
-    public IEnumerable<Tag> Tags { get; set; }
+    public IEnumerable<Tag>? Tags { get; set; }
 }
