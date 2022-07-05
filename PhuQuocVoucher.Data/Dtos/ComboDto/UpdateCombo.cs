@@ -1,6 +1,9 @@
-﻿namespace PhuQuocVoucher.Data.Dtos.ComboDto;
+﻿using CrudApiTemplate.Request;
+using PhuQuocVoucher.Data.Models;
 
-public class UpdateCombo
+namespace PhuQuocVoucher.Data.Dtos.ComboDto;
+
+public class UpdateCombo : UpdateDto, IUpdateRequest<Combo>
 {
     public string Name { get; set; }
 

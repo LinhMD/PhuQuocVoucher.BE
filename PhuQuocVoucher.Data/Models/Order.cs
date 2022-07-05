@@ -11,10 +11,12 @@ public class Order : BaseModel
     public DateTime CompleteDate { get; set; }
 
     public OrderStatus OrderStatus { get; set; } = OrderStatus.Processing;
-
     public Customer? Customer { get; set; }
 
+    public int? CustomerId { get; set; }
     public Seller? Seller { get; set; }
+
+    public int? SellerId { get; set; }
 
     public PaymentDetail? PaymentDetail { get; set; }
 

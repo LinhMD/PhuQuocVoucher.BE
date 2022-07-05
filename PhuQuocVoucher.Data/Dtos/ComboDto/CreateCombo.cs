@@ -18,7 +18,7 @@ public class CreateCombo : CreateDto, ICreateRequest<Combo>
     public double Price { get; set; }
 
     [Required]
-    public CreateProduct ProductCreate { get; set; }
+    public CreateProduct CreateProduct { get; set; }
 
     [Required]
     public IEnumerable<int> VoucherIds { get; set; }

@@ -1,6 +1,9 @@
-﻿namespace PhuQuocVoucher.Data.Dtos.OrderDto;
+﻿using CrudApiTemplate.Request;
+using PhuQuocVoucher.Data.Models;
 
-public class UpdateOrder
+namespace PhuQuocVoucher.Data.Dtos.OrderDto;
+
+public class UpdateOrder : UpdateDto, IUpdateRequest<Order>
 {
     
 }

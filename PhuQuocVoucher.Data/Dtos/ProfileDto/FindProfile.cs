@@ -1,8 +1,10 @@
 ﻿using CrudApiTemplate.Attributes.Search;
+using CrudApiTemplate.Request;
+using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Data.Dtos.ProfileDto;
 
-public class FindProfile
+public class FindProfile : IFindRequest<Profile>
 {
     public int? Sex { get; set; }
 
