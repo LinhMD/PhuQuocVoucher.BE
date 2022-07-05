@@ -22,7 +22,9 @@ public class ServiceTypeController : ControllerBase
 
     private readonly IRepository<ServiceType> _repo;
 
-    public ServiceTypeController(IServiceTypeService serviceTypeService, ILogger<ServiceTypeController> logger, IUnitOfWork work)
+    public ServiceTypeController(IServiceTypeService serviceTypeService,
+        ILogger<ServiceTypeController> logger,
+        IUnitOfWork work)
     {
         _serviceTypeService = serviceTypeService;
         _logger = logger;
@@ -30,7 +32,10 @@ public class ServiceTypeController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] FindServiceType request, [FromQuery] PagingRequest paging, string? orderBy)
+    public async Task<IActionResult> Get(
+        [FromQuery] FindServiceType request,
+        [FromQuery] PagingRequest paging,
+        string? orderBy)
     {
         return Ok((await _serviceTypeService.GetAsync(new GetRequest<ServiceType>
         {
