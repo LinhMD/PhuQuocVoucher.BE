@@ -5,6 +5,7 @@ using CrudApiTemplate.Utilities;
 using CrudApiTemplate.View;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PhuQuocVoucher.Api.Ultility;
 
 namespace CrudApiTemplate.Services;
@@ -14,10 +15,13 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     protected readonly IRepository<TModel> Repository;
     protected readonly IUnitOfWork UnitOfWork;
 
-    protected ServiceCrud(IRepository<TModel> repository, IUnitOfWork work)
+    protected ILogger<ServiceCrud<TModel>> Logger;
+
+    protected ServiceCrud(IRepository<TModel> repository, IUnitOfWork work, ILogger<ServiceCrud<TModel>> logger)
     {
         Repository = repository;
         UnitOfWork = work;
+        Logger = logger;
     }
 
     public TModel Create(ICreateRequest<TModel> createRequest)
@@ -47,6 +51,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         try
         {
             model = await Repository.AddAsync(model);
+
         }
         catch(Exception ex)
         {

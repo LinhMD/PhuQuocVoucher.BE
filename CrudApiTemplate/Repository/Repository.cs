@@ -2,6 +2,8 @@
 using CrudApiTemplate.View;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using PhuQuocVoucher.Api.Ultility;
 
 namespace CrudApiTemplate.Repository;
 
@@ -65,6 +67,7 @@ public class Repository<TModel> : IRepository<TModel> where TModel : class
     {
         Models.Add(model);
         Context.SaveChanges();
+
         Context.Entry(model).GetDatabaseValues();
         return model;
     }
@@ -111,7 +114,6 @@ public class Repository<TModel> : IRepository<TModel> where TModel : class
     public async void RemoveAsync(TModel model)
     {
         Models.Remove(model);
-
         await Context.SaveChangesAsync();
     }
 

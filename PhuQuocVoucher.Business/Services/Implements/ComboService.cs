@@ -3,16 +3,19 @@ using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Services;
 using CrudApiTemplate.Utilities;
+using Microsoft.Extensions.Logging;
+using PhuQuocVoucher.Business.Dtos.ComboDto;
 using PhuQuocVoucher.Business.Services.Core;
-using PhuQuocVoucher.Data.Dtos.ComboDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Services.Implements;
 
 public class ComboService : ServiceCrud<Combo>, IComboService
 {
-    public ComboService(IUnitOfWork work) : base(work.Get<Combo>(), work)
+    private ILogger<ComboService> _logger;
+    public ComboService(IUnitOfWork work, ILogger<ComboService> logger) : base(work.Get<Combo>(), work, logger)
     {
+        _logger = logger;
     }
 
     public async Task<Combo> CreateAsync(CreateCombo createCombo)

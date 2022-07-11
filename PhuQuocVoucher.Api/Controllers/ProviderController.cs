@@ -5,8 +5,8 @@ using CrudApiTemplate.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.ExceptionFilter;
+using PhuQuocVoucher.Business.Dtos.ProviderDto;
 using PhuQuocVoucher.Business.Services.Core;
-using PhuQuocVoucher.Data.Dtos.ProviderDto;
 using ServiceProvider = PhuQuocVoucher.Data.Models.ServiceProvider;
 
 namespace PhuQuocVoucher.Api.Controllers;
@@ -45,7 +45,7 @@ public class ProviderController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
-        return Ok(await _repository.Find<ProviderSView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
+        return Ok(await _repository.Find<ProviderView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(ServiceProvider)} with id {id}"));
     }
 

@@ -5,10 +5,10 @@ using CrudApiTemplate.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.ExceptionFilter;
+using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data;
-using PhuQuocVoucher.Data.Dtos.CustomerDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Api.Controllers;
@@ -21,17 +21,24 @@ public class CustomerController : ControllerBase
 {
     private readonly ICustomerService _customerService;
 
+    private readonly ICartService _cartService;
+
+    private readonly IOrderService _orderService;
+
     private IUnitOfWork _work;
 
     private readonly ILogger<CustomerController> _logger;
 
     private readonly IRepository<Customer> _repo;
 
-    public CustomerController(ICustomerService customerService, ILogger<CustomerController> logger, IUnitOfWork work)
+    public CustomerController(ILogger<CustomerController> logger, IUnitOfWork work,
+        ICustomerService customerService, IOrderService orderService, ICartService cartService)
     {
         _customerService = customerService;
         _logger = logger;
         _work = work;
+        _orderService = orderService;
+        _cartService = cartService;
         _repo = work.Get<Customer>();
     }
 

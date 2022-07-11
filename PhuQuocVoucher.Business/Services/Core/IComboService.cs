@@ -1,5 +1,5 @@
 ﻿using CrudApiTemplate.Services;
-using PhuQuocVoucher.Data.Dtos.ComboDto;
+using PhuQuocVoucher.Business.Dtos.ComboDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Services.Core;

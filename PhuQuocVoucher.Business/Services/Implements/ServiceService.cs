@@ -1,5 +1,6 @@
 ﻿using CrudApiTemplate.Repository;
 using CrudApiTemplate.Services;
+using Microsoft.Extensions.Logging;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 
@@ -7,7 +8,9 @@ namespace PhuQuocVoucher.Business.Services.Implements;
 
 public class ServiceService : ServiceCrud<Service>, IServiceService
 {
-    public ServiceService( IUnitOfWork work) : base(work.Get<Service>(), work)
+    private ILogger<ServiceService> _logger;
+    public ServiceService( IUnitOfWork work, ILogger<ServiceService> logger) : base(work.Get<Service>(), work, logger)
     {
+        _logger = logger;
     }
 }
