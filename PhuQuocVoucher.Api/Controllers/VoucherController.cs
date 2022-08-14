@@ -13,7 +13,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/voucher")]
-[CrudExceptionFilter]
 public class VoucherController : ControllerBase
 {
     private readonly IVoucherService _voucherService;

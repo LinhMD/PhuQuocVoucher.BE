@@ -13,7 +13,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/order")]
-[CrudExceptionFilter]
 public class OrderController : ControllerBase
 {
     private readonly IOrderService _orderService;

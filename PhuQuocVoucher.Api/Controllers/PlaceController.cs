@@ -14,7 +14,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/place")]
-[CrudExceptionFilter]
 public class PlaceController : ControllerBase
 {
     private readonly IPlaceService _placeService;

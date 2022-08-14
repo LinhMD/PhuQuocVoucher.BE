@@ -13,7 +13,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/user")]
-[CrudExceptionFilter]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;

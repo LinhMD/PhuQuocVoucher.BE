@@ -14,7 +14,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/product")]
-[CrudExceptionFilter]
 public class ProductController : ControllerBase
 {
     private readonly IProductService _productService;

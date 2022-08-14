@@ -7,35 +7,54 @@ namespace PhuQuocVoucher.Api.ExceptionFilter;
 
 public class CrudExceptionFilterAttribute : ExceptionFilterAttribute
 {
+    private ILogger<CrudExceptionFilterAttribute> Logger;
+
+    public CrudExceptionFilterAttribute(ILogger<CrudExceptionFilterAttribute> logger)
+    {
+        Logger = logger;
+    }
+
     public override void OnException(ExceptionContext context)
     {
-        $"error message: {context.Exception.Message}".Dump();
-        context.Exception.StackTrace.Dump();
-        IActionResult result = new BadRequestResult();
-
-        switch (context.Exception)
+        var guid = Guid.NewGuid();
+        Logger.LogError(context.Exception, $"trace guid: {guid}");
+        IActionResult result = context.Exception switch
         {
-            case ModelNotFoundException exception:
-                result = new BadRequestObjectResult(context)
+            ModelNotFoundException exception => new BadRequestObjectResult(context)
+            {
+                Value = new
                 {
-                    Value = new
-                    {
-                        message = exception.Message,
-                        action = "Get"
-                    }
-                };
-                break;
-            case DbQueryException dbQueryException:
-                result = new BadRequestObjectResult(context)
+                    message = exception.Message,
+                    action = "Get",
+                    traceId = guid
+                }
+            },
+            DbQueryException dbQueryException => new BadRequestObjectResult(context)
+            {
+                Value = new
                 {
-                    Value = new
-                    {
-                        message = dbQueryException.Message,
-                        action = dbQueryException.Error.ToString()
-                    }
-                };
-                break;
-        }
+                    message = dbQueryException.Message,
+                    action = dbQueryException.Error.ToString(),
+                    traceId = guid
+                }
+            },
+            ModelValueInvalidException valueInvalidException => new BadRequestObjectResult(context)
+            {
+                Value = new
+                {
+                    message = valueInvalidException.Message,
+                    traceId = guid
+                }
+            },
+            _ => new BadRequestObjectResult(context)
+            {
+                Value = new
+                {
+                    traceId = guid
+                }
+            }
+        };
+
 
         context.Result = result;
     }

@@ -13,7 +13,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/seller")]
-[CrudExceptionFilter]
 public class SellerController : ControllerBase
 {
     private readonly ISellerService _sellerService;

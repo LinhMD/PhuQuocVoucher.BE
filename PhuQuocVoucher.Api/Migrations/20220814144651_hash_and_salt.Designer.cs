@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhuQuocVoucher.Data;
 
@@ -11,9 +12,10 @@ using PhuQuocVoucher.Data;
 namespace PhuQuocVoucher.Controller.Migrations
 {
     [DbContext(typeof(PhuQuocDataContext))]
-    partial class PhuQuocDataContextModelSnapshot : ModelSnapshot
+    [Migration("20220814144651_hash_and_salt")]
+    partial class hash_and_salt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

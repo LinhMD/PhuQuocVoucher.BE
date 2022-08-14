@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PhuQuocVoucher.Api.CustomBinding;
+using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Dtos;
 using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services;
@@ -17,7 +18,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(option =>
+{
+    option.Filters.Add<CrudExceptionFilterAttribute>();
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -84,6 +88,11 @@ builder.Services.AddAuthorization(o =>
     o.AddPolicy("Admin", policy => policy.RequireClaim("role", Role.Admin.ToString()));
 });
 
+builder.Services.AddLogging(config =>
+{
+    config.AddDebug();
+    config.AddConsole();
+});
 //Firebase
 FirebaseApp.Create(new AppOptions()
 {

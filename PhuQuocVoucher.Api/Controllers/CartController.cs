@@ -13,7 +13,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/cart")]
-[CrudExceptionFilter]
 public class CartController : ControllerBase
 {
     private readonly ICartService _cartService;
@@ -54,7 +53,7 @@ public class CartController : ControllerBase
     }
 
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}/cart")]
     public async Task<IActionResult> Delete(int id)
     {
         return Ok(await _cartService.DeleteAsync(id));

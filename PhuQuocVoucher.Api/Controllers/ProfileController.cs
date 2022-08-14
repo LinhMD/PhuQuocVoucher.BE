@@ -13,7 +13,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/profile")]
-[CrudExceptionFilter]
 public class ProfileController : ControllerBase
 {
     private readonly IProfileService _profileService;

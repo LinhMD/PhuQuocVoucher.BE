@@ -11,7 +11,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/providerType")]
-[CrudExceptionFilter]
 public class ProviderTypeController : ControllerBase
 {
     private readonly IProviderTypeService _providerTypeService;

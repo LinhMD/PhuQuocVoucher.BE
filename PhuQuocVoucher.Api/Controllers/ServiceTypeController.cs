@@ -13,7 +13,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/serviceType")]
-[CrudExceptionFilter]
 public class ServiceTypeController : ControllerBase
 {
     private readonly IServiceTypeService _serviceTypeService;

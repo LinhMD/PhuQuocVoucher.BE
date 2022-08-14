@@ -5,7 +5,10 @@ using CrudApiTemplate.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.ExceptionFilter;
+using PhuQuocVoucher.Business.Dtos.CartDto;
+using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
+using PhuQuocVoucher.Business.Dtos.OrderDto;
 using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data;
@@ -16,7 +19,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/customer")]
-[CrudExceptionFilter]
 public class CustomerController : ControllerBase
 {
     private readonly ICustomerService _customerService;
@@ -25,7 +27,7 @@ public class CustomerController : ControllerBase
 
     private readonly IOrderService _orderService;
 
-    private IUnitOfWork _work;
+    private readonly IUnitOfWork _work;
 
     private readonly ILogger<CustomerController> _logger;
 
@@ -78,5 +80,22 @@ public class CustomerController : ControllerBase
         return Ok(await _customerService.DeleteAsync(id));
     }
 
+    [HttpGet("{id:int}/cart")]
+    public async Task<IActionResult> GetCart(int id)
+    {
+        var cart = await _work.Get<Cart>().Find(cus => cus.CustomerId == id).FirstOrDefaultAsync() ??
+                   await _cartService.CreateAsync(new CreateCart
+        {
+            CustomerId = id
+        });
+        return Ok(cart);
+    }
 
+
+    [HttpGet("{id:int}/order")]
+    public async Task<IActionResult> GetOrder(int id, PagingRequest paging, string? orderBy)
+    {
+        var orders = await _orderService.GetOrdersByCustomerId(id, paging, new OrderRequest<Order>());
+        return Ok(orders.ToPagingResponse(paging));
+    }
 }

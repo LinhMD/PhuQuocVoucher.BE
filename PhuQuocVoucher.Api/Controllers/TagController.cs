@@ -13,7 +13,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/tag")]
-[CrudExceptionFilter]
 public class TagController : ControllerBase
 {
     private readonly ITagService _tagService;

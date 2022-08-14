@@ -13,7 +13,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/combo")]
-[CrudExceptionFilter]
 public class ComboController : ControllerBase
 {
     private readonly IComboService _comboService;

@@ -14,7 +14,6 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/blog")]
-[CrudExceptionFilter]
 public class BlogController : ControllerBase
 {
     private readonly IBlogService _blogService;
@@ -50,7 +49,7 @@ public class BlogController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
-        return Ok(await _repo.Find<BlogView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
+        return Ok(await _repo.Find<BlogView>(blog => blog.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Blog)} with id {id}"));
     }
 
