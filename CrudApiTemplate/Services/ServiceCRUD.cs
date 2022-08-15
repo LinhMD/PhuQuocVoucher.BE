@@ -6,7 +6,6 @@ using CrudApiTemplate.View;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using PhuQuocVoucher.Api.Ultility;
 
 namespace CrudApiTemplate.Services;
 
@@ -15,7 +14,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     protected readonly IRepository<TModel> Repository;
     protected readonly IUnitOfWork UnitOfWork;
 
-    protected ILogger<ServiceCrud<TModel>> Logger;
+    protected readonly ILogger<ServiceCrud<TModel>> Logger;
 
     protected ServiceCrud(IRepository<TModel> repository, IUnitOfWork work, ILogger<ServiceCrud<TModel>> logger)
     {
@@ -26,37 +25,39 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
 
     public TModel Create(ICreateRequest<TModel> createRequest)
     {
-        var model = createRequest.CreateNew(UnitOfWork);
-
-        model.Validate();
-
+        var model = createRequest.CreateNew(UnitOfWork).Validate();
         try
         {
             model = Repository.Add(model);
         }
         catch(Exception ex)
         {
-            ex.StackTrace.Dump();
-            throw new DbQueryException($"Create {typeof(TModel).Name} failed with message: {ex.Message}", DbError.Create);
+            var message = $"Create {typeof(TModel).Name} failed with message: {ex.Message}";
+            Logger.LogError(ex, message);
+            throw new DbQueryException(message, DbError.Create);
         }
         return model;
     }
 
     public async Task<TModel> CreateAsync(ICreateRequest<TModel> createRequest)
     {
-        var model = createRequest.CreateNew(UnitOfWork);
-
-        model.Validate();
+        var model = createRequest.CreateNew(UnitOfWork).Validate();
 
         try
         {
             model = await Repository.AddAsync(model);
-
         }
-        catch(Exception ex)
+        catch(DbUpdateException e)
         {
-            ex.StackTrace.Dump();
-            throw new DbQueryException($"Create {typeof(TModel).Name} failed with message: {ex.Message}", DbError.Create);
+            var exceptionMessage = e.InnerException?.Message ?? "";
+            Logger.LogError(e.InnerException, exceptionMessage);
+            if (exceptionMessage.Contains("duplicate"))
+            {
+                var dupValue = exceptionMessage.Substring(exceptionMessage.IndexOf('(') + 1,
+                    (exceptionMessage.IndexOf(')') - exceptionMessage.IndexOf('(') - 1));
+                throw new DbQueryException($"Duplicate value: {dupValue}", DbError.Create);
+            }
+            throw new DbQueryException($"Error create {typeof(TModel).Name}  with message: {exceptionMessage}.", DbError.Create);
         }
         return model;
     }
@@ -64,39 +65,34 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     public TModel Update(int id, IUpdateRequest<TModel> updateRequest)
     {
         var model = Get(id);
-
         updateRequest.UpdateModel(ref model, UnitOfWork);
-
         model.Validate();
-
         try
         {
             Repository.Commit();
         }
         catch(Exception ex)
         {
-            ex.StackTrace.Dump();
-            throw new DbQueryException($"Update {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}", DbError.Update);
+            var mess = $"Update {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}";
+            Logger.LogError(ex, mess);
+            throw new DbQueryException(mess, DbError.Update);
         }
-
         return model;
     }
     public async Task<TModel> UpdateAsync(int id, IUpdateRequest<TModel> updateRequest)
     {
         var model = await GetAsync(id);
 
-        updateRequest.UpdateModel(ref model, UnitOfWork);
-
-        model.Validate();
-
+        updateRequest.UpdateModel(ref model, UnitOfWork).Validate();
         try
         {
             await Repository.CommitAsync();
         }
         catch(Exception ex)
         {
-            ex.StackTrace.Dump();
-            throw new DbQueryException($"Update {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}", DbError.Update);
+            var message = $"Update {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}";
+            Logger.LogError(ex, message);
+            throw new DbQueryException(message, DbError.Update);
         }
 
         return model;
@@ -105,15 +101,15 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     public TModel Delete(int id)
     {
         var model = Get(id);
-
         try
         {
             Repository.Remove(model);
         }
         catch (Exception ex)
         {
-            ex.StackTrace.Dump();
-            throw new DbQueryException($"Delete {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}", DbError.Delete);
+            var mess = $"Delete {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}";
+            Logger.LogError(ex, mess);
+            throw new DbQueryException(mess, DbError.Delete);
         }
         return model;
     }
@@ -128,8 +124,9 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         }
         catch (Exception ex)
         {
-            ex.StackTrace.Dump();
-            throw new DbQueryException($"Delete {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}", DbError.Delete);
+            var message = $"Delete {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}";
+            Logger.LogError(ex, message);
+            throw new DbQueryException(message, DbError.Delete);
         }
 
         return model;

@@ -1,4 +1,5 @@
-﻿using CrudApiTemplate.CustomException;
+﻿using System.ComponentModel.DataAnnotations;
+using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
@@ -8,6 +9,7 @@ using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
+using static PhuQuocVoucher.Api.Ultility.Common;
 
 namespace PhuQuocVoucher.Api.Controllers;
 
@@ -26,12 +28,17 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery]FindUser request, [FromQuery]PagingRequest paging, string? orderBy)
+    public async Task<IActionResult> Get(
+        [FromQuery]FindUser request,
+        [FromQuery]PagingRequest paging,
+        [RegularExpression(SortByRegexString)] string? orderBy)
     {
+        orderBy.ToOrderRequest<User>().ToString().Dump();
+
         return Ok((await _userService.GetAsync<UserView>(new GetRequest<User>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<User>(),
+            OrderRequest = orderBy.ToOrderRequest<User>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }
@@ -53,13 +60,11 @@ public class UserController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromBody] UpdateUser request, int id)
     {
-
         return Ok(await _userService.UpdateAsync(id, request));
     }
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-
         return Ok(await _userService.DeleteAsync(id));
     }
 }

@@ -6,8 +6,6 @@ public class Order : BaseModel
 
     public double TotalPrice { get; set; }
 
-    public DateTime CreateDate { get; set; }
-
     public DateTime CompleteDate { get; set; }
 
     public OrderStatus OrderStatus { get; set; } = OrderStatus.Processing;

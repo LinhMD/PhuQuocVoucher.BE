@@ -16,7 +16,7 @@ public class BlogView : IView<Blog>, IDto
 
     public string Summary { get; set; }
 
-    public IEnumerable<Tag> Tags { get; set; }
+    public IEnumerable<Place> Places { get; set; }
 
-    public IEnumerable<int> PlaceIds { get; set; }
+    public IEnumerable<Tag>? Tags { get; set; }
 }
