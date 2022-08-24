@@ -19,4 +19,8 @@ public class Seller : BaseModel
 
     public float CommissionRate { get; set; }
 
+    public BusyLevel BusyLevel { get; set; } = BusyLevel.Free;
+
+    public IEnumerable<Order> HandleOrders { get; set; }
+
 }

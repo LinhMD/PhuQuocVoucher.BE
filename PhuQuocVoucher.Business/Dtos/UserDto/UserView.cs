@@ -4,7 +4,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.UserDto;
 
-public class UserView : IView<User>, IDto
+public class UserView : BaseModel, IView<User>, IDto
 {
     public int? Id { get; set; }
 
@@ -17,8 +17,6 @@ public class UserView : IView<User>, IDto
     public Role? Role { get; set; }
 
     public string? PhoneNumber { get; set; }
-
-    public ModelStatus? Status { get; set; }
 
     public void InitMapper()
     {

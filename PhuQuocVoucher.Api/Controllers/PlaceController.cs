@@ -13,7 +13,7 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 
 [ApiController]
-[Route("api/v1/place")]
+[Route("api/v1/[controller]s")]
 public class PlaceController : ControllerBase
 {
     private readonly IPlaceService _placeService;

@@ -1,12 +1,10 @@
 ﻿using CrudApiTemplate.View;
 using Mapster;
-using PhuQuocVoucher.Business.Dtos.OrderDto;
-using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.SellerDto;
 
-public class SellerView : IView<Seller>, IDto
+public class SellerSView :  IView<Seller>, IDto
 {
     public int? Id { get; set; }
 
@@ -14,20 +12,16 @@ public class SellerView : IView<Seller>, IDto
 
     public int? UserInfoId { get; set; }
 
-    public UserView? UserInfo { get; set; }
-
     public float? CommissionRate { get; set; }
 
     public double? Profit { get; set; }
-
-    public IEnumerable<OrderView> Orders { get; set; }
 
     public BusyLevel BusyLevel { get; set; } = BusyLevel.Free;
 
 
     public void InitMapper()
     {
-        TypeAdapterConfig<Seller, SellerView>.NewConfig().Map(
+        TypeAdapterConfig<Seller, SellerSView>.NewConfig().Map(
             sv => sv.Profit,
             s => s.HandleOrders.Select(o => o.TotalPrice).Sum());
     }

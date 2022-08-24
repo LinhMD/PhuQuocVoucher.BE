@@ -12,7 +12,7 @@ using PhuQuocVoucher.Data.Models;
 namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/order")]
+[Route("api/v1/[controller]s")]
 public class OrderController : ControllerBase
 {
     private readonly IOrderService _orderService;

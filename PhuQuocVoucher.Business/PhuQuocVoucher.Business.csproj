@@ -16,5 +16,20 @@
       <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.6" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\Email\Email.vi-VN.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Email.vi-VN.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Compile Update="Resources\Email\Email.vi-VN.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Email.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
 
 </Project>

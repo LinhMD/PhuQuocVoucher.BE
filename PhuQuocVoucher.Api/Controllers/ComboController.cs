@@ -12,7 +12,7 @@ using PhuQuocVoucher.Data.Models;
 namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/combo")]
+[Route("api/v1/[controller]s")]
 public class ComboController : ControllerBase
 {
     private readonly IComboService _comboService;

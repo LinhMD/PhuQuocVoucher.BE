@@ -13,7 +13,7 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 
 [ApiController]
-[Route("api/v1/blog")]
+[Route("api/v1/[controller]s")]
 public class BlogController : ControllerBase
 {
     private readonly IBlogService _blogService;

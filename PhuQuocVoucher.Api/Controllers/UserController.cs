@@ -5,6 +5,7 @@ using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PhuQuocVoucher.Api.CustomBinding;
 using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Business.Services.Core;
@@ -14,7 +15,7 @@ using static PhuQuocVoucher.Api.Ultility.Common;
 namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/user")]
+[Route("api/v1/[controller]s")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -66,5 +67,12 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         return Ok(await _userService.DeleteAsync(id));
+    }
+
+    [HttpGet("current")]
+    public async Task<IActionResult> Current([FromClaim("Id")]int? id)
+    {
+        return Ok(await _repository.Find<UserView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
+                  throw new ModelNotFoundException($"Not Found {nameof(Data.Models.User)} with id {id}"));
     }
 }

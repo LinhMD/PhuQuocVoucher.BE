@@ -1,4 +1,5 @@
-﻿using CrudApiTemplate.Attributes.Search;
+﻿using System.Linq.Expressions;
+using CrudApiTemplate.Attributes.Search;
 using CrudApiTemplate.Request;
 using PhuQuocVoucher.Data.Models;
 
@@ -23,4 +24,5 @@ public class FindSeller : IFindRequest<Seller>
 
     [Contain("UserInfo.UserName")]
     public string? UserName { get; set; }
+    
 }

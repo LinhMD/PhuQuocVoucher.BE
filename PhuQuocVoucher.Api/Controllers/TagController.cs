@@ -12,7 +12,7 @@ using PhuQuocVoucher.Data.Models;
 namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/tag")]
+[Route("api/v1/[controller]s")]
 public class TagController : ControllerBase
 {
     private readonly ITagService _tagService;

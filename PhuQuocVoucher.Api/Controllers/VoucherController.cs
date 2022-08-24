@@ -12,7 +12,7 @@ using PhuQuocVoucher.Data.Models;
 namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/voucher")]
+[Route("api/v1/[controller]s")]
 public class VoucherController : ControllerBase
 {
     private readonly IVoucherService _voucherService;

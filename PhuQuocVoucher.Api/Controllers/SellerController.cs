@@ -12,7 +12,7 @@ using PhuQuocVoucher.Data.Models;
 namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/seller")]
+[Route("api/v1/[controller]s")]
 public class SellerController : ControllerBase
 {
     private readonly ISellerService _sellerService;
@@ -29,14 +29,20 @@ public class SellerController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] FindSeller request, [FromQuery] PagingRequest paging, string? orderBy)
+    public async Task<IActionResult> Get(
+        [FromQuery] FindSeller request,
+        [FromQuery] PagingRequest paging,
+        [FromQuery] string? orderBy,
+        [FromQuery] DateTime? completeDateLowBound)
     {
-        return Ok((await _sellerService.GetAsync<SellerView>(new GetRequest<Seller>
+
+        return Ok((await _sellerService.FindSellerAsync(new GetRequest<Seller>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<Seller>(),
+            OrderRequest = orderBy.ToOrderRequest<Seller>(),
             PagingRequest = paging
-        })).ToPagingResponse(paging));
+        }, completeDateLowBound)).ToPagingResponse(paging));
+
     }
 
     [HttpPost]

@@ -13,6 +13,7 @@ public class SellerRepository : Repository<Seller>, ISellerRepository
 
     public override IQueryable<Seller> IncludeAll()
     {
-        return Models.Include(s => s.UserInfo);
+        return Models.Include(s => s.UserInfo).Include(s => s.HandleOrders);
     }
+
 }

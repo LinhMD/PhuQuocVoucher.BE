@@ -18,5 +18,10 @@ public class FindOrder : IFindRequest<Order>, IDto
     [Equal("Seller.Id")]
     public int? SellerId { get; set; }
 
+    [LessThan("CompleteDate")]
+    public DateTime? CompleteDateLowBound { get; set; }
+
+    [BiggerThan("CompleteDate")]
+    public DateTime? CompleteDateUpBound { get; set; }
 
 }

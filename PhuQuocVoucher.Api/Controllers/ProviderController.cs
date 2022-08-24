@@ -13,7 +13,7 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 
 [ApiController]
-[Route("api/v1/provider")]
+[Route("api/v1/[controller]s")]
 public class ProviderController : ControllerBase
 {
     private readonly IProviderService _providerService;

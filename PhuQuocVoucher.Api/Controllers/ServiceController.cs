@@ -12,7 +12,7 @@ using PhuQuocVoucher.Data.Models;
 namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/service")]
+[Route("api/v1/[controller]s")]
 public class ServiceController : ControllerBase
 {
     private readonly IServiceService _providerService;

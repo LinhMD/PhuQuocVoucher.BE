@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PhuQuocVoucher.Api.CustomBinding;
 using PhuQuocVoucher.Business.Dtos.LoginDto;
 using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Business.Repositories;
@@ -19,7 +20,7 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 
 [ApiController]
-[Route("api/v1/login")]
+[Route("api/v1/[controller]")]
 public class LoginController : ControllerBase
 {
     private readonly IConfiguration _config;
@@ -42,7 +43,7 @@ public class LoginController : ControllerBase
     {
         var user = await _work.Users.Find(u => u.UserName == username && u.Status == ModelStatus.Active)
             .FirstOrDefaultAsync();
-        return user == null ? BadRequest() : Ok(LoginHelper.GenerateJwt(user, _config));
+        return user == null ? BadRequest("User not found") : Ok(LoginHelper.GenerateJwt(user, _config));
     }
 
 
@@ -87,6 +88,18 @@ public class LoginController : ControllerBase
         return Ok(userView);
     }
 
+    [HttpPost("forgot")]
+    public async Task<IActionResult> ForgotPassword(string newPassword, [FromClaim("Id")] int? userId)
+    {
+        var salt = LoginHelper.GenerateSalt();
+        var hash = LoginHelper.ComputeHash(
+            Encoding.UTF8.GetBytes(newPassword),
+            Encoding.UTF8.GetBytes(salt));
+
+        var user = await _work.Users.Find(u => u.Id == userId && u.Status == ModelStatus.Active).FirstOrDefaultAsync();
+        return Ok();
+    }
+
     [HttpPost]
     public async Task<IActionResult> LoginWithPassword(LoginRequest request)
     {
@@ -102,7 +115,6 @@ public class LoginController : ControllerBase
 
         return Ok(LoginHelper.GenerateJwt(user, _config));
     }
-
 
 
     public static class LoginHelper
@@ -156,4 +168,6 @@ public class LoginController : ControllerBase
             return await GetFireBaseUser(uid);
         }
     }
+
+
 }

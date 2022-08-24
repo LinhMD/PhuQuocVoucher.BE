@@ -30,13 +30,7 @@ public static class ExtensionMethods
         };
     }
 
-    public static string FirstCharToUpper(this string input) =>
-        input switch
-        {
-            null => throw new ArgumentNullException(nameof(input)),
-            "" => "",
-            _ => string.Concat(input[0].ToString().ToUpper(), input.AsSpan(1))
-        };
+
 
     public static MyResponse<T> ToMyResponse<T>(this T t, int code, string message)
     {
@@ -53,9 +47,9 @@ public static class ExtensionMethods
         var (models, total) = tuple;
         return new PagingResponse<T>
         {
-            Page = request.Page,
-            Payload = models,
-            Size = request.PageSize,
+            Current = request.Page,
+            Data = models,
+            PageSize = request.PageSize,
             Total = total
         };
     }

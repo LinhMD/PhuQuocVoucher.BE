@@ -17,5 +17,5 @@ public class BaseModel
 public enum ModelStatus
 {
     Active,
-    Delete
+    Disable
 }

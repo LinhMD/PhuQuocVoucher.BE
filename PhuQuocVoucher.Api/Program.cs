@@ -1,9 +1,12 @@
+using System.Globalization;
+using System.Resources;
 using System.Text;
 using CrudApiTemplate.Repository;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PhuQuocVoucher.Api.CustomBinding;
@@ -32,6 +35,12 @@ builder.Services.AddScoped<IUnitOfWork ,PqUnitOfWork>();
 
 //Services
 builder.Services.InitServices();
+
+builder.Services.AddLocalization(o => o.ResourcesPath = "Resources");
+builder.Services.AddRouting(options =>
+{
+    options.LowercaseUrls = true;
+});
 
 
 var configuration = builder.Configuration;
@@ -105,8 +114,18 @@ DtoConfig.ConfigMapper();
 //Custom Binding
 builder.Services.AddControllersWithViews(options => options.ValueProviderFactories.Add(new ClaimValueProviderFactory()));
 
+builder.Services.AddLocalization(o => { o.ResourcesPath = "Resources"; });
 
 var app = builder.Build();
+
+var supportCultures = new[] {new CultureInfo("en-US")};
+
+app.UseRequestLocalization(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("en-US");
+    options.SupportedCultures = supportCultures;
+    options.SupportedUICultures = supportCultures;
+});
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();

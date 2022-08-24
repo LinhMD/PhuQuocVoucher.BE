@@ -18,7 +18,7 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 
 [ApiController]
-[Route("api/v1/customer")]
+[Route("api/v1/[controller]s")]
 public class CustomerController : ControllerBase
 {
     private readonly ICustomerService _customerService;
