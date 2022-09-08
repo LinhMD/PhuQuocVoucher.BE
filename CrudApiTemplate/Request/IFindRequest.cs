@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using CrudApiTemplate.Attributes.Search;
+using PhuQuocVoucher.Api.Ultility;
 
 namespace CrudApiTemplate.Request;
 
@@ -16,11 +17,12 @@ public interface IFindRequest<TModel> where TModel: class
             if(value is null) continue;
 
             Expression tProperty;
-            FilterAttribute[] filters = Attribute.GetCustomAttributes(property!, typeof(FilterAttribute)) as FilterAttribute[] ?? Array.Empty<FilterAttribute>();
+            var filters = Attribute.GetCustomAttributes(property!, typeof(FilterAttribute)) as FilterAttribute[] ?? Array.Empty<FilterAttribute>();
             if (filters.Any())
             {
                 foreach (var filter in filters)
                 {
+                    Console.WriteLine(filter.Target);
                     var list = filter.Target?.Split(".").ToList();
                     //ex: t.Name
                     tProperty = Navigate(param, list, property);

@@ -37,10 +37,15 @@ builder.Services.AddScoped<IUnitOfWork ,PqUnitOfWork>();
 builder.Services.InitServices();
 
 builder.Services.AddLocalization(o => o.ResourcesPath = "Resources");
+
 builder.Services.AddRouting(options =>
 {
     options.LowercaseUrls = true;
 });
+
+builder.Services.AddCors(o => o.AddPolicy("AllowAnyOrigin",
+    policyBuilder => policyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+));
 
 
 var configuration = builder.Configuration;
@@ -118,7 +123,10 @@ builder.Services.AddLocalization(o => { o.ResourcesPath = "Resources"; });
 
 var app = builder.Build();
 
+app.UseCors("AllowAnyOrigin");
+
 var supportCultures = new[] {new CultureInfo("en-US")};
+
 
 app.UseRequestLocalization(options =>
 {

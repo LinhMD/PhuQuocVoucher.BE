@@ -1,30 +1,30 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using CrudApiTemplate.Attributes.Search;
 using CrudApiTemplate.Request;
+using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.UserDto;
 
-public class FindUser : IFindRequest<Data.Models.User>, IDto
+public class FindUser : IFindRequest<User>, IDto
 {
-    public int? Id { get; set; }
+    [In(target:"Id")]
+    public IList<int>? Ids { get; set; }
 
-    [EmailAddress]
-    [Contain]
-    public string? Email { get; set; }
+    [In(target:"Email")]
+    public IList<string>? Emails { get; set; }
 
-    [Contain]
-    public string? FireBaseUid { get; set; }
+    [In(target:"PhoneNumber")]
+    public IList<string>? PhoneNumbers { get; set; }
 
-    public int? Status { get; set; }
+    [Equal]
+    public ModelStatus? Status { get; set; }
 
-    [Contain]
-    public string? AvatarLink { get; set; }
+    [Equal]
+    public Role? Role { get; set; }
 
     [MaxLength(255)]
-    [Contain]
+    [Equal]
     public string? UserName { get; set; }
-
-    [Contain]
-    public string? PhoneNumber { get; set; }
 
 }

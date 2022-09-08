@@ -34,7 +34,6 @@ public class UserController : ControllerBase
         [FromQuery]PagingRequest paging,
         [RegularExpression(SortByRegexString)] string? orderBy)
     {
-        orderBy.ToOrderRequest<User>().ToString().Dump();
 
         return Ok((await _userService.GetAsync<UserView>(new GetRequest<User>
         {

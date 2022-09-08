@@ -1,15 +1,13 @@
-﻿
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+﻿using CrudApiTemplate.View;
+using Mapster;
+using PhuQuocVoucher.Data.Models;
 
-namespace PhuQuocVoucher.Data.Models;
+namespace PhuQuocVoucher.Business.Dtos.VoucherDto;
 
-[Index(nameof(ProductId), IsUnique = true)]
-[Index(nameof(VoucherName), IsUnique = true)]
-public class Voucher : BaseModel
+public class VoucherSView : IView<Voucher>, IDto
 {
-
     public int Id { get; set; }
+
     public string VoucherName { get; set; }
 
     public double Price { get; set; }
@@ -24,14 +22,13 @@ public class Voucher : BaseModel
 
     public DateTime? EndDate { get; set; }
 
-    public Product? Product { get; set; }
-
     public int? ProductId { get; set; }
-
-    public Service Service { get; set; }
 
     public int ServiceId { get; set; }
 
-    public IEnumerable<Combo> Combos { get; set; }
+    public void InitMapper()
+    {
+        TypeAdapterConfig<Voucher, VoucherSView>.NewConfig();
 
+    }
 }

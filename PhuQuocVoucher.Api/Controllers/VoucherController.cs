@@ -31,7 +31,7 @@ public class VoucherController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindVoucher request, [FromQuery] PagingRequest paging, string? orderBy)
     {
-        return Ok((await _voucherService.GetAsync(new GetRequest<Voucher>
+        return Ok((await _voucherService.GetAsync<VoucherView>(new GetRequest<Voucher>
         {
             FindRequest = request,
             OrderRequest = new OrderRequest<Voucher>(),
@@ -48,7 +48,7 @@ public class VoucherController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
-        return Ok(await _repo.Find(cus => cus.Id == id).FirstOrDefaultAsync() ??
+        return Ok(await _repo.Find<VoucherView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Voucher)} with id {id}"));
     }
 

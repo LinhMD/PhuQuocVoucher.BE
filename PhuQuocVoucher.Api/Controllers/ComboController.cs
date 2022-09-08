@@ -2,6 +2,7 @@
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.ExceptionFilter;
@@ -31,7 +32,7 @@ public class ComboController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindCombo request, [FromQuery] PagingRequest paging, string? orderBy)
     {
-        return Ok((await _comboService.GetAsync(new GetRequest<Combo>
+        return Ok((await _comboService.GetAsync<ComboView>(new GetRequest<Combo>
         {
             FindRequest = request,
             OrderRequest = new OrderRequest<Combo>(),
@@ -42,7 +43,7 @@ public class ComboController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCombo request)
     {
-        return Ok(await _comboService.CreateAsync(request));
+        return Ok((await _comboService.CreateAsync(request)).Adapt<ComboView>());
     }
 
     [HttpGet("{id:int}")]

@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace CrudApiTemplate.Attributes.Search;
 
@@ -13,7 +14,7 @@ public class EqualAttribute : FilterAttribute
     {
     }
 
-    public EqualAttribute(string target) : base(target)
+    public EqualAttribute(string target, [CallerMemberName] string? name = null) : base(target, name)
     {
     }
 }

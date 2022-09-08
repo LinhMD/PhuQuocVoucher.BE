@@ -15,8 +15,8 @@ public class Combo : BaseModel
     public DateTime? EndDate { get; set; }
 
     public double Price { get; set; }
-    public Product Product { get; set; }
-    public int ProductId { get; set; }
+    public Product? Product { get; set; }
+    public int? ProductId { get; set; }
 
     public IEnumerable<Voucher> Vouchers { get; set; }
 }

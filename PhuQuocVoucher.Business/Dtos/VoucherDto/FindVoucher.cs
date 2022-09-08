@@ -6,10 +6,10 @@ namespace PhuQuocVoucher.Business.Dtos.VoucherDto;
 
 public class FindVoucher : IFindRequest<Voucher>
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     [Contain]
-    public string VoucherName { get; set; }
+    public string? VoucherName { get; set; }
 
     public double? Price { get; set; }
 

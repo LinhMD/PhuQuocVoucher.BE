@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace CrudApiTemplate.Attributes.Search;
 
@@ -13,13 +14,14 @@ public class AnyAttribute : FilterAttribute
 
     private readonly string _property;
 
-    public AnyAttribute(string target, string property, Type filterType) : base(target)
+    public AnyAttribute(string target, string property, Type filterType, [CallerMemberName] string? name = null) : base(target, name)
     {
 
         if (!filterType.IsSubclassOf(typeof(FilterAttribute)))
             throw new Exception("Coding error of using AnyAttribute");
 
-        Filter = (FilterAttribute?) Activator.CreateInstance(filterType, property) ?? new EqualAttribute(property);
+        Filter = (FilterAttribute?) Activator.CreateInstance(filterType, property, name)
+                 ?? new EqualAttribute(property, name);
 
         _property = property;
     }

@@ -108,7 +108,7 @@ public class LoginController : ControllerBase
         if (user == null)
             return NotFound("User not found with email: " + request.Email);
 
-        var hash = LoginHelper.ComputeHash(Encoding.UTF8.GetBytes(request.Passwrod),
+        var hash = LoginHelper.ComputeHash(Encoding.UTF8.GetBytes(request.Password),
             Encoding.UTF8.GetBytes(user!.Salt ?? ""));
         if (hash != user.Hash)
             return Unauthorized("Wrong password");

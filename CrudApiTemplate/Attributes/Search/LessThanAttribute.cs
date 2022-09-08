@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace CrudApiTemplate.Attributes.Search;
 
@@ -12,7 +13,7 @@ public class LessThanAttribute : FilterAttribute
     {
     }
 
-    public LessThanAttribute(string target) : base(target)
+    public LessThanAttribute(string target ,[CallerMemberName] string? name = null) : base(target, name)
     {
     }
 }

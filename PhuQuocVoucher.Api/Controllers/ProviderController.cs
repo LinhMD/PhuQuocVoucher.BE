@@ -27,7 +27,7 @@ public class ProviderController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery]FindProvider request, [FromQuery]PagingRequest paging, string? orderBy)
     {
-        return Ok((await _providerService.GetAsync(new GetRequest<ServiceProvider>
+        return Ok((await _providerService.GetAsync<ProviderView>(new GetRequest<ServiceProvider>
         {
             FindRequest = request,
             OrderRequest = new OrderRequest<ServiceProvider>(),

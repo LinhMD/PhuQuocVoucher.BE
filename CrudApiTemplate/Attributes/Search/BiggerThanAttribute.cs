@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace CrudApiTemplate.Attributes.Search;
 
@@ -12,7 +13,7 @@ public class BiggerThanAttribute : FilterAttribute
     {
     }
 
-    public BiggerThanAttribute(string target) : base(target)
+    public BiggerThanAttribute(string target,[CallerMemberName] string? name = null) : base(target, name)
     {
     }
 }

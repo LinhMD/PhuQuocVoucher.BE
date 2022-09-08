@@ -3,7 +3,9 @@ using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Services;
 using CrudApiTemplate.Utilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using PhuQuocVoucher.Api.Ultility;
 using PhuQuocVoucher.Business.Dtos.ComboDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
@@ -29,11 +31,16 @@ public class ComboService : ServiceCrud<Combo>, IComboService
 
             var combo = (createCombo as ICreateRequest<Combo>).CreateNew(UnitOfWork);
             combo.Product = product;
+
+            var voucherList = await UnitOfWork.Get<Voucher>().Find(v => createCombo.VoucherIds.Contains(v.Id)).ToListAsync();
+            combo.Vouchers = voucherList;
             combo.Validate();
             return await UnitOfWork.Get<Combo>().AddAsync(combo);
         }
-        catch (Exception e)
+        catch (DbUpdateException e)
         {
+            e.InnerException?.Message.Dump();
+            e.InnerException?.StackTrace.Dump();
             throw new DbQueryException(e.Message, DbError.Create);
         }
     }

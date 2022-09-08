@@ -7,7 +7,8 @@ namespace PhuQuocVoucher.Business.Dtos.SellerDto;
 
 public class FindSeller : IFindRequest<Seller>
 {
-    public int? Id { get; set; }
+    [In(target:"Id")]
+    public IList<int>? Ids { get; set; }
 
     [Contain]
     public string? SellerName { get; set; }
@@ -16,13 +17,13 @@ public class FindSeller : IFindRequest<Seller>
 
     public float? CommissionRate { get; set; }
 
-    [Contain("UserInfo.PhoneNumber")]
+    [Contain(target:"UserInfo.PhoneNumber")]
     public string? PhoneNumber { get; set; }
 
-    [Contain("UserInfo.Email")]
+    [Contain(target:"UserInfo.Email")]
     public string? Email { get; set; }
 
-    [Contain("UserInfo.UserName")]
+    [Contain(target:"UserInfo.UserName")]
     public string? UserName { get; set; }
     
 }
