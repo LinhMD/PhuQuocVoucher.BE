@@ -2,6 +2,7 @@
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.ExceptionFilter;
@@ -31,7 +32,7 @@ public class OrderController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindOrder request, [FromQuery] PagingRequest paging, string? orderBy)
     {
-        return Ok((await _orderService.GetAsync(new GetRequest<Order>
+        return Ok((await _orderService.GetAsync<OrderView>(new GetRequest<Order>
         {
             FindRequest = request,
             OrderRequest = new OrderRequest<Order>(),
@@ -42,25 +43,25 @@ public class OrderController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateOrder request)
     {
-        return Ok(await _orderService.CreateAsync(request));
+        return Ok(await _orderService.CreateOrderAsync(request));
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
-        return Ok(await _repo.Find(order => order.Id == id).FirstOrDefaultAsync() ??
+        return Ok(await _repo.Find<OrderView>(order => order.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Order)} with id {id}"));
     }
 
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromBody] UpdateOrder request, int id)
     {
-        return Ok(await _orderService.UpdateAsync(id, request));
+        return Ok((await _orderService.UpdateAsync(id, request)).Adapt<OrderView>());
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        return Ok(await _orderService.DeleteAsync(id));
+        return Ok((await _orderService.DeleteAsync(id)).Adapt<OrderView>());
     }
 }

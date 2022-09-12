@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using PhuQuocVoucher.Api.Ultility;
 
 namespace CrudApiTemplate.Attributes.Search;
 
@@ -10,7 +9,7 @@ public class ContainAttribute : FilterAttribute
     {
         var parameterType = parameter.Type;
         /*
-        var member = parameter.Navigate(Target?.Split(".").ToList(), PropertyName ?? "");
+        var member = parameter.Navigate(Target?.6Split(".").ToList(), PropertyName ?? "");
         */
         var containMethod = parameterType.GetMethod("Contains", new []{value.GetType()});
         if (containMethod is null) throw new Exception("Coding error: using ContainAttribute");

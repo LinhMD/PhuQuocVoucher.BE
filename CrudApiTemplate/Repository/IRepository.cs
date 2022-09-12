@@ -30,10 +30,10 @@ public interface IRepository<TModel> where TModel : class
     public void Commit();
 
     ValueTask<TModel> AddAsync(TModel model);
-    void AddAllAsync(IEnumerable<TModel> models);
+    Task AddAllAsync(IEnumerable<TModel> models);
 
-    void RemoveAsync(TModel model);
-    void RemoveAllAsync(IEnumerable<TModel> models);
+    Task RemoveAsync(TModel model);
+    Task RemoveAllAsync(IEnumerable<TModel> models);
 
     public Task CommitAsync();
 

@@ -17,7 +17,7 @@ public class OrderItem  : BaseModel
     public int? ProfileId { get; set; }
     public Review? Review { get; set; }
 
-    public DateTime UseDate { get; set; }
+    public DateTime? UseDate { get; set; }
 
 
 }

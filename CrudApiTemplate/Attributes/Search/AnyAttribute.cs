@@ -27,7 +27,9 @@ public class AnyAttribute : FilterAttribute
     }
     public override Expression ToExpressionEvaluate(Expression parameter, object value)
     {
+        //User.Profiles
         var parameterType = parameter.Type.GetTypeInfo().GenericTypeArguments[0];
+
         //Profile
         var innerParameter = Expression.Parameter(parameterType, parameterType.Name);
 
@@ -39,10 +41,11 @@ public class AnyAttribute : FilterAttribute
         }
         //Profile.Gender == true;
         var innerBody = Filter.ToExpressionEvaluate(memberExpression, value);
+
         //Profile => Profile.Gender == true
         var innerLambda = Expression.Lambda(innerBody, innerParameter);
         var anyMethod = AnyMethod.MakeGenericMethod(parameterType);
-        //User.Profiles.Any(Profile => (Profile.Gender == True))
+        //User.Profiles.Any(Profile => (Profile.Gender == true))
         return Expression.Call(null, anyMethod, parameter, innerLambda);
     }
 }

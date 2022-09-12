@@ -3,8 +3,10 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using CrudApiTemplate.Repository;
+using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
 using FirebaseAdmin.Auth;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.EntityFrameworkCore;
@@ -97,7 +99,14 @@ public class LoginController : ControllerBase
             Encoding.UTF8.GetBytes(salt));
 
         var user = await _work.Users.Find(u => u.Id == userId && u.Status == ModelStatus.Active).FirstOrDefaultAsync();
-        return Ok();
+
+        if (user == null) return BadRequest("User not found? why?");
+
+        user.Hash = hash;
+        user.Salt = salt;
+
+        await _work.Users.CommitAsync();
+        return Ok(user.Adapt<UserView>());
     }
 
     [HttpPost]
@@ -116,15 +125,19 @@ public class LoginController : ControllerBase
         return Ok(LoginHelper.GenerateJwt(user, _config));
     }
 
+    [HttpPost("addMany")]
+    public async Task<IActionResult> CreateMultipleUser(IList<SignUpRequest> list)
+    {
+        var repository = _work.Get<User>();
+        await repository.AddAllAsync(list.Select(u => (u as ICreateRequest<User>).CreateNew(_work)));
+        return Ok();
+    }
 
     public static class LoginHelper
     {
         public static string GenerateSalt()
         {
-            var bytes = new byte[128 / 8];
-            var rng = new RNGCryptoServiceProvider();
-            rng.GetBytes(bytes);
-            return Convert.ToBase64String(bytes);
+            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
         }
 
         public static string ComputeHash(byte[] password, byte[] salt)

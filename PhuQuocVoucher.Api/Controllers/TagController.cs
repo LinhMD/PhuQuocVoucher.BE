@@ -34,7 +34,7 @@ public class TagController : ControllerBase
         return Ok((await _tagService.GetAsync(new GetRequest<Tag>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<Tag>(),
+            OrderRequest = orderBy.ToOrderRequest<Tag>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }

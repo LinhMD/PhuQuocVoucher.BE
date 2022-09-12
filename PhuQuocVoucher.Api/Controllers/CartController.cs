@@ -34,7 +34,7 @@ public class CartController : ControllerBase
         return Ok((await _cartService.GetAsync(new GetRequest<Cart>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<Cart>(),
+            OrderRequest = orderBy.ToOrderRequest<Cart>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }

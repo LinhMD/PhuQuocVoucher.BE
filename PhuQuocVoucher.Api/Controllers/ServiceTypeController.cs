@@ -39,7 +39,7 @@ public class ServiceTypeController : ControllerBase
         return Ok((await _serviceTypeService.GetAsync(new GetRequest<ServiceType>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<ServiceType>(),
+            OrderRequest = orderBy.ToOrderRequest<ServiceType>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }

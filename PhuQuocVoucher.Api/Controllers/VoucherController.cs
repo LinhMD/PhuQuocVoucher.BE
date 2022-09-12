@@ -34,7 +34,7 @@ public class VoucherController : ControllerBase
         return Ok((await _voucherService.GetAsync<VoucherView>(new GetRequest<Voucher>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<Voucher>(),
+            OrderRequest = orderBy.ToOrderRequest<Voucher>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }

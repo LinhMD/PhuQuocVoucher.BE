@@ -50,7 +50,7 @@ public class CustomerController : ControllerBase
         return Ok((await _customerService.GetAsync<CustomerSView>(new GetRequest<Customer>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<Customer>(),
+            OrderRequest = orderBy.ToOrderRequest<Customer>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }
@@ -92,7 +92,7 @@ public class CustomerController : ControllerBase
     }
 
 
-    [HttpGet("{id:int}/order")]
+    [HttpGet("{id:int}/orders")]
     public async Task<IActionResult> GetOrder(int id, PagingRequest paging, string? orderBy)
     {
         var orders = await _orderService.GetOrdersByCustomerId(id, paging, new OrderRequest<Order>());

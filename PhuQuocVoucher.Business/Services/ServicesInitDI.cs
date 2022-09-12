@@ -32,5 +32,7 @@ public static class ServicesInitDi
         serviceCollection.AddScoped<IUserService, UserService>();
         serviceCollection.AddScoped<IVoucherService, VoucherService>();
 
+        serviceCollection.AddScoped<IMailingService, MailingService>();
+
     }
 }

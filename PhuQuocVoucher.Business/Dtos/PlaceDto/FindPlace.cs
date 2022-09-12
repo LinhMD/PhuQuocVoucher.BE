@@ -9,7 +9,7 @@ public class FindPlace : IFindRequest<Place>
     [Equal]
     public int? Id { get; set; }
 
-    [Contain]
+    [Contain(nameof(Place.Name))]
     public string? Name { get; set; }
 
     [Contain]

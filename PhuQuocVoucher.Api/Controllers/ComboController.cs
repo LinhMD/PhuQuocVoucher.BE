@@ -35,7 +35,7 @@ public class ComboController : ControllerBase
         return Ok((await _comboService.GetAsync<ComboView>(new GetRequest<Combo>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<Combo>(),
+            OrderRequest = orderBy.ToOrderRequest<Combo>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }

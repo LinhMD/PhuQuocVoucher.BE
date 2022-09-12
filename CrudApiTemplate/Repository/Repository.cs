@@ -9,7 +9,6 @@ namespace CrudApiTemplate.Repository;
 
 public class Repository<TModel> : IRepository<TModel> where TModel : class
 {
-
     protected readonly DbContext Context;
     protected readonly DbSet<TModel> Models;
 
@@ -105,19 +104,19 @@ public class Repository<TModel> : IRepository<TModel> where TModel : class
         return model;
     }
 
-    public async void AddAllAsync(IEnumerable<TModel> models)
+    public async Task AddAllAsync(IEnumerable<TModel> models)
     {
         await Models.AddRangeAsync(models);
         await Context.SaveChangesAsync();
     }
 
-    public async void RemoveAsync(TModel model)
+    public async Task RemoveAsync(TModel model)
     {
         Models.Remove(model);
         await Context.SaveChangesAsync();
     }
 
-    public async void RemoveAllAsync(IEnumerable<TModel> models)
+    public async Task RemoveAllAsync(IEnumerable<TModel> models)
     {
         Models.RemoveRange(models);
         await Context.SaveChangesAsync();

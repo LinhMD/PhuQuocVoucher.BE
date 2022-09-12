@@ -38,7 +38,7 @@ public class ProductController : ControllerBase
         return Ok((await _productService.GetAsync(new GetRequest<Product>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<Product>(),
+            OrderRequest = orderBy.ToOrderRequest<Product>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }

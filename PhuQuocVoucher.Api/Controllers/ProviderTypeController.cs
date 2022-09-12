@@ -26,7 +26,7 @@ public class ProviderTypeController : ControllerBase
         return Ok((await _providerTypeService.GetAsync(new GetRequest<ProviderType>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<ProviderType>(),
+            OrderRequest = orderBy.ToOrderRequest<ProviderType>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }

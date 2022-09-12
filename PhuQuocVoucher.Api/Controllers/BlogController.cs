@@ -35,7 +35,7 @@ public class BlogController : ControllerBase
         return Ok((await _blogService.GetAsync(new GetRequest<Blog>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<Blog>(),
+            OrderRequest = orderBy.ToOrderRequest<Blog>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }

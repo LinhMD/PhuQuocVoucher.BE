@@ -34,7 +34,7 @@ public class ProfileController : ControllerBase
         return Ok((await _profileService.GetAsync(new GetRequest<Profile>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<Profile>(),
+            OrderRequest = orderBy.ToOrderRequest<Profile>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }

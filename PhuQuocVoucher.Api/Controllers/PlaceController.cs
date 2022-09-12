@@ -38,7 +38,7 @@ public class PlaceController : ControllerBase
         return Ok((await _placeService.GetAsync(new GetRequest<Place>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<Place>(),
+            OrderRequest = orderBy.ToOrderRequest<Place>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }

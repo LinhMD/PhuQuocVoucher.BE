@@ -12,16 +12,15 @@ public class FindBlog : IFindRequest<Blog>, IDto
     [Contain]
     public string? Content { get; set; }
 
-    [Contain]
+    [Contain(nameof(Blog.Title))]
     public string? Title { get; set; }
 
     [Contain]
     public string? Summary { get; set; }
 
-    [Any("Places", "Id", typeof(EqualAttribute))]
+    [Any(nameof(Blog.Places), nameof(Place.Id), typeof(EqualAttribute))]
     public int? AnyPlaceId { get; set; }
 
-
-    [Any("Tags", "Id", typeof(EqualAttribute))]
+    [Any(nameof(Blog.Tags), nameof(Tag.Id), typeof(EqualAttribute))]
     public int? AnyTagId { get; set; }
 }

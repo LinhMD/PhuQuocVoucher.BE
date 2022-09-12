@@ -29,7 +29,7 @@ public class ServiceController : ControllerBase
         return Ok((await _providerService.GetAsync<ServiceView>(new GetRequest<Service>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<Service>(),
+            OrderRequest = orderBy.ToOrderRequest<Service>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }

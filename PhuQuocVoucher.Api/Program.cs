@@ -1,3 +1,4 @@
+using System.Configuration;
 using System.Globalization;
 using System.Resources;
 using System.Text;
@@ -12,6 +13,7 @@ using Microsoft.OpenApi.Models;
 using PhuQuocVoucher.Api.CustomBinding;
 using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Dtos;
+using PhuQuocVoucher.Business.Dtos.MailDto;
 using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services;
 using PhuQuocVoucher.Data;
@@ -120,6 +122,15 @@ DtoConfig.ConfigMapper();
 builder.Services.AddControllersWithViews(options => options.ValueProviderFactories.Add(new ClaimValueProviderFactory()));
 
 builder.Services.AddLocalization(o => { o.ResourcesPath = "Resources"; });
+
+builder.Services.AddSingleton(new MailSetting()
+{
+    Host = configuration["MailSettings:Host"],
+    Mail = configuration["MailSettings:Mail"],
+    DisplayName = configuration["MailSettings:DisplayName"],
+    Password = configuration["MailSettings:Password"],
+    Port = int.Parse(configuration["MailSettings:Port"])
+});
 
 var app = builder.Build();
 

@@ -30,7 +30,7 @@ public class ProviderController : ControllerBase
         return Ok((await _providerService.GetAsync<ProviderView>(new GetRequest<ServiceProvider>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<ServiceProvider>(),
+            OrderRequest = orderBy.ToOrderRequest<ServiceProvider>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }
