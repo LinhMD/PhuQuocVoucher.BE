@@ -21,12 +21,15 @@ using PhuQuocVoucher.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var configuration = builder.Configuration;
+
 // Add services to the container.
 
 builder.Services.AddControllers(option =>
 {
     option.Filters.Add<CrudExceptionFilterAttribute>();
 });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -37,66 +40,57 @@ builder.Services.AddScoped<IUnitOfWork ,PqUnitOfWork>();
 
 //Services
 builder.Services.InitServices();
-
 builder.Services.AddLocalization(o => o.ResourcesPath = "Resources");
-
 builder.Services.AddRouting(options =>
 {
     options.LowercaseUrls = true;
 });
-
 builder.Services.AddCors(o => o.AddPolicy("AllowAnyOrigin",
     policyBuilder => policyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
 ));
 
-
-var configuration = builder.Configuration;
-
 //Authenticate
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = configuration["JwtSetting:Issuer"],
-            ValidAudience = configuration["JwtSetting:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSetting:SecurityKey"]))
-        };
-    });
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = configuration["JwtSetting:Issuer"],
+        ValidAudience = configuration["JwtSetting:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSetting:SecurityKey"]))
+    };
+});
 
 //Swagger
-builder.Services.AddSwaggerGen(
-    c =>
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo {Title = "PhuQuocVoucher", Version = "v1"});
+    var jwtSecurityScheme = new OpenApiSecurityScheme
     {
-        c.SwaggerDoc("v1", new OpenApiInfo {Title = "PhuQuocVoucher", Version = "v1"});
-        var jwtSecurityScheme = new OpenApiSecurityScheme
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Name = "JWT Authentication",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Description = "Put **_ONLY_** your JWT Bearer token on text box below!",
+
+        Reference = new OpenApiReference
         {
-            Scheme = "bearer",
-            BearerFormat = "JWT",
-            Name = "JWT Authentication",
-            In = ParameterLocation.Header,
-            Type = SecuritySchemeType.Http,
-            Description = "Put **_ONLY_** your JWT Bearer token on text box below!",
-
-            Reference = new OpenApiReference
-            {
-                Id = JwtBearerDefaults.AuthenticationScheme,
-                Type = ReferenceType.SecurityScheme
-            }
-        };
-
-        c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-
-        c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {jwtSecurityScheme, Array.Empty<string>()}
-        });
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+    c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {jwtSecurityScheme, Array.Empty<string>()}
     });
+});
 
 //Authorization
 builder.Services.AddAuthorization(o =>
@@ -109,6 +103,7 @@ builder.Services.AddLogging(config =>
     config.AddDebug();
     config.AddConsole();
 });
+
 //Firebase
 FirebaseApp.Create(new AppOptions()
 {
@@ -122,7 +117,6 @@ DtoConfig.ConfigMapper();
 builder.Services.AddControllersWithViews(options => options.ValueProviderFactories.Add(new ClaimValueProviderFactory()));
 
 builder.Services.AddLocalization(o => { o.ResourcesPath = "Resources"; });
-
 builder.Services.AddSingleton(new MailSetting()
 {
     Host = configuration["MailSettings:Host"],
@@ -131,31 +125,21 @@ builder.Services.AddSingleton(new MailSetting()
     Password = configuration["MailSettings:Password"],
     Port = int.Parse(configuration["MailSettings:Port"])
 });
-
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
 app.UseCors("AllowAnyOrigin");
-
 var supportCultures = new[] {new CultureInfo("en-US")};
-
-
 app.UseRequestLocalization(options =>
 {
     options.DefaultRequestCulture = new RequestCulture("en-US");
     options.SupportedCultures = supportCultures;
     options.SupportedUICultures = supportCultures;
 });
-
-// Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.UseAuthentication();
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

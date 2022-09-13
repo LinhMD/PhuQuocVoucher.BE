@@ -1,6 +1,7 @@
 ﻿using PhuQuocVoucher.Business.Dtos.BlogDto;
 using PhuQuocVoucher.Business.Dtos.ComboDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
+using PhuQuocVoucher.Business.Dtos.LoginDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
 using PhuQuocVoucher.Business.Dtos.PlaceDto;
 using PhuQuocVoucher.Business.Dtos.ProductDto;
@@ -40,5 +41,8 @@ public static class DtoConfig
         Config<CreateProviderType>();
         Config<CreateCustomer>();
         Config<CreateBlog>();
+        
+        
+        Config<SignUpRequest>();
     }
 }
