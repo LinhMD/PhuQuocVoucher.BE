@@ -33,5 +33,11 @@
         <LastGenOutput>Email.en-US.Designer.cs</LastGenOutput>
       </EmbeddedResource>
     </ItemGroup>
+    
+    <ItemGroup>
+        <Content Include="MailTemplate\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
 </Project>

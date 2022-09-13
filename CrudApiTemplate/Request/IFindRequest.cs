@@ -32,7 +32,8 @@ public interface IFindRequest<TModel> where TModel: class
             else
             {
                 tProperty = Expression.Property(param, property!.Name);
-                expressionBody = Expression.And(expressionBody, Expression.Equal(tProperty, Expression.Constant(value))!);
+
+                expressionBody = Expression.And(expressionBody, Expression.Equal(tProperty, Expression.Convert(Expression.Constant(value), tProperty.Type)));
             }
         }
 

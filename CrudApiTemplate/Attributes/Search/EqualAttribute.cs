@@ -7,7 +7,7 @@ public class EqualAttribute : FilterAttribute
 {
     public override Expression ToExpressionEvaluate(Expression parameter, object value)
     {
-        return Expression.Equal(parameter, Expression.Constant(value));
+        return Expression.Equal(parameter, Expression.Convert(Expression.Constant(value), parameter.Type));
     }
 
     public EqualAttribute()

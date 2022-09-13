@@ -1,8 +1,6 @@
 ﻿
 using System.Net;
 using System.Net.Mail;
-using System.Net.Mime;
-using PhuQuocVoucher.Api.Ultility;
 using PhuQuocVoucher.Business.Dtos.MailDto;
 using PhuQuocVoucher.Business.Services.Core;
 

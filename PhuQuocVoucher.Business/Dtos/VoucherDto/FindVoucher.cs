@@ -1,4 +1,5 @@
-﻿using CrudApiTemplate.Attributes.Search;
+﻿using System.Linq.Expressions;
+using CrudApiTemplate.Attributes.Search;
 using CrudApiTemplate.Request;
 using PhuQuocVoucher.Data.Models;
 
@@ -28,6 +29,5 @@ public class FindVoucher : IFindRequest<Voucher>
     public int? ProductId { get; set; }
 
     public int? ServiceId { get; set; }
-
 
 }

@@ -7,7 +7,7 @@ public class BiggerThanAttribute : FilterAttribute
 {
     public override Expression ToExpressionEvaluate(Expression parameter, object value)
     {
-        return Expression.GreaterThanOrEqual(parameter, Expression.Constant(value));
+        return Expression.GreaterThanOrEqual(parameter, Expression.Convert(Expression.Constant(value), parameter.Type));
     }
     public BiggerThanAttribute()
     {

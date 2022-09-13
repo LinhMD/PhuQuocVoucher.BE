@@ -46,16 +46,15 @@ public class CrudExceptionFilterAttribute : ExceptionFilterAttribute
                     traceId = guid
                 }
             },
-            _ => new BadRequestObjectResult(context)
+            _ => new ObjectResult(new
             {
-                Value = new
-                {
-                    traceId = guid
-                }
-            }
-        };
-
-
+                traceId = guid,
+                context.Exception.StackTrace,
+                context.Exception.Message
+            })
+            {
+                StatusCode = 500
+            }};
         context.Result = result;
     }
 }

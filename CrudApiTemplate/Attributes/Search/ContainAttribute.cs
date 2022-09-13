@@ -14,7 +14,7 @@ public class ContainAttribute : FilterAttribute
         var containMethod = parameterType.GetMethod("Contains", new []{value.GetType()});
         if (containMethod is null) throw new Exception("Coding error: using ContainAttribute");
         //parameter.Contains()
-        return Expression.Call(parameter, containMethod, Expression.Constant(value));
+        return Expression.Call(parameter, containMethod, Expression.Convert(Expression.Constant(value), parameter.Type));
     }
 
     public ContainAttribute([CallerMemberName] string propertyName = ""): base(propertyName, propertyName)

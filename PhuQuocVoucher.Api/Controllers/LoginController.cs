@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PhuQuocVoucher.Api.CustomBinding;
 using PhuQuocVoucher.Business.Dtos.LoginDto;
+using PhuQuocVoucher.Business.Dtos.MailDto;
 using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services.Core;
@@ -30,11 +31,13 @@ public class LoginController : ControllerBase
     private readonly PqUnitOfWork _work;
 
     private readonly IUserService _userService;
+    private readonly IMailingService _mailing;
 
-    public LoginController(IConfiguration config, IUnitOfWork work, IUserService userService)
+    public LoginController(IConfiguration config, IUnitOfWork work, IUserService userService, IMailingService mailing)
     {
         _config = config;
         _userService = userService;
+        _mailing = mailing;
         _work = (PqUnitOfWork?) work ?? throw new RuntimeBinderException();
     }
 
@@ -130,6 +133,24 @@ public class LoginController : ControllerBase
     {
         var repository = _work.Get<User>();
         await repository.AddAllAsync(list.Select(u => (u as ICreateRequest<User>).CreateNew(_work)));
+
+        var createdUsers = await repository.Find(user => list.Select(l => l.Email).Contains(user.Email)).ToListAsync();
+
+        createdUsers.Select(u => new MailTemplateRequest
+        {
+            values = new Dictionary<string, string>
+            {
+                {"UserName", u.UserName},
+                {"Email", u.Email},
+                {"jwt", LoginHelper.GenerateJwt(u, _config)}
+            },
+            MailRequest = new MailRequest
+            {
+                Subject = "Create Password",
+                ToEmail = u.Email,
+            },
+            FileTemplateName = "CreatePassword"
+        }).ToList().ForEach(m => _mailing.SendEmailAsync(m));
         return Ok();
     }
 
@@ -156,7 +177,8 @@ public class LoginController : ControllerBase
             {
                 new Claim("Id", user.Id.ToString()),
                 new Claim("Username", user.UserName),
-                new Claim("Role", user.Role.ToString())
+                new Claim("Role", user.Role.ToString()),
+                new Claim("Email", user.Email)
             };
 
             var token = new JwtSecurityToken(configuration["JwtSetting:Issuer"],
