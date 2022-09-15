@@ -14,6 +14,8 @@ public class CustomerSView : IView<Customer>, IDto
     public UserView? UserInfo { get; set; }
 
     public int? UserInfoId { get; set; }
+    
+    public int CartId { get; set; }
 
     public void InitMapper()
     {

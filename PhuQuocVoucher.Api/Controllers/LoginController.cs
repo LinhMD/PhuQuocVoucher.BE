@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Packaging;
 using PhuQuocVoucher.Api.CustomBinding;
 using PhuQuocVoucher.Business.Dtos.LoginDto;
 using PhuQuocVoucher.Business.Dtos.MailDto;
@@ -48,9 +49,46 @@ public class LoginController : ControllerBase
     {
         var user = await _work.Users.Find(u => u.UserName == username && u.Status == ModelStatus.Active)
             .FirstOrDefaultAsync();
-        return user == null ? BadRequest("User not found") : Ok(LoginHelper.GenerateJwt(user, _config));
+        
+        return user == null ? BadRequest("User not found") : Ok(LoginHelper.GenerateJwt(user, _config, await GetAdditionalClaims(user)));
     }
 
+    [NonAction]
+    public async Task<IDictionary<string, string?>?> GetAdditionalClaims(User user)
+    {
+        var additionalClaims = default(Dictionary<string, string?>);
+        switch (user.Role)
+        {
+            case Role.Customer:
+            {
+                var customer = await _work.Get<Customer>().Find(c => c.UserInfoId == user.Id).FirstOrDefaultAsync();
+                additionalClaims = new Dictionary<string, string?>
+                {
+                    {"CartId", customer?.CartId.ToString()},
+                    {"CustomerId", customer?.Id.ToString()}
+                };
+                break;
+            }
+            case Role.Seller:
+            {
+                var seller = await _work.Get<Seller>().Find(c => c.UserInfoId == user.Id).FirstOrDefaultAsync();
+                additionalClaims = new Dictionary<string, string?>
+                {
+                    {"SellerId", seller?.Id.ToString()}
+                };
+                break;
+            }
+            case Role.Admin:
+                break;
+            case Role.Provider:
+                break;
+            default:
+                additionalClaims = null;
+                break;
+        }
+        return additionalClaims;
+
+    }
 
     [HttpPost("firebase")]
     public async Task<IActionResult> GetFireBaseUser([FromBody] string token)
@@ -59,7 +97,7 @@ public class LoginController : ControllerBase
         var uid = userRecord.Uid;
         var user = await _work.Users.Find(u => u.FireBaseUid == uid && u.Status == ModelStatus.Active).FirstOrDefaultAsync() ??
                    await SignUpFromFirebaseAsync(userRecord);
-        return Ok(LoginHelper.GenerateJwt(user, _config));
+        return Ok(LoginHelper.GenerateJwt(user, _config, await GetAdditionalClaims(user)));
     }
 
     private async Task<User> SignUpFromFirebaseAsync(UserRecord userRecord)
@@ -125,7 +163,7 @@ public class LoginController : ControllerBase
         if (hash != user.Hash)
             return Unauthorized("Wrong password");
 
-        return Ok(LoginHelper.GenerateJwt(user, _config));
+        return Ok(LoginHelper.GenerateJwt(user, _config, await GetAdditionalClaims(user)));
     }
 
     [HttpPost("addMany")]
@@ -168,11 +206,12 @@ public class LoginController : ControllerBase
         }
 
 
-        public static string GenerateJwt(User user, IConfiguration configuration)
+        public static string GenerateJwt(User user, IConfiguration configuration, IDictionary<string, string?>? additionalClaims = null)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSetting:SecurityKey"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+            
             var claims = new[]
             {
                 new Claim("Id", user.Id.ToString()),
@@ -180,6 +219,11 @@ public class LoginController : ControllerBase
                 new Claim("Role", user.Role.ToString()),
                 new Claim("Email", user.Email)
             };
+            
+            if (additionalClaims != null)
+            {
+                claims.AddRange(additionalClaims.Where(pair => pair.Value != null).Select(pair =>  new Claim(pair.Key, pair.Value!)));
+            }
 
             var token = new JwtSecurityToken(configuration["JwtSetting:Issuer"],
                 configuration["JwtSetting:Audience"],

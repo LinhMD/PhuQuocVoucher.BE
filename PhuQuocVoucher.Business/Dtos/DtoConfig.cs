@@ -1,4 +1,6 @@
 ﻿using PhuQuocVoucher.Business.Dtos.BlogDto;
+using PhuQuocVoucher.Business.Dtos.CartDto;
+using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.ComboDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.LoginDto;
@@ -21,6 +23,8 @@ public static class DtoConfig
     public static void ConfigMapper()
     {
         Config<BlogView>();
+        Config<CartView>();
+        Config<CartItemView>();
         Config<ComboView>();
         Config<OrderView>();
         Config<UserView>();

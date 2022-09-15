@@ -6,7 +6,7 @@ public class Order : BaseModel
 
     public double TotalPrice { get; set; }
 
-    public DateTime CompleteDate { get; set; }
+    public DateTime? CompleteDate { get; set; }
 
     public OrderStatus OrderStatus { get; set; } = OrderStatus.Processing;
     public Customer? Customer { get; set; }

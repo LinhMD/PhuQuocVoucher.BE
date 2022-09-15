@@ -96,7 +96,7 @@ public class Repository<TModel> : IRepository<TModel> where TModel : class
         Context.SaveChanges();
     }
 
-    public async ValueTask<TModel> AddAsync(TModel model)
+    public async Task<TModel> AddAsync(TModel model)
     {
         await Models.AddAsync(model);
         await Context.SaveChangesAsync();

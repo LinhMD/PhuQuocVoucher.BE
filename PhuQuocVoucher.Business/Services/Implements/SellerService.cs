@@ -5,6 +5,7 @@ using CrudApiTemplate.Utilities;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using PhuQuocVoucher.Business.Dtos.MailDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
 using PhuQuocVoucher.Business.Dtos.SellerDto;
 using PhuQuocVoucher.Business.Dtos.UserDto;
@@ -16,12 +17,14 @@ namespace PhuQuocVoucher.Business.Services.Implements;
 public class SellerService : ServiceCrud<Seller>, ISellerService
 {
     private ILogger<SellerService> _logger;
-    public SellerService( IUnitOfWork work, ILogger<SellerService> logger) : base(work.Get<Seller>(), work, logger)
+
+    public SellerService(IUnitOfWork work, ILogger<SellerService> logger) : base(work.Get<Seller>(), work, logger)
     {
         _logger = logger;
     }
 
-    public async Task<(IList<SellerView>, int)> FindSellerAsync(GetRequest<Seller> request, DateTime? completeDateLowBound)
+    public async Task<(IList<SellerView>, int)> FindSellerAsync(GetRequest<Seller> request,
+        DateTime? completeDateLowBound)
     {
         var filter = Repository.GetAll().Where(request.FindRequest.ToPredicate());
 
@@ -36,8 +39,7 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
             Id = s.Id,
             Orders = s.HandleOrders
                 .Where(o => (o.CompleteDate >= completeDateLowBound))
-                .Select(o => o.Adapt<OrderView>())
-            ,
+                .Select(o => o.Adapt<OrderView>()),
             Profit = s.HandleOrders
                 .Where(o => (o.CompleteDate >= completeDateLowBound))
                 .Select(o => o.TotalPrice).Sum(),
@@ -50,4 +52,11 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
 
         return (await sellerViews.ToListAsync(), total);
     }
+
+    public IList<SellerView> CreateSellers(IList<CreateSeller> createSellers)
+    {
+        
+        return null;
+    }
+
 }

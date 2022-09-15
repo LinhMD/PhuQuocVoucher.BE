@@ -20,6 +20,14 @@ public class PhuQuocDataContext : DbContext
             b => b.MigrationsAssembly("PhuQuocVoucher.Api"));
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Customer>()
+            .HasOne(a => a.Cart)
+            .WithOne(a => a.Customer)
+            .HasForeignKey<Cart>(c => c.CustomerId);
+    }
+
 
     public DbSet<User> Users { get; set; }
 

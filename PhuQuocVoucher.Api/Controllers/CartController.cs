@@ -2,6 +2,7 @@
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.ExceptionFilter;
@@ -31,7 +32,7 @@ public class CartController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindCart request, [FromQuery] PagingRequest paging, string? orderBy)
     {
-        return Ok((await _cartService.GetAsync(new GetRequest<Cart>
+        return Ok((await _cartService.GetAsync<CartView>(new GetRequest<Cart>
         {
             FindRequest = request,
             OrderRequest = orderBy.ToOrderRequest<Cart>(),
@@ -42,13 +43,13 @@ public class CartController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCart request)
     {
-        return Ok(await _cartService.CreateAsync(request));
+        return Ok((await _cartService.CreateAsync(request)).Adapt<CartView>());
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
-        return Ok(await _repo.Find(cus => cus.Id == id).FirstOrDefaultAsync() ??
+        return Ok(await _repo.Find<CartView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Cart)} with id {id}"));
     }
 

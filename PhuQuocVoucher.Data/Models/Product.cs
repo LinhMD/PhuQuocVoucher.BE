@@ -14,8 +14,7 @@ public class Product : BaseModel
 
     public double Price { get; set; }
 
-    public bool IsForKid { get; set; }
-
     public ProductType Type { get; set; }
 
+    public IEnumerable<PriceBook> Prices { get; set; }
 }

@@ -19,5 +19,8 @@ public class OrderItem  : BaseModel
 
     public DateTime? UseDate { get; set; }
 
+    public PriceBook Price { get; set; }
+    
+    public int PriceId { get; set; }
 
 }

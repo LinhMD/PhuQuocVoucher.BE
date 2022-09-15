@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhuQuocVoucher.Data;
 
@@ -11,9 +12,10 @@ using PhuQuocVoucher.Data;
 namespace PhuQuocVoucher.Controller.Migrations
 {
     [DbContext(typeof(PhuQuocDataContext))]
-    partial class PhuQuocDataContextModelSnapshot : ModelSnapshot
+    [Migration("20220915072051_price_level")]
+    partial class price_level
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -222,9 +224,6 @@ namespace PhuQuocVoucher.Controller.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CartId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreateAt")
                         .HasColumnType("datetime2");
@@ -493,6 +492,9 @@ namespace PhuQuocVoucher.Controller.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsForKid")
+                        .HasColumnType("bit");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
@@ -1001,8 +1003,8 @@ namespace PhuQuocVoucher.Controller.Migrations
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Cart", b =>
                 {
                     b.HasOne("PhuQuocVoucher.Data.Models.Customer", "Customer")
-                        .WithOne("Cart")
-                        .HasForeignKey("PhuQuocVoucher.Data.Models.Cart", "CustomerId")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1266,8 +1268,6 @@ namespace PhuQuocVoucher.Controller.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Customer", b =>
                 {
-                    b.Navigation("Cart");
-
                     b.Navigation("Orders");
 
                     b.Navigation("Profiles");

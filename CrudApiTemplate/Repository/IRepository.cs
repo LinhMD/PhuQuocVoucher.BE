@@ -29,7 +29,7 @@ public interface IRepository<TModel> where TModel : class
 
     public void Commit();
 
-    ValueTask<TModel> AddAsync(TModel model);
+    Task<TModel> AddAsync(TModel model);
     Task AddAllAsync(IEnumerable<TModel> models);
 
     Task RemoveAsync(TModel model);

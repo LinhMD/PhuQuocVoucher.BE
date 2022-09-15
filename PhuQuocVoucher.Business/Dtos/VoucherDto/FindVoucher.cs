@@ -12,7 +12,11 @@ public class FindVoucher : IFindRequest<Voucher>
     [Contain]
     public string? VoucherName { get; set; }
 
-    public double? Price { get; set; }
+    [BiggerThan("Price")]
+    public double? PriceLow { get; set; }
+    
+    [LessThan("Price")]
+    public double? PriceHigh { get; set; }
 
     public int? Inventory { get; set; }
 
@@ -29,5 +33,8 @@ public class FindVoucher : IFindRequest<Voucher>
     public int? ProductId { get; set; }
 
     public int? ServiceId { get; set; }
+    
+    [Equal("Service.TypeId")]
+    public string? ServiceTypeId{ get; set; }
 
 }

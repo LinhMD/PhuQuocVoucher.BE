@@ -20,7 +20,6 @@ using PhuQuocVoucher.Data;
 using PhuQuocVoucher.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
 var configuration = builder.Configuration;
 
 // Add services to the container.
@@ -137,7 +136,11 @@ app.UseRequestLocalization(options =>
     options.SupportedUICultures = supportCultures;
 });
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    options.RoutePrefix = string.Empty;
+});
 app.UseAuthentication();
 app.UseHttpsRedirection();
 app.UseAuthorization();

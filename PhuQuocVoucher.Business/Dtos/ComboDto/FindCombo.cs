@@ -7,7 +7,7 @@ namespace PhuQuocVoucher.Business.Dtos.ComboDto;
 public class FindCombo : IFindRequest<Combo>
 {
     public int? Id { get; set; }
-
+    
     [Contain]
     public string? Name { get; set; }
 
@@ -20,10 +20,10 @@ public class FindCombo : IFindRequest<Combo>
     public int? Status { get; set; }
 
     public double? Price { get; set; }
-
+    
     [Equal]
     public int? ProductId { get; set; }
 
-    [Contain]
+    [Any(nameof(Combo.Vouchers),nameof(Voucher.Id), typeof(EqualAttribute))]
     public int? ContainVoucherId { get; set; }
 }

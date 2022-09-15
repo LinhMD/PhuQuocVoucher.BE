@@ -18,10 +18,10 @@ public class FindProvider : IFindRequest<Provider>
     [Contain]
     public string? TaxCode { get; set; }
 
-    [Contain("UserInfo.Email")]
+    [Contain(target:"UserInfo.Email")]
     public string? Email { get; set; }
 
-    [Contain("UserInfo.PhoneNumber")]
+    [Contain(target:"UserInfo.PhoneNumber")]
     public string? PhoneNumber { get; set; }
 
     [Equal]
@@ -30,7 +30,7 @@ public class FindProvider : IFindRequest<Provider>
     [Equal("AssignedSeller.Id")]
     public int? AssignedSellerId { get; set; }
 
-    [Contain("Type.Name")]
+    [Contain(target:"Type.Name")]
     public string? TypeName { get; set; }
 
     [Equal("Type.Id")]

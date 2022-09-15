@@ -12,6 +12,10 @@ public class Customer : BaseModel
     [Required]
     [MaxLength(255)]
     public string CustomerName { get; set; }
+    
+    public Cart? Cart { get; set; }
+    
+    public int? CartId { get; set; }
 
     public User? UserInfo { get; set; }
     public int? UserInfoId { get; set; }

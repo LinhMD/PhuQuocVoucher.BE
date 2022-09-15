@@ -22,7 +22,6 @@ public interface IFindRequest<TModel> where TModel: class
             {
                 foreach (var filter in filters)
                 {
-                    Console.WriteLine(filter.Target);
                     var list = filter.Target?.Split(".").ToList();
                     //ex: t.Name
                     tProperty = Navigate(param, list, property);
