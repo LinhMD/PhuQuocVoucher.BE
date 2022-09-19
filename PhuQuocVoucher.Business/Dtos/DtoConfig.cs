@@ -6,6 +6,8 @@ using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.LoginDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
 using PhuQuocVoucher.Business.Dtos.PlaceDto;
+using PhuQuocVoucher.Business.Dtos.PriceBookDto;
+using PhuQuocVoucher.Business.Dtos.PriceLevelDto;
 using PhuQuocVoucher.Business.Dtos.ProductDto;
 using PhuQuocVoucher.Business.Dtos.ProviderDto;
 using PhuQuocVoucher.Business.Dtos.ProviderTypeDto;
@@ -48,5 +50,9 @@ public static class DtoConfig
         
         
         Config<SignUpRequest>();
+        
+        Config<PriceBookView>();
+        Config<PriceLevelView>();
+
     }
 }

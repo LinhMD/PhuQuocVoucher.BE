@@ -3,6 +3,7 @@ using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.CustomBinding;
@@ -69,6 +70,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("current")]
+    [Authorize]
     public async Task<IActionResult> Current([FromClaim("Id")]int? id)
     {
         return Ok(await _repository.Find<UserView>(cus => cus.Id == id).FirstOrDefaultAsync() ??

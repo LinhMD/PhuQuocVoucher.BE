@@ -6,6 +6,6 @@ namespace PhuQuocVoucher.Business.Services.Core;
 
 public interface IVoucherService : IServiceCrud<Voucher>
 {
-    public Task<Voucher> CreateAsync(CreateVoucher createVoucher);
+    public Task<VoucherView> CreateAsync(CreateVoucher createVoucher);
 
 }

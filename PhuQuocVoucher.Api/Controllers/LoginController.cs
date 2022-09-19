@@ -212,12 +212,12 @@ public class LoginController : ControllerBase
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             
-            var claims = new[]
+            var claims = new List<Claim>()
             {
-                new Claim("Id", user.Id.ToString()),
-                new Claim("Username", user.UserName),
-                new Claim("Role", user.Role.ToString()),
-                new Claim("Email", user.Email)
+                new("Id", user.Id.ToString()),
+                new("Username", user.UserName),
+                new("Role", user.Role.ToString()),
+                new("Email", user.Email)
             };
             
             if (additionalClaims != null)

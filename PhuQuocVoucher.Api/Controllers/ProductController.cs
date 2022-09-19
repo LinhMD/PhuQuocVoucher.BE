@@ -18,13 +18,13 @@ public class ProductController : ControllerBase
 {
     private readonly IProductService _productService;
 
-    private readonly ILogger<BlogController> _logger;
+    private readonly ILogger<ProductController> _logger;
 
     private readonly IRepository<Product> _repo;
 
     private readonly IUnitOfWork _work;
 
-    public ProductController(IProductService productService, ILogger<BlogController> logger, IUnitOfWork work)
+    public ProductController(IProductService productService, ILogger<ProductController> logger, IUnitOfWork work)
     {
         _productService = productService;
         _logger = logger;
@@ -35,7 +35,7 @@ public class ProductController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery]FindProduct request, [FromQuery]PagingRequest paging, string? orderBy)
     {
-        return Ok((await _productService.GetAsync(new GetRequest<Product>
+        return Ok((await _productService.GetAsync<ProductView>(new GetRequest<Product>
         {
             FindRequest = request,
             OrderRequest = orderBy.ToOrderRequest<Product>(),
@@ -46,13 +46,13 @@ public class ProductController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody]CreateProduct request)
     {
-        return Ok(await _productService.CreateAsync(request));
+        return Ok(await _productService.CreateProductAsync(request));
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
-        return Ok(await _repo.Find(cus => cus.Id == id).FirstOrDefaultAsync() ??
+        return Ok(await _repo.Find<ProductView>(pro => pro.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Product)} with id {id}"));
     }
 

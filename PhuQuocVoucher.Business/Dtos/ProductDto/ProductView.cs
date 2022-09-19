@@ -1,4 +1,6 @@
 ﻿using CrudApiTemplate.View;
+using Mapster;
+using PhuQuocVoucher.Business.Dtos.PriceBookDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.ProductDto;
@@ -20,4 +22,7 @@ public class ProductView : IView<Product>, IDto
     public bool IsForKid { get; set; }
 
     public ProductType Type { get; set; }
+    
+    public IEnumerable<PriceBookView> Prices { get; set; }
+
 }

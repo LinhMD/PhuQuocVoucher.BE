@@ -34,5 +34,7 @@ public static class ServicesInitDi
 
         serviceCollection.AddScoped<IMailingService, MailingService>();
 
+        serviceCollection.AddScoped<IPriceBookService, PriceBookService>();
+        serviceCollection.AddScoped<IPriceLevelService, PriceLevelService>();
     }
 }

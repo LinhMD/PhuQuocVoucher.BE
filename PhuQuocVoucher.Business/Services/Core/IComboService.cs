@@ -6,5 +6,5 @@ namespace PhuQuocVoucher.Business.Services.Core;
 
 public interface IComboService : IServiceCrud<Combo>
 {
-    public  Task<Combo> CreateAsync(CreateCombo createCombo);
+    public  Task<ComboView> CreateAsync(CreateCombo createCombo);
 }

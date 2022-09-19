@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CrudApiTemplate.Request;
+using PhuQuocVoucher.Business.Dtos.PriceBookDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.ProductDto;
@@ -23,5 +24,8 @@ public class CreateProduct : CreateDto, ICreateRequest<Product>
     public double Price { get; set; }
 
     [Required] public bool IsForKid { get; set; } = false;
+    
+    public ProductType Type { get; set; }
 
+    public IList<CreatePriceBookSimple> PriceBooks { get; set; }
 }

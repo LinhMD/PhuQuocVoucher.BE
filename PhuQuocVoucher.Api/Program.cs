@@ -1,5 +1,6 @@
 using System.Configuration;
 using System.Globalization;
+using System.Reflection;
 using System.Resources;
 using System.Text;
 using CrudApiTemplate.Repository;
@@ -89,6 +90,9 @@ builder.Services.AddSwaggerGen(c =>
     {
         {jwtSecurityScheme, Array.Empty<string>()}
     });
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    c.OperationFilter<OpenApiParameterIgnoreFilter>();
 });
 
 //Authorization

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhuQuocVoucher.Data;
 
@@ -11,9 +12,10 @@ using PhuQuocVoucher.Data;
 namespace PhuQuocVoucher.Controller.Migrations
 {
     [DbContext(typeof(PhuQuocDataContext))]
-    partial class PhuQuocDataContextModelSnapshot : ModelSnapshot
+    [Migration("20220918072951_price_level_and_price_book")]
+    partial class price_level_and_price_book
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -973,13 +975,13 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.Blog", null)
                         .WithMany()
                         .HasForeignKey("BlogsId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.Place", null)
                         .WithMany()
                         .HasForeignKey("PlacesId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -988,13 +990,13 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.Combo", null)
                         .WithMany()
                         .HasForeignKey("CombosId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.Voucher", null)
                         .WithMany()
                         .HasForeignKey("VouchersId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -1003,7 +1005,7 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.Customer", "Customer")
                         .WithOne("Cart")
                         .HasForeignKey("PhuQuocVoucher.Data.Models.Cart", "CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
@@ -1014,19 +1016,19 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.Cart", null)
                         .WithMany("CartItems")
                         .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.PriceBook", "Price")
                         .WithMany()
                         .HasForeignKey("PriceId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Price");
@@ -1072,19 +1074,19 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.Product", "OrderProduct")
                         .WithMany()
                         .HasForeignKey("OrderProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.PriceBook", "Price")
                         .WithMany()
                         .HasForeignKey("PriceId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.Profile", "Profile")
@@ -1105,7 +1107,7 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.Order", "Order")
                         .WithOne("PaymentDetail")
                         .HasForeignKey("PhuQuocVoucher.Data.Models.PaymentDetail", "OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -1116,13 +1118,13 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.PriceLevel", "PriceLevel")
                         .WithMany("PriceBooks")
                         .HasForeignKey("PriceLevelId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.Product", "Product")
                         .WithMany("Prices")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("PriceLevel");
@@ -1135,7 +1137,7 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.Customer", "Customer")
                         .WithMany("Profiles")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
@@ -1150,7 +1152,7 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.OrderItem", "OrderItem")
                         .WithOne("Review")
                         .HasForeignKey("PhuQuocVoucher.Data.Models.Review", "OrderItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("OrderItem");
@@ -1161,7 +1163,7 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.User", "UserInfo")
                         .WithMany()
                         .HasForeignKey("UserInfoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("UserInfo");
@@ -1172,19 +1174,19 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.ServiceProvider", "Provider")
                         .WithMany("Services")
                         .HasForeignKey("ProviderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.Place", "ServiceLocation")
                         .WithMany("Services")
                         .HasForeignKey("ServiceLocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.ServiceType", "Type")
                         .WithMany()
                         .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Provider");
@@ -1199,19 +1201,19 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.Seller", "AssignedSeller")
                         .WithMany()
                         .HasForeignKey("AssignedSellerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.ProviderType", "Type")
                         .WithMany()
                         .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.User", "UserInfo")
                         .WithMany()
                         .HasForeignKey("UserInfoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("AssignedSeller");
@@ -1246,7 +1248,7 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.Service", "Service")
                         .WithMany()
                         .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");

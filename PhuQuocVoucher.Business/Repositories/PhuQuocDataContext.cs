@@ -66,4 +66,8 @@ public class PhuQuocDataContext : DbContext
     public DbSet<Blog> Blogs { get; set; }
 
     public DbSet<Tag> Tags { get; set; }
+    
+    public DbSet<PriceLevel> PriceLevels { get; set; }
+    
+    public DbSet<PriceBook> PriceBooks { get; set; }
 }

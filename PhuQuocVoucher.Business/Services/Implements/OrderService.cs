@@ -42,11 +42,13 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         {
             var orderItems = createOrder.OrderItems
                 .Select(o => (o as ICreateRequest<OrderItem>).CreateNew(UnitOfWork)).ToList();
-            UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
+            await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
 
             var order = (createOrder as ICreateRequest<Order>).CreateNew(UnitOfWork);
+            order.TotalPrice = orderItems.Select(item => item.Price.Price).Sum();
             order.OrderItems = orderItems;
             order.Validate();
+            
             return (await UnitOfWork.Get<Order>().AddAsync(order)).Adapt<OrderView>();
         }
         catch (DbUpdateException e)
@@ -54,5 +56,39 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             e.InnerException?.StackTrace.Dump();
             throw new DbQueryException(e.InnerException?.Message!, DbError.Create);
         }
+    }
+
+    public async Task<OrderView> PlaceOrderAsync(Cart cart, int cusId)
+    {
+        //create order for the id
+        var order = new Order()
+        {
+            CustomerId = cusId,
+            TotalPrice = 0D
+        };
+        await UnitOfWork.Get<Order>().AddAsync(order);
+
+        double total = 0;
+        //create order item
+        var orderItems = new List<OrderItem>();
+        foreach (var items in cart!.CartItems)
+        {
+            for (var i = 0; i < items.Quantity; i++)
+            {
+                orderItems.Add(new OrderItem
+                {
+                    PriceId = items.PriceId,
+                    OrderProductId = items.ProductId,
+                    OrderId = order.Id,
+                    Price = items.Price!
+                });
+                total += items.Price!.Price;
+            }
+        }
+        order.TotalPrice = total;
+        await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
+
+        await UnitOfWork.Get<CartItem>().RemoveAllAsync(cart.CartItems);
+        return (await UnitOfWork.Get<Order>().Find<OrderView>(o => o.Id == order.Id).FirstOrDefaultAsync())!;
     }
 }

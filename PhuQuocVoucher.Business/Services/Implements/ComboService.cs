@@ -3,6 +3,7 @@ using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Services;
 using CrudApiTemplate.Utilities;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PhuQuocVoucher.Api.Ultility;
@@ -15,27 +16,29 @@ namespace PhuQuocVoucher.Business.Services.Implements;
 public class ComboService : ServiceCrud<Combo>, IComboService
 {
     private ILogger<ComboService> _logger;
-    public ComboService(IUnitOfWork work, ILogger<ComboService> logger) : base(work.Get<Combo>(), work, logger)
+    
+    private readonly IProductService _productService;
+    public ComboService(IUnitOfWork work, ILogger<ComboService> logger, IProductService productService) : base(work.Get<Combo>(), work, logger)
     {
         _logger = logger;
+        _productService = productService;
     }
 
-    public async Task<Combo> CreateAsync(CreateCombo createCombo)
+    public async Task<ComboView> CreateAsync(CreateCombo createCombo)
     {
         try
         {
-            var productCreate = (createCombo.CreateProduct as ICreateRequest<Product>).CreateNew(UnitOfWork);
-            productCreate.Type = ProductType.Combo;
-            productCreate.Validate();
-            var product = await UnitOfWork.Get<Product>().AddAsync(productCreate);
-
+            createCombo.CreateProduct.Type = ProductType.Voucher;
+            var product = await _productService.CreateProductAsync(createCombo.CreateProduct);
             var combo = (createCombo as ICreateRequest<Combo>).CreateNew(UnitOfWork);
-            combo.Product = product;
+            combo.ProductId = product.Id;
 
             var voucherList = await UnitOfWork.Get<Voucher>().Find(v => createCombo.VoucherIds.Contains(v.Id)).ToListAsync();
             combo.Vouchers = voucherList;
             combo.Validate();
-            return await UnitOfWork.Get<Combo>().AddAsync(combo);
+            var comboView = (await UnitOfWork.Get<Combo>().AddAsync(combo)).Adapt<ComboView>();
+            comboView.Product = product;
+            return comboView;
         }
         catch (DbUpdateException e)
         {

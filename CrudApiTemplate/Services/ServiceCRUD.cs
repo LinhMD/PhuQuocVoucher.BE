@@ -83,7 +83,8 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     {
         var model = await GetAsync(id);
 
-        updateRequest.UpdateModel(ref model, UnitOfWork).Validate();
+        updateRequest.UpdateModel(ref model, UnitOfWork);
+        model.Validate();
         try
         {
             await Repository.CommitAsync();

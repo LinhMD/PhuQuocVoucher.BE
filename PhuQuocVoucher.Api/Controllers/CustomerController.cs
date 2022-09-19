@@ -15,6 +15,8 @@ using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
 using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services.Core;
+using PhuQuocVoucher.Business.Services.Implements;
+using PhuQuocVoucher.Controller.Migrations;
 using PhuQuocVoucher.Data;
 using PhuQuocVoucher.Data.Models;
 
@@ -37,6 +39,9 @@ public class CustomerController : ControllerBase
 
     private readonly IRepository<Customer> _repo;
 
+    /// <summary>
+    /// Create Controller.
+    /// </summary>
     public CustomerController(ILogger<CustomerController> logger, IUnitOfWork work,
         ICustomerService customerService, IOrderService orderService, ICartService cartService)
     {
@@ -48,6 +53,17 @@ public class CustomerController : ControllerBase
         _repo = work.Get<Customer>();
     }
 
+    /// <summary> with filter
+    /// Get customer.
+    /// </summary>
+    /// <param name="orderBy">format: [fieldName1]-[asc|dec],[fieldName2]-[asc|dec],...</param>
+    /// <returns>Customer with matching filter</returns>
+    /// <response code="200">Return List of Customer matching filter</response>
+    /// <response code="400">If the fail validation</response>
+    /// <response code="500">If im bad</response>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery]FindCustomer request, [FromQuery]PagingRequest paging, string? orderBy)
     {
@@ -85,19 +101,20 @@ public class CustomerController : ControllerBase
         return Ok(await _customerService.DeleteAsync(id));
     }
 
-    [HttpGet("{id:int}/cart")]
+    [HttpGet("cart")]
     [Authorize]
-    public async Task<IActionResult> GetCart(int id)
+    public async Task<IActionResult> GetCart([FromClaim("CustomerId")]int id)
     {
-        var cart = await _work.Get<Cart>().Find(cus => cus.CustomerId == id).FirstOrDefaultAsync() ??
-                   await _cartService.CreateAsync(new CreateCart
+        var cart = await _work.Get<Cart>()
+            .Find<CartView>(cus => cus.CustomerId == id).FirstOrDefaultAsync() ?? 
+                   (await _cartService.CreateAsync(new CreateCart
         {
             CustomerId = id
-        });
+        })).Adapt<CartView>();
         return Ok(cart);
     }
     
-    [HttpPost("/cart/items")]
+    [HttpPost("cart/items")]
     [Authorize]
     public async Task<IActionResult> AddCartItem(CreateCartItem item)
     {
@@ -112,7 +129,7 @@ public class CustomerController : ControllerBase
 
     
     [Authorize]
-    [HttpDelete("/cart/items/{cartItemId:int}")]
+    [HttpDelete("cart/items/{cartItemId:int}")]
     public async Task<IActionResult> DeleteCartItem(int cartItemId, [FromClaim("CartId")]int cartId)
     {
         var found = await _work.Get<CartItem>().Find(c => c.CartId == cartId && c.Id == cartItemId).FirstOrDefaultAsync();
@@ -121,59 +138,27 @@ public class CustomerController : ControllerBase
             return BadRequest($"Cart Item {cartItemId} not found!!!");
         }
         await _work.Get<CartItem>().RemoveAsync(found);
-        return Ok(found);
+        return Ok(found.Adapt<CartItemView>());
     }
     
     [Authorize]
-    [HttpPut("/cart/items/{cartItemId:int}")]
-    public async Task<IActionResult> UpdateCartItem(int cartItemId, UpdateCartItem updateCartItem)
+    [HttpPut("cart/items/{cartItemId:int}")]
+    public async Task<IActionResult> UpdateCartItem(int cartItemId, UpdateCartItem updateCartItem, [FromClaim("CartId")]int cartId)
     {
-        var cartId = int.Parse(User.FindFirstValue("CartId"));
         var itemFound = await _work.Get<CartItem>().Find(c => c.CartId == cartId && c.Id == cartItemId).FirstOrDefaultAsync();
         if (itemFound == null) return BadRequest($"Cart Item {updateCartItem} not found!!!");
         itemFound.Quantity = updateCartItem.Quantity;
-        return Ok(itemFound);
+        return Ok(itemFound.Adapt<CartItemView>());
     }
     
     [Authorize]
-    [HttpPost("/cart/place-order")]
-    public async Task<IActionResult> PlaceOrder(int cartItemId, UpdateCartItem updateCartItem, [FromClaim("CustomerId")]int cusId)
+    [HttpPost("cart/place-order")]
+    public async Task<IActionResult> PlaceOrder([FromClaim("CustomerId")]int cusId, [FromClaim("CartId")]  int cartId)
     {
         //Get User Cart
-        var cartId = int.Parse(User.FindFirstValue("CartId"));
         var cart = await _work.Get<Cart>().GetAsync(cartId);
         if (!cart!.CartItems.Any()) return BadRequest("Cart did not have any item");
-        
-        //create order for the id
-        var order = new Order()
-        {
-            CustomerId = cartId,
-            TotalPrice = 0D
-        };
-        await _work.Get<Order>().AddAsync(order);
-
-        double total = 0;
-        //create order item
-        var orderItems = new List<OrderItem>();
-        foreach (var items in cart!.CartItems)
-        {
-            for (var i = 0; i < items.Quantity; i++)
-            {
-                orderItems.Add(new OrderItem
-                {
-                    PriceId = items.PriceId,
-                    OrderProductId = items.ProductId,
-                    OrderId = order.Id,
-                    Price = items.Price!
-                });
-                total += items.Price!.Price;
-            }
-        }
-        order.TotalPrice = total;
-        await _work.Get<OrderItem>().AddAllAsync(orderItems);
-
-        await _work.Get<CartItem>().RemoveAllAsync(cart.CartItems);
-        return Ok(await _work.Get<Order>().Find<OrderView>(o => o.Id == order.Id).FirstOrDefaultAsync());
+        return Ok(await _orderService.PlaceOrderAsync(cart, cusId));
     }
 
     [HttpGet("{id:int}/orders")]

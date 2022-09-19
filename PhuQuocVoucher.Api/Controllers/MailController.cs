@@ -36,7 +36,6 @@ public class MailController : ControllerBase
             },
             FileTemplateName = "HelloMail"
         });
-        return Problem();
         return Ok();
     }
 }

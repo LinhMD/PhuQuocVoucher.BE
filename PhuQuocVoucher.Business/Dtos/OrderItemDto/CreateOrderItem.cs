@@ -8,6 +8,8 @@ public class CreateOrderItem : CreateDto, ICreateRequest<OrderItem>
     public int OrderId { get; set; }
 
     public int OrderProductId { get; set; }
+    
+    public int PriceId { get; set; }
 
     public int? ProfileId { get; set; }
 

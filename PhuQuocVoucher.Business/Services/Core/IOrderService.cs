@@ -10,4 +10,6 @@ public interface IOrderService : IServiceCrud<Order>{
     public Task<(IList<OrderView>, int)> GetOrdersByCustomerId(int cusId, PagingRequest request, OrderRequest<Order> sortBy);
 
     public Task<OrderView> CreateOrderAsync(CreateOrder createOrder);
+
+    public Task<OrderView> PlaceOrderAsync(Cart cart, int cusId);
 }
