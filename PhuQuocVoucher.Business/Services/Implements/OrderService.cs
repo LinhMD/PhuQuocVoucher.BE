@@ -7,6 +7,7 @@ using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PhuQuocVoucher.Api.Ultility;
+using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
 using PhuQuocVoucher.Business.Dtos.OrderItemDto;
 using PhuQuocVoucher.Business.Services.Core;
@@ -58,13 +59,14 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         }
     }
 
-    public async Task<OrderView> PlaceOrderAsync(Cart cart, int cusId)
+    public async Task<OrderView> PlaceOrderAsync(CartView cart, int cusId, int? sellerId = null)
     {
         //create order for the id
         var order = new Order()
         {
             CustomerId = cusId,
-            TotalPrice = 0D
+            TotalPrice = 0D,
+            SellerId = sellerId
         };
         await UnitOfWork.Get<Order>().AddAsync(order);
 
@@ -79,16 +81,14 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 {
                     PriceId = items.PriceId,
                     OrderProductId = items.ProductId,
-                    OrderId = order.Id,
-                    Price = items.Price!
+                    OrderId = order.Id
                 });
-                total += items.Price!.Price;
+                total += items.Price;
             }
         }
         order.TotalPrice = total;
         await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
-
-        await UnitOfWork.Get<CartItem>().RemoveAllAsync(cart.CartItems);
+        await UnitOfWork.Get<CartItem>().RemoveAllAsync(cart.CartItems.Select(c => new CartItem{Id = c.Id}));
         return (await UnitOfWork.Get<Order>().Find<OrderView>(o => o.Id == order.Id).FirstOrDefaultAsync())!;
     }
 }

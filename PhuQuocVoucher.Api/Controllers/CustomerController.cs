@@ -156,7 +156,7 @@ public class CustomerController : ControllerBase
     public async Task<IActionResult> PlaceOrder([FromClaim("CustomerId")]int cusId, [FromClaim("CartId")]  int cartId)
     {
         //Get User Cart
-        var cart = await _work.Get<Cart>().GetAsync(cartId);
+        var cart = await _cartService.GetCartByCustomerAsync(cusId);
         if (!cart!.CartItems.Any()) return BadRequest("Cart did not have any item");
         return Ok(await _orderService.PlaceOrderAsync(cart, cusId));
     }

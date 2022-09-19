@@ -1,5 +1,6 @@
 ﻿using CrudApiTemplate.Request;
 using CrudApiTemplate.Services;
+using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
 using PhuQuocVoucher.Data.Models;
 
@@ -11,5 +12,5 @@ public interface IOrderService : IServiceCrud<Order>{
 
     public Task<OrderView> CreateOrderAsync(CreateOrder createOrder);
 
-    public Task<OrderView> PlaceOrderAsync(Cart cart, int cusId);
+    public Task<OrderView> PlaceOrderAsync(CartView cart, int cusId, int? sellerId = null);
 }

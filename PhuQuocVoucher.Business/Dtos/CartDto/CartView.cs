@@ -12,7 +12,7 @@ public class CartView : IView<Cart>, IDto
 
     public int CustomerId { get; set; }
 
-    public IEnumerable<CartItemView> CartItems { get; set; }
+    public IList<CartItemView> CartItems { get; set; }
 
     public void InitMapper()
     {
