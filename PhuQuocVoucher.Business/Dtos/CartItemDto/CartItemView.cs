@@ -11,14 +11,14 @@ public class CartItemView : IView<CartItem>, IDto
 
     public int Quantity { get; set; }
     
-    public ProductView Product { get; set; }
+    public ProductSView Product { get; set; }
     
     public int ProductId { get; set; }
     public double Price { get; set; }
     
     public int PriceId { get; set; }
     
-
+    
     public void InitMapper()
     {
         TypeAdapterConfig<CartItem, CartItemView>.NewConfig()

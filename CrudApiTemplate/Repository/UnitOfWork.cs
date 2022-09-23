@@ -42,6 +42,11 @@ public class UnitOfWork : IUnitOfWork
     {
         return DataContext.SaveChanges();
     }
+    
+    public async  Task<int> CompleteAsync()
+    {
+        return await DataContext.SaveChangesAsync();
+    }
 
     public void Dispose()
     {

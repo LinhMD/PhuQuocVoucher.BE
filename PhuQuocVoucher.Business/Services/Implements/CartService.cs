@@ -1,10 +1,13 @@
-﻿using CrudApiTemplate.Repository;
+﻿using System.Diagnostics;
+using CrudApiTemplate.CustomException;
+using CrudApiTemplate.Repository;
 using CrudApiTemplate.Services;
 using Google.Apis.Json;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PhuQuocVoucher.Business.Dtos.CartDto;
+using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 
@@ -20,6 +23,10 @@ public class CartService : ServiceCrud<Cart>, ICartService
 
     public async Task<CartView> GetCartByCustomerAsync(int customerId)
     {
+        
+        var customer = await UnitOfWork.Get<Customer>().GetAsync(customerId);
+        if (customer == null) throw new ModelNotFoundException($"Customer {customerId} not found!!!");
+        
         return await Repository.Find<CartView>(c => c.CustomerId == customerId).FirstOrDefaultAsync() ?? 
                (await Repository.AddAsync(new Cart
         {
@@ -27,5 +34,25 @@ public class CartService : ServiceCrud<Cart>, ICartService
             CreateAt = DateTime.Now,
             CustomerId = customerId
         })).Adapt<CartView>();
+    }
+
+    public async Task<CartView> AddItemToCart(CreateCartItem item, int customerId)
+    {
+        var cart = await GetCartByCustomerAsync(customerId);
+        var cartItem = item.Adapt<CartItem>();
+        
+        cartItem.CartId = cart.Id;
+        var priceBook = await UnitOfWork.Get<PriceBook>().GetAsync(item.PriceId);
+        
+        if (priceBook == null)
+        {
+            throw new ModelNotFoundException($"Price Id {item.PriceId} not found!!");
+        } 
+        
+        cartItem.PriceId = priceBook.ProductId;
+        
+        var itemView = (await UnitOfWork.Get<CartItem>().AddAsync(cartItem)).Adapt<CartItemView>();
+        cart.CartItems.Add(itemView);
+        return cart;
     }
 }

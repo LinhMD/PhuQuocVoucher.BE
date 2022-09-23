@@ -5,7 +5,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.ProductDto;
 
-public class ProductView : IView<Product>, IDto
+public class ProductSView :IView<Product>, IDto
 {
     public int Id { get; set; }
 
@@ -17,10 +17,12 @@ public class ProductView : IView<Product>, IDto
 
     public string? Content { get; set; }
 
-    public bool IsForKid { get; set; }
-
+    public double Price { get; set; }
+    
     public ProductType Type { get; set; }
     
-    public IEnumerable<PriceBookSView> Prices { get; set; }
-
+    public void InitMapper()
+    {
+        TypeAdapterConfig<Product, ProductSView>.NewConfig();
+    }
 }

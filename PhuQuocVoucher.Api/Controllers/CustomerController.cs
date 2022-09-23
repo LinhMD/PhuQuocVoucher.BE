@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿
+using System.Security.Claims;
 using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
@@ -8,16 +9,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.CustomBinding;
-using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
-using PhuQuocVoucher.Business.Dtos.OrderDto;
-using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services.Core;
-using PhuQuocVoucher.Business.Services.Implements;
-using PhuQuocVoucher.Controller.Migrations;
-using PhuQuocVoucher.Data;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Api.Controllers;
@@ -61,7 +56,6 @@ public class CustomerController : ControllerBase
     /// <response code="200">Return List of Customer matching filter</response>
     /// <response code="400">If the fail validation</response>
     /// <response code="500">If im bad</response>
-    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
@@ -76,6 +70,7 @@ public class CustomerController : ControllerBase
         })).ToPagingResponse(paging));
     }
 
+    
     [HttpPost]
     public async Task<IActionResult> Create([FromBody]CreateCustomer request)
     {

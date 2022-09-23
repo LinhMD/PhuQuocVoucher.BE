@@ -5,15 +5,12 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.PriceBookDto;
 
-public class PriceBookView : IView<PriceBook>, IDto
+public class PriceBookSView : IView<PriceBook>, IDto
 {
     public int Id { get; set; }
-    
     public string PriceLevelName { get; set; }
     
     public int PriceLevelId { get; set; }
-    
-    public ProductSView Product { get; set; }
 
     public int ProductId { get; set; }
     
@@ -21,6 +18,6 @@ public class PriceBookView : IView<PriceBook>, IDto
 
     public void InitMapper()
     {
-        TypeAdapterConfig<PriceBook, PriceBookView>.NewConfig().Map(view => view.PriceLevelName, book => book.PriceLevel.Name);
+        TypeAdapterConfig<PriceBook, PriceBookSView>.NewConfig().Map(view => view.PriceLevelName, book => book.PriceLevel.Name);
     }
 }

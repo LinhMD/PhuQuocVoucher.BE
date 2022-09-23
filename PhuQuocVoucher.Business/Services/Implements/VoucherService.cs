@@ -3,6 +3,7 @@ using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Services;
 using Mapster;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Business.Services.Core;
@@ -14,7 +15,7 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
 {
     private ILogger<VoucherService> _logger;
 
-    private IProductService _productService;
+    private readonly IProductService _productService;
     public VoucherService(IUnitOfWork work, ILogger<VoucherService> logger, IProductService productService) : base(work.Get<Voucher>(), work, logger)
     {
         _logger = logger;
@@ -27,12 +28,10 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
         {
             createVoucher.CreateProduct.Type = ProductType.Voucher;
             var product = await _productService.CreateProductAsync(createVoucher.CreateProduct);
-
             var voucher = (createVoucher as ICreateRequest<Voucher>).CreateNew(UnitOfWork);
             voucher.ProductId = product.Id;
             var voucherView = (await UnitOfWork.Get<Voucher>().AddAsync(voucher)).Adapt<VoucherView>();
-            voucherView.Product = product;
-            return voucherView;
+            return await UnitOfWork.Get<Voucher>().Find<VoucherView>(v => v.Id == voucherView.Id).FirstOrDefaultAsync() ?? voucherView;
         }
         catch (Exception e)
         {

@@ -11,5 +11,5 @@ public class Cart : BaseModel
 
     public int CustomerId { get; set; }
 
-    public IEnumerable<CartItem> CartItems { get; set; }
+    public IList<CartItem> CartItems { get; set; }
 }

@@ -17,7 +17,7 @@ public class CrudExceptionFilterAttribute : ExceptionFilterAttribute
     public override void OnException(ExceptionContext context)
     {
         var guid = Guid.NewGuid();
-        Logger.LogError(context.Exception, $"trace guid: {guid}");
+        Logger.LogError(context.Exception, "trace guid: {Guid}", guid);
         IActionResult result = context.Exception switch
         {
             ModelNotFoundException exception => new BadRequestObjectResult(context)
@@ -43,6 +43,7 @@ public class CrudExceptionFilterAttribute : ExceptionFilterAttribute
                 Value = new
                 {
                     message = valueInvalidException.Message,
+                    action = "unknown",
                     traceId = guid
                 }
             },
@@ -54,7 +55,8 @@ public class CrudExceptionFilterAttribute : ExceptionFilterAttribute
             })
             {
                 StatusCode = 500
-            }};
+            }
+        };
         context.Result = result;
     }
 }

@@ -43,6 +43,9 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         {
             var orderItems = createOrder.OrderItems
                 .Select(o => (o as ICreateRequest<OrderItem>).CreateNew(UnitOfWork)).ToList();
+            if (!await IsInventoryEnoughAsync(orderItems))
+                throw new ModelValueInvalidException("Voucher inventory insufficient!!");
+
             await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
 
             var order = (createOrder as ICreateRequest<Order>).CreateNew(UnitOfWork);
@@ -57,6 +60,16 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             e.InnerException?.StackTrace.Dump();
             throw new DbQueryException(e.InnerException?.Message!, DbError.Create);
         }
+    }
+
+    private async Task<bool> IsInventoryEnoughAsync(IEnumerable<OrderItem> orderItems)
+    {
+        var itemCount = orderItems.GroupBy(o => o.OrderProductId);
+        //check inventory
+        var foundVoucher = await UnitOfWork.Get<Voucher>().Find(voucher => itemCount
+            .Any(i => i.Key == voucher.ProductId && i.Count() >= voucher.Inventory)).CountAsync();
+
+        return Equals(itemCount.Count(), foundVoucher);
     }
 
     public async Task<OrderView> PlaceOrderAsync(CartView cart, int cusId, int? sellerId = null)
@@ -87,7 +100,10 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             }
         }
         order.TotalPrice = total;
-        await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
+        
+        if (!await IsInventoryEnoughAsync(orderItems))
+            throw new ModelValueInvalidException("Voucher inventory insufficient!!");
+
         await UnitOfWork.Get<CartItem>().RemoveAllAsync(cart.CartItems.Select(c => new CartItem{Id = c.Id}));
         return (await UnitOfWork.Get<Order>().Find<OrderView>(o => o.Id == order.Id).FirstOrDefaultAsync())!;
     }

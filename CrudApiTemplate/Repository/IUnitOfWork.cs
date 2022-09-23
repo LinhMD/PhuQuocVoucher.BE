@@ -10,4 +10,6 @@ public interface IUnitOfWork : IDisposable
     public IRepository<object> Get(Type modelType);
 
     int Complete();
+
+    Task<int> CompleteAsync();
 }

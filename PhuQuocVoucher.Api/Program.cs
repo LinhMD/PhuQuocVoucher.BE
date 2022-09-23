@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PhuQuocVoucher.Api.CustomBinding;
 using PhuQuocVoucher.Api.ExceptionFilter;
+using PhuQuocVoucher.Api.Ultility;
 using PhuQuocVoucher.Business.Dtos;
 using PhuQuocVoucher.Business.Dtos.MailDto;
 using PhuQuocVoucher.Business.Repositories;
@@ -90,9 +91,10 @@ builder.Services.AddSwaggerGen(c =>
     {
         {jwtSecurityScheme, Array.Empty<string>()}
     });
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    var xmlFiles = Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly).ToList();
+    xmlFiles.ForEach(xmlFile => c.IncludeXmlComments(xmlFile));
     c.OperationFilter<OpenApiParameterIgnoreFilter>();
+    c.EnableAnnotations();
 });
 
 //Authorization

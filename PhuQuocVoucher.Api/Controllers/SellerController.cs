@@ -1,9 +1,9 @@
-﻿using System.Security.Claims;
+﻿using System.Net;
 using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
+using CrudApiTemplate.Response;
 using CrudApiTemplate.Utilities;
-using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +15,7 @@ using PhuQuocVoucher.Business.Dtos.OrderDto;
 using PhuQuocVoucher.Business.Dtos.SellerDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace PhuQuocVoucher.Api.Controllers;
 
@@ -54,6 +55,7 @@ public class SellerController : ControllerBase
     /// <param name="orderBy">Format: [fieldName1]-[asc|dec],[fieldName2]-[asc|dec],... .Allows:[Id|CommissionRate|SellerName|BusyLevel]</param>
     /// <param name="completeDateLowBound">profit from {param} to current date</param>
     [HttpGet]
+    [SwaggerResponse(200,"Seller view page", typeof(PagingResponse<SellerView>))]
     public async Task<IActionResult> Get(
         [FromQuery] FindSeller request,
         [FromQuery] PagingRequest paging,
@@ -66,16 +68,17 @@ public class SellerController : ControllerBase
             OrderRequest = orderBy.ToOrderRequest<Seller>(),
             PagingRequest = paging
         }, completeDateLowBound)).ToPagingResponse(paging));
-
     }
 
     [HttpPost]
+    [SwaggerResponse(200,"Seller", typeof(Seller))]
     public async Task<IActionResult> Create([FromBody] CreateSeller request)
     {
         return Ok(await _sellerService.CreateAsync(request));
     }
 
     [HttpGet("{id:int}")]
+    [SwaggerResponse(200,"Seller view", typeof(SellerView))]
     public async Task<IActionResult> Get(int id)
     {
         return Ok(await _repo.Find<SellerView>(seller => seller.Id == id).FirstOrDefaultAsync() ??
@@ -89,6 +92,7 @@ public class SellerController : ControllerBase
     /// <returns>Seller Information</returns>
     ///<code></code>
     [HttpGet("current")]
+    [SwaggerResponse(200,"Seller view", typeof(SellerView))]
     public async Task<IActionResult> GetCurrent([FromClaim("SellerId")]int id)
     {
         return Ok(await _repo.Find<SellerView>(seller => seller.Id == id).FirstOrDefaultAsync() ??
@@ -97,12 +101,14 @@ public class SellerController : ControllerBase
     
 
     [HttpPut("{id:int}")]
+    [SwaggerResponse(200,"Seller", typeof(Seller))]
     public async Task<IActionResult> Update([FromBody] UpdateSeller request, int id)
     {
         return Ok(await _sellerService.UpdateAsync(id, request));
     }
 
     [HttpDelete("{id:int}")]
+    [SwaggerResponse(200,"Seller", typeof(Seller))]
     public async Task<IActionResult> Delete(int id)
     {
         return Ok(await _sellerService.DeleteAsync(id));
@@ -116,6 +122,7 @@ public class SellerController : ControllerBase
     /// <param name="sellerId">nah this field get from jwt, better be authenticated :v</param>
     /// <returns>Order have been successfully created</returns>
     [Authorize]
+    [SwaggerResponse(200,"Order view", typeof(OrderView))]
     [HttpPost("order")]
     public async Task<IActionResult> CreateOrder(CreateOrder createOrder, [FromClaim("SellerId")] int sellerId)
     {
@@ -130,6 +137,7 @@ public class SellerController : ControllerBase
     /// <param name="sellerId"></param>
     /// <returns>Customer newly created</returns>
     [Authorize]
+    [SwaggerResponse(200,"Cart view", typeof(CustomerSView))]
     [HttpPost("customers")]
     public async Task<IActionResult> CreateCustomer([FromBody]CreateCustomer request, [FromClaim("SellerId")] int sellerId)
     {
@@ -144,15 +152,11 @@ public class SellerController : ControllerBase
     /// <param name="customerId">Customer id</param>
     /// <returns>Customer cart</returns>
     [HttpPost("customers/{customerId:int}/cart/items/")]
+    [SwaggerResponse(200,"Cart view", typeof(CartView))]
     [Authorize]
     public async Task<IActionResult> AddCartItem(CreateCartItem item, int customerId)
     {
-        var cart = await _cartService.GetCartByCustomerAsync(customerId);
-        var cartItem = item.Adapt<CartItem>();
-        cartItem.CartId = cart.Id;
-        var itemView = (await _work.Get<CartItem>().AddAsync(cartItem)).Adapt<CartItemView>();
-        cart.CartItems.Add(itemView);
-        return Ok(cart);
+        return Ok(await _cartService.AddItemToCart(item, customerId));
     }
     
     /// <summary>
@@ -162,6 +166,7 @@ public class SellerController : ControllerBase
     /// <param name="cartItemId">Cart Id</param>
     /// <returns>Cart</returns>
     [Authorize]
+    [SwaggerResponse(200,"Cart view", typeof(CartView))]
     [HttpDelete("customers/{customerId:int}/cart/items/{cartItemId:int}")]
     public async Task<IActionResult> DeleteCartItem(int customerId, int cartItemId)
     {
@@ -184,6 +189,7 @@ public class SellerController : ControllerBase
     /// <param name="customerId"></param>
     /// <returns>cart</returns>
     [Authorize]
+    [SwaggerResponse(200, "Cart view",typeof(CartView))]
     [HttpPut("customers/{customerId:int}/cart/items/{cartItemId:int}")]
     public async Task<IActionResult> UpdateCartItem(int cartItemId, UpdateCartItem updateCartItem, int customerId)
     {
@@ -191,7 +197,8 @@ public class SellerController : ControllerBase
         var itemFound = await _work.Get<CartItem>().Find(c => c.CartId == cart.Id && c.Id == cartItemId).FirstOrDefaultAsync();
         if (itemFound == null) return BadRequest($"Cart Item {updateCartItem} not found!!!");
         itemFound.Quantity = updateCartItem.Quantity;
-        return Ok(itemFound.Adapt<CartItemView>());
+        await _work.CompleteAsync();
+        return Ok(await _cartService.GetCartByCustomerAsync(customerId));
     }
     
     /// <summary>
@@ -200,11 +207,11 @@ public class SellerController : ControllerBase
     /// <param name="customerId"></param>
     /// <returns></returns>
     [HttpGet("customers/{customerId:int}/cart")]
+    [SwaggerResponse(200, "Cart view", typeof(CartView))]
     [Authorize]
     public async Task<IActionResult> GetCart(int customerId)
     {
-        var cart = (await _cartService.GetCartByCustomerAsync(customerId)).Adapt<CartView>();
-        return Ok(cart);
+        return Ok(await _cartService.GetCartByCustomerAsync(customerId));
     }
     
     /// <summary>
@@ -215,6 +222,7 @@ public class SellerController : ControllerBase
     /// <returns></returns>
     [Authorize]
     [HttpPost("customers/{customerId:int}/place-order")]
+    [SwaggerResponse(200, "Order View",typeof(OrderView))]
     public async Task<IActionResult> PlaceOrder(int customerId, [FromClaim("SellerId")]int? sellerId)
     {
         //Get User Cart

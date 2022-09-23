@@ -7,7 +7,6 @@ public class CreateCartItem : CreateDto, ICreateRequest<CartItem>
 {
     public int Quantity { get; set; }
 
-    public int ProductId { get; set; }
-    
     public int PriceId { get; set; }
+    
 }

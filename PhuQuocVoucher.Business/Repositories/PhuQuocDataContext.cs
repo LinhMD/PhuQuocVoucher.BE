@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Laraue.EfCoreTriggers.Common.Extensions;
+using Laraue.EfCoreTriggers.SqlServer.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using PhuQuocVoucher.Data.Models;
 
@@ -17,7 +19,8 @@ public class PhuQuocDataContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer(_config["ConnectionStrings:PhuQuocDB_devops"],
-            b => b.MigrationsAssembly("PhuQuocVoucher.Api"));
+            b => b.MigrationsAssembly("PhuQuocVoucher.Api"))
+            .UseSqlServerTriggers();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,6 +29,15 @@ public class PhuQuocDataContext : DbContext
             .HasOne(a => a.Cart)
             .WithOne(a => a.Customer)
             .HasForeignKey<Cart>(c => c.CustomerId);
+
+        
+        modelBuilder.Entity<OrderItem>().AfterInsert(trigger => trigger
+            .Action(action => action
+                .Update<Voucher>(
+                    (item, voucher) => voucher.ProductId == item.OrderProductId && voucher.Inventory > 0, //Matching product id
+                    (item, oldVoucher) => new Voucher {Inventory = oldVoucher.Inventory - 1})// reduce 1 inventory
+            )
+        );
     }
 
 

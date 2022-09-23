@@ -1,10 +1,11 @@
 ﻿using CrudApiTemplate.View;
 using Mapster;
+using PhuQuocVoucher.Business.Dtos.PriceBookDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.OrderItemDto;
 
-public class OrderItemSView : IView<OrderItem>, IDto
+public class OrderItemView : IView<OrderItem>, IDto
 {
     public int Id { get; set;}
 
@@ -17,9 +18,11 @@ public class OrderItemSView : IView<OrderItem>, IDto
     public int? ProfileId { get; set; }
     
     public DateTime? UseDate { get; set; }
+    
+    public PriceBookView Price { get; set; }
 
     public void InitMapper()
     {
-        TypeAdapterConfig<OrderItem, OrderItemSView>.NewConfig();
+        TypeAdapterConfig<OrderItem, OrderItemView>.NewConfig();
     }
 }
