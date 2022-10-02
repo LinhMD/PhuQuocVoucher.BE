@@ -11,4 +11,6 @@ public class FindTag: IFindRequest<Tag>
 
     [Contain]
     public string? Name { get; set; }
+
+    public ModelStatus? Status { get; set; } = ModelStatus.Active;
 }

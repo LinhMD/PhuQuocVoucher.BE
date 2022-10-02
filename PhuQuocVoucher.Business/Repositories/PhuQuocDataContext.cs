@@ -82,4 +82,6 @@ public class PhuQuocDataContext : DbContext
     public DbSet<PriceLevel> PriceLevels { get; set; }
     
     public DbSet<PriceBook> PriceBooks { get; set; }
+    
+    public DbSet<QrCodeInfo> QrCodes { get; set; }
 }

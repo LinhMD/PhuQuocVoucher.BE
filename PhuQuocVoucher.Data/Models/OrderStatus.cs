@@ -7,6 +7,9 @@ namespace PhuQuocVoucher.Data.Models;
 public enum OrderStatus
 {
     Processing,
+    Confirm,
+    Failed,
     Completed,
+    Used,
     Canceled
 }

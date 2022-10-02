@@ -8,6 +8,8 @@ public class UpdateCustomer : UpdateDto, IUpdateRequest<Customer>
 {
     [Required]
     [MaxLength(255)]
-    public string CustomerName { get; set; }
+    public string? CustomerName { get; set; }
+    
+    public int? AssignSellerId { get; set; }
 
 }

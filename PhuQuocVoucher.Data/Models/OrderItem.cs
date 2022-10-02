@@ -21,6 +21,10 @@ public class OrderItem  : BaseModel
 
     public PriceBook Price { get; set; }
     
+    public QrCodeInfo? QrCode { get; set; }
+    
+    public int? QrCodeId { get; set; }
+    
     public int PriceId { get; set; }
 
 }

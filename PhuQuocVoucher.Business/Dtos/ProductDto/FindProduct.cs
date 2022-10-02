@@ -16,12 +16,6 @@ public class FindProduct : IFindRequest<Product>
     [Contain]
     public string? Content { get; set; }
 
-    [BiggerThan(nameof(Product.Price))]
-    public double? PriceLow { get; set; }
-
-    [LessThan(nameof(Product.Price))]
-    public double? PriceHigh { get; set; }
-
     public bool? IsForKid { get; set; }
 
     public ProductType? Type { get; set; }

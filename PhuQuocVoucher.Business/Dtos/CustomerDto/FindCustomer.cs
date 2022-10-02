@@ -22,4 +22,7 @@ public class FindCustomer : IFindRequest<Customer>
 
     [Contain(target:"UserInfo.PhoneNumber")]
     public string? PhoneNumber { get; set; }
+
+    [Equal(nameof(Customer.AssignSellerId))]
+    public int? SellerId { get; set; }
 }

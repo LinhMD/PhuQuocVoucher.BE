@@ -7,4 +7,6 @@ namespace PhuQuocVoucher.Business.Services.Core;
 public interface IProductService : IServiceCrud<Product>
 {
     public Task<ProductView> CreateProductAsync(CreateProduct createProduct);
+
+    public Task<ProductView> AddTagsAsync(IList<string> tags, int productId);
 }

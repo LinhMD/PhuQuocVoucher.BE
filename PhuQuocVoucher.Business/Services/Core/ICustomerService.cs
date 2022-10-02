@@ -6,5 +6,5 @@ namespace PhuQuocVoucher.Business.Services.Core;
 
 public interface ICustomerService : IServiceCrud<Customer>
 {
-    public Task<CustomerSView> CreateCustomerAsync(CreateCustomer createCustomer);
+    public Task<CustomerSView> CreateCustomerAsync(CreateCustomer createCustomer, int? sellerId = null);
 }

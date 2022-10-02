@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhuQuocVoucher.Data;
 
@@ -11,9 +12,10 @@ using PhuQuocVoucher.Data;
 namespace PhuQuocVoucher.Controller.Migrations
 {
     [DbContext(typeof(PhuQuocDataContext))]
-    partial class PhuQuocDataContextModelSnapshot : ModelSnapshot
+    [Migration("20221002074423_qr_code")]
+    partial class qr_code
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,21 +37,6 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasIndex("PlacesId");
 
                     b.ToTable("BlogPlace");
-                });
-
-            modelBuilder.Entity("BlogTag", b =>
-                {
-                    b.Property<int>("BlogsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BlogsId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("BlogTag");
                 });
 
             modelBuilder.Entity("ComboVoucher", b =>
@@ -524,6 +511,9 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -876,6 +866,9 @@ namespace PhuQuocVoucher.Controller.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int?>("BlogId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("CreateAt")
                         .HasColumnType("datetime2");
 
@@ -884,7 +877,7 @@ namespace PhuQuocVoucher.Controller.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -894,8 +887,7 @@ namespace PhuQuocVoucher.Controller.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasIndex("BlogId");
 
                     b.ToTable("Tags");
                 });
@@ -988,6 +980,9 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.Property<int?>("LimitPerDay")
                         .HasColumnType("int");
 
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
                     b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
@@ -1021,21 +1016,6 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.ToTable("Vouchers");
                 });
 
-            modelBuilder.Entity("ProductTag", b =>
-                {
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductsId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("ProductTag");
-                });
-
             modelBuilder.Entity("BlogPlace", b =>
                 {
                     b.HasOne("PhuQuocVoucher.Data.Models.Blog", null)
@@ -1047,21 +1027,6 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.Place", null)
                         .WithMany()
                         .HasForeignKey("PlacesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BlogTag", b =>
-                {
-                    b.HasOne("PhuQuocVoucher.Data.Models.Blog", null)
-                        .WithMany()
-                        .HasForeignKey("BlogsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PhuQuocVoucher.Data.Models.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1336,6 +1301,13 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.Navigation("ParentType");
                 });
 
+            modelBuilder.Entity("PhuQuocVoucher.Data.Models.Tag", b =>
+                {
+                    b.HasOne("PhuQuocVoucher.Data.Models.Blog", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("BlogId");
+                });
+
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Voucher", b =>
                 {
                     b.HasOne("PhuQuocVoucher.Data.Models.Product", "Product")
@@ -1353,19 +1325,9 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("ProductTag", b =>
+            modelBuilder.Entity("PhuQuocVoucher.Data.Models.Blog", b =>
                 {
-                    b.HasOne("PhuQuocVoucher.Data.Models.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PhuQuocVoucher.Data.Models.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Cart", b =>

@@ -18,7 +18,6 @@ public class CreateUser : CreateDto, ICreateRequest<User>
     [MaxLength(255)]
     public string UserName { get; set; }
 
-    
     [Required] public Role Role { get; set; } = Role.Customer;
 
     [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Must be a phone number")]

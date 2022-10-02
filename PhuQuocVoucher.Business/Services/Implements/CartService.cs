@@ -49,7 +49,7 @@ public class CartService : ServiceCrud<Cart>, ICartService
             throw new ModelNotFoundException($"Price Id {item.PriceId} not found!!");
         } 
         
-        cartItem.PriceId = priceBook.ProductId;
+        cartItem.ProductId = priceBook.ProductId;
         
         var itemView = (await UnitOfWork.Get<CartItem>().AddAsync(cartItem)).Adapt<CartItemView>();
         cart.CartItems.Add(itemView);

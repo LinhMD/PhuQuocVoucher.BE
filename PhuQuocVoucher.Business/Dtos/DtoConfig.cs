@@ -49,13 +49,14 @@ public static class DtoConfig
         Config<ProductSView>();
         Config<VoucherView>();
         Config<VoucherSView>();
+        Config<CustomerSimpleView>();
+        Config<CustomerView>();
 
         Config<CreateUser>();
-        Config<CreateProvider>();
+        Config<CreateProvider>();   
         Config<CreateProviderType>();
         Config<CreateCustomer>();
         Config<CreateBlog>();
-        
         
         Config<SignUpRequest>();
         

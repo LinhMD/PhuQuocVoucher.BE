@@ -16,10 +16,10 @@ public class CustomerService : ServiceCrud<Customer>, ICustomerService
         _logger = logger;
     }
 
-    public async Task<CustomerSView> CreateCustomerAsync(CreateCustomer createCustomer)
+    public async Task<CustomerSView> CreateCustomerAsync(CreateCustomer createCustomer, int? sellerId = null)
     {
         var user = createCustomer.UserInfo.Adapt<User>();
-        user.Role = Role.Seller;
+        user.Role = Role.Customer;
         await UnitOfWork.Get<User>().AddAsync(user);
         var customer = new Customer()
         {
@@ -27,6 +27,7 @@ public class CustomerService : ServiceCrud<Customer>, ICustomerService
             CreateAt = createCustomer.CreateAt,
             Status = createCustomer.Status,
             UserInfoId = user.Id,
+            AssignSellerId = sellerId,
             UserInfo = user
         };
 

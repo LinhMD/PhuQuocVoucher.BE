@@ -53,6 +53,7 @@ public class ProviderController : ControllerBase
     {
         return Ok(await _providerService.UpdateAsync(id, request));
     }
+    
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

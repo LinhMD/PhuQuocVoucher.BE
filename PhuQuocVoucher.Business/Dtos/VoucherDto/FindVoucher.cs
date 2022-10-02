@@ -34,7 +34,10 @@ public class FindVoucher : IFindRequest<Voucher>
 
     public int? ServiceId { get; set; }
     
-    [Equal("Service.TypeId")]
-    public string? ServiceTypeId{ get; set; }
+    [Equal($"{nameof(Service)}.{nameof(Service.TypeId)}")]
+    public int? ServiceTypeId{ get; set; }
+    
+    [Contain(target:$"{nameof(Service)}.{nameof(Service.Type)}.{nameof(ServiceType.Name)}")]
+    public string? ServiceTypeName { get; set; }
 
 }

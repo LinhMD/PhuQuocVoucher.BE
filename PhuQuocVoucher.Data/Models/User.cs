@@ -33,5 +33,8 @@ public class User : BaseModel
     [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Must be a phone number")]
     [MaxLength(10)]
     public string? PhoneNumber { get; set; }
+    
+    
+    
 
 }

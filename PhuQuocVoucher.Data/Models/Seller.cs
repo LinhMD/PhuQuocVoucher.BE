@@ -23,4 +23,5 @@ public class Seller : BaseModel
 
     public IEnumerable<Order> HandleOrders { get; set; }
 
+    public IEnumerable<Customer> Customers { get; set; }
 }

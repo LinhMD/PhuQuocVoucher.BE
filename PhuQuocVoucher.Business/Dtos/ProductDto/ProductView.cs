@@ -22,5 +22,7 @@ public class ProductView : IView<Product>, IDto
     public ProductType Type { get; set; }
     
     public IEnumerable<PriceBookSView> Prices { get; set; }
+    
+    public IEnumerable<Tag> Tags { get; set; }
 
 }

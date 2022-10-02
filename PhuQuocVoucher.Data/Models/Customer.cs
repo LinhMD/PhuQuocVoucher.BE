@@ -19,11 +19,17 @@ public class Customer : BaseModel
 
     public User? UserInfo { get; set; }
     public int? UserInfoId { get; set; }
+    
+    public Seller? AssignSeller { get; set; }
+    
+    public int? AssignSellerId { get; set; }
 
     public IEnumerable<Profile> Profiles { get; set; }
 
     public IEnumerable<Order> Orders { get; set; }
 
     public IEnumerable<Review> Reviews { get; set; }
+    
+    
 
 }

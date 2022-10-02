@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Dtos.ProductDto;
+using PhuQuocVoucher.Business.Dtos.TagDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 
@@ -55,6 +56,13 @@ public class ProductController : ControllerBase
         return Ok(await _repo.Find<ProductView>(pro => pro.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Product)} with id {id}"));
     }
+
+    [HttpPost("{id:int}/tags")]
+    public async Task<IActionResult> AddTag(IList<string> tags, int id)
+    {
+        
+        return null;
+    } 
 
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromBody] UpdateProduct request, int id)

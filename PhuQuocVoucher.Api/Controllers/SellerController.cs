@@ -142,9 +142,20 @@ public class SellerController : ControllerBase
     public async Task<IActionResult> CreateCustomer([FromBody]CreateCustomer request, [FromClaim("SellerId")] int sellerId)
     {
         request.UserInfo.Role = Role.Customer;
-        return Ok(await _customerService.CreateCustomerAsync(request));
+        return Ok(await _customerService.CreateCustomerAsync(request, sellerId));
     }
-    
+    /// <summary>
+    /// Get Customer List
+    /// </summary>
+    /// <param name="sellerId">Get from claims</param>
+    /// <returns>all customers  this seller support</returns>
+    [Authorize(Roles = nameof(Role.Seller))]
+    [SwaggerResponse(200,"List of customers been assigned to you", typeof(List<CustomerSView>))]
+    [HttpGet("customers")]
+    public async Task<IActionResult> GetCustomer([FromClaim("SellerId")] int? sellerId)
+    {
+        return Ok(await _work.Get<Customer>().Find<CustomerSView>(c => c.AssignSellerId == sellerId).ToListAsync());
+    }
     /// <summary>
     /// Add an cart item
     /// </summary>
@@ -165,7 +176,7 @@ public class SellerController : ControllerBase
     /// <param name="customerId">Customer id</param>
     /// <param name="cartItemId">Cart Id</param>
     /// <returns>Cart</returns>
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Seller))]
     [SwaggerResponse(200,"Cart view", typeof(CartView))]
     [HttpDelete("customers/{customerId:int}/cart/items/{cartItemId:int}")]
     public async Task<IActionResult> DeleteCartItem(int customerId, int cartItemId)

@@ -12,5 +12,8 @@ public class PriceBook
     
     public int ProductId { get; set; }
     
+    public bool IsDefault { get; set; }
+
+    public bool IsSellerPrice { get; set; }
     public double Price { get; set; }
 }

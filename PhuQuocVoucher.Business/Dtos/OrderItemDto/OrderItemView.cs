@@ -1,6 +1,7 @@
 ﻿using CrudApiTemplate.View;
 using Mapster;
 using PhuQuocVoucher.Business.Dtos.PriceBookDto;
+using PhuQuocVoucher.Business.Dtos.QrCodeDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.OrderItemDto;
@@ -20,6 +21,8 @@ public class OrderItemView : IView<OrderItem>, IDto
     public DateTime? UseDate { get; set; }
     
     public PriceBookView Price { get; set; }
+    
+    public QrCodeView QrCode { get; set; }
 
     public void InitMapper()
     {

@@ -19,12 +19,6 @@ public class CreateProduct : CreateDto, ICreateRequest<Product>
 
     [Required]
     public string Content { get; set; }
-
-    [Required]
-    public double Price { get; set; }
-
-    [Required] public bool IsForKid { get; set; } = false;
-    
     public ProductType Type { get; set; }
 
     public IList<CreatePriceBookSimple> PriceBooks { get; set; }

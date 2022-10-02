@@ -201,7 +201,7 @@ public class LoginController : ControllerBase
         return Ok();
     }
 
-    public static class LoginHelper
+    private static class LoginHelper
     {
         public static string GenerateSalt()
         {
@@ -224,9 +224,9 @@ public class LoginController : ControllerBase
             var claims = new List<Claim>()
             {
                 new("Id", user.Id.ToString()),
-                new("Username", user.UserName),
-                new("role", user.Role.ToString()),
-                new("Email", user.Email)
+                new(ClaimTypes.NameIdentifier,user.UserName),
+                new(ClaimTypes.Role, user.Role.ToString()),
+                new(ClaimTypes.Email, user.Email)
             };
             
             if (additionalClaims != null)

@@ -6,7 +6,6 @@ public class PriceLevel
     
     public string Name { get; set; }
     
-    public bool IsSellerPrice { get; set; }
     
     public IEnumerable<PriceBook> PriceBooks { get; set; }
 }

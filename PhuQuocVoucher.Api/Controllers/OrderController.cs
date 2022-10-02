@@ -32,10 +32,10 @@ public class OrderController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindOrder request, [FromQuery] PagingRequest paging, string? orderBy)
     {
-        return Ok((await _orderService.GetAsync<OrderView>(new GetRequest<Order>
+        return Ok((await _orderService.GetAsync<OrderSView>(new GetRequest<Order>
         {
             FindRequest = request,
-            OrderRequest = new OrderRequest<Order>(),
+            OrderRequest = orderBy.ToOrderRequest<Order>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }
