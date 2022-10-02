@@ -49,7 +49,7 @@ public class ComboController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
-        return Ok(await _repo.Find(cus => cus.Id == id).FirstOrDefaultAsync() ??
+        return Ok(await _repo.Find<ComboView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Combo)} with id {id}"));
     }
 

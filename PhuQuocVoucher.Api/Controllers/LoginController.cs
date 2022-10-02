@@ -115,6 +115,15 @@ public class LoginController : ControllerBase
         user.Validate();
 
         user = await _work.Users.AddAsync(user);
+
+        var customer = new Customer()
+        {
+            UserInfo = user,
+            UserInfoId = user.Id,
+            CustomerName = user.UserName,
+            CreateAt = DateTime.Now,
+        }; 
+        await _work.Get<Customer>().AddAsync(customer);
         return user;
     }
 
@@ -216,7 +225,7 @@ public class LoginController : ControllerBase
             {
                 new("Id", user.Id.ToString()),
                 new("Username", user.UserName),
-                new("Role", user.Role.ToString()),
+                new("role", user.Role.ToString()),
                 new("Email", user.Email)
             };
             

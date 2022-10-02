@@ -89,6 +89,7 @@ public class CustomerController : ControllerBase
     {
         return Ok(await _customerService.UpdateAsync(id, request));
     }
+    
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
@@ -96,6 +97,13 @@ public class CustomerController : ControllerBase
         return Ok(await _customerService.DeleteAsync(id));
     }
 
+    [HttpGet("{id:int}/orders")]
+    public async Task<IActionResult> GetOrder(int id, PagingRequest paging, string? orderBy)
+    {
+        var orders = await _orderService.GetOrdersByCustomerId(id, paging, orderBy.ToOrderRequest<Order>());
+        return Ok(orders.ToPagingResponse(paging));
+    }
+    
     [HttpGet("cart")]
     [Authorize]
     public async Task<IActionResult> GetCart([FromClaim("CustomerId")]int id)
@@ -110,16 +118,10 @@ public class CustomerController : ControllerBase
     }
     
     [HttpPost("cart/items")]
-    [Authorize]
-    public async Task<IActionResult> AddCartItem(CreateCartItem item)
+    [Authorize(Roles = "Customer")]
+    public async Task<IActionResult> AddCartItem(CreateCartItem item, [FromClaim("CustomerId")]int cusId)
     {
-        var cartId = int.Parse(User.FindFirstValue("CartId"));
-
-        var cartItem = item.Adapt<CartItem>();
-        cartItem.CartId = cartId;
-
-        await _work.Get<CartItem>().AddAsync(cartItem);
-        return Ok(cartItem.Adapt<CartItemView>());
+        return Ok(await _cartService.AddItemToCart(item, cusId));
     }
 
     
@@ -156,10 +158,21 @@ public class CustomerController : ControllerBase
         return Ok(await _orderService.PlaceOrderAsync(cart, cusId));
     }
 
-    [HttpGet("{id:int}/orders")]
-    public async Task<IActionResult> GetOrder(int id, PagingRequest paging, string? orderBy)
+    [Authorize]
+    [HttpGet("current/orders")]
+    public async Task<IActionResult> GetLoginCustomerOrder([FromClaim("CustomerId")]int id, PagingRequest paging, string? orderBy)
     {
         var orders = await _orderService.GetOrdersByCustomerId(id, paging, orderBy.ToOrderRequest<Order>());
         return Ok(orders.ToPagingResponse(paging));
     }
+    
+    [HttpGet("current")]
+    [Authorize]
+    public async Task<IActionResult> GetCurrent([FromClaim("CustomerId")]int id)
+    {
+        return Ok(await _repo.Find<CustomerSView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
+                  throw new ModelNotFoundException($"Not Found {nameof(Customer)} with id {id}"));
+    }
+    
+    
 }

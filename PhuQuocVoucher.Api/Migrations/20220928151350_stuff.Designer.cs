@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhuQuocVoucher.Data;
 
@@ -11,9 +12,10 @@ using PhuQuocVoucher.Data;
 namespace PhuQuocVoucher.Controller.Migrations
 {
     [DbContext(typeof(PhuQuocDataContext))]
-    partial class PhuQuocDataContextModelSnapshot : ModelSnapshot
+    [Migration("20220928151350_stuff")]
+    partial class stuff
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -223,9 +225,6 @@ namespace PhuQuocVoucher.Controller.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("AssignSellerId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("CartId")
                         .HasColumnType("int");
 
@@ -250,8 +249,6 @@ namespace PhuQuocVoucher.Controller.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AssignSellerId");
 
                     b.HasIndex("UserInfoId")
                         .IsUnique()
@@ -1055,15 +1052,9 @@ namespace PhuQuocVoucher.Controller.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Customer", b =>
                 {
-                    b.HasOne("PhuQuocVoucher.Data.Models.Seller", "AssignSeller")
-                        .WithMany("Customers")
-                        .HasForeignKey("AssignSellerId");
-
                     b.HasOne("PhuQuocVoucher.Data.Models.User", "UserInfo")
                         .WithMany()
                         .HasForeignKey("UserInfoId");
-
-                    b.Navigation("AssignSeller");
 
                     b.Navigation("UserInfo");
                 });
@@ -1320,8 +1311,6 @@ namespace PhuQuocVoucher.Controller.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Seller", b =>
                 {
-                    b.Navigation("Customers");
-
                     b.Navigation("HandleOrders");
                 });
 
