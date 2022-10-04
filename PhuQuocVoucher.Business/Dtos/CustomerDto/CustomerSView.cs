@@ -20,7 +20,7 @@ public class CustomerSView : IView<Customer>, IDto
     
     public SellerSView AssignSeller { get; set; }
     
-    public int CartId { get; set; }
+    public int? CartId { get; set; }
 
     public void InitMapper()
     {

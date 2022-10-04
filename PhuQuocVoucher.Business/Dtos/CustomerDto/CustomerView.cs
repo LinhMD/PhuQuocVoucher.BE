@@ -23,7 +23,7 @@ public class CustomerView : IView<Customer>, IDto
     
     public IList<ProfileView> Profiles { get; set; }
 
-    public int CartId { get; set; }
+    public int? CartId { get; set; }
 
     public void InitMapper()
     {

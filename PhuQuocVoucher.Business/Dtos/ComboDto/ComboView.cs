@@ -23,6 +23,8 @@ public class ComboView : IView<Combo>, IDto
     [JsonIgnore]
     public ProductView? Product { get; set; }
     
+    
+    public double Price { get; set; }
     public string? Description { get; set; }
 
     public string? Summary { get; set; }
@@ -50,6 +52,6 @@ public class ComboView : IView<Combo>, IDto
             .Map(view => view.BannerImg, combo => combo.Product!.BannerImg)
             .Map(view => view.Content, combo => combo.Product!.Content)
             .Map(view => view.Type, combo => combo.Product!.Type)
-            .Map(view => view.Prices, combo => combo.Product!.Prices);
+            .Map(view => view.Price, combo => combo.Product!.Prices.FirstOrDefault(p => p.IsDefault)!.Price);
     }
 }

@@ -56,7 +56,7 @@ public class SellerController : ControllerBase
     /// <param name="completeDateLowBound">profit from {param} to current date</param>
     [HttpGet]
     [SwaggerResponse(200,"Seller view page", typeof(PagingResponse<SellerView>))]
-    public async Task<IActionResult> Get(
+    public async Task<ActionResult<PagingResponse<SellerView>>> Get(
         [FromQuery] FindSeller request,
         [FromQuery] PagingRequest paging,
         [FromQuery] string? orderBy,
@@ -72,14 +72,14 @@ public class SellerController : ControllerBase
 
     [HttpPost]
     [SwaggerResponse(200,"Seller", typeof(Seller))]
-    public async Task<IActionResult> Create([FromBody] CreateSeller request)
+    public async Task<ActionResult<Seller>> Create([FromBody] CreateSeller request)
     {
         return Ok(await _sellerService.CreateAsync(request));
     }
 
     [HttpGet("{id:int}")]
     [SwaggerResponse(200,"Seller view", typeof(SellerView))]
-    public async Task<IActionResult> Get(int id)
+    public async Task<ActionResult<SellerView>> Get(int id)
     {
         return Ok(await _repo.Find<SellerView>(seller => seller.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Seller)} with id {id}"));
@@ -93,7 +93,7 @@ public class SellerController : ControllerBase
     ///<code></code>
     [HttpGet("current")]
     [SwaggerResponse(200,"Seller view", typeof(SellerView))]
-    public async Task<IActionResult> GetCurrent([FromClaim("SellerId")]int id)
+    public async Task<ActionResult<SellerView>> GetCurrent([FromClaim("SellerId")]int id)
     {
         return Ok(await _repo.Find<SellerView>(seller => seller.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Seller)} with id {id}"));
@@ -102,14 +102,14 @@ public class SellerController : ControllerBase
 
     [HttpPut("{id:int}")]
     [SwaggerResponse(200,"Seller", typeof(Seller))]
-    public async Task<IActionResult> Update([FromBody] UpdateSeller request, int id)
+    public async Task<ActionResult<Seller>> Update([FromBody] UpdateSeller request, int id)
     {
         return Ok(await _sellerService.UpdateAsync(id, request));
     }
 
     [HttpDelete("{id:int}")]
     [SwaggerResponse(200,"Seller", typeof(Seller))]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<ActionResult<Seller>> Delete(int id)
     {
         return Ok(await _sellerService.DeleteAsync(id));
     }
@@ -121,10 +121,10 @@ public class SellerController : ControllerBase
     /// <param name="createOrder">Order being create</param>
     /// <param name="sellerId">nah this field get from jwt, better be authenticated :v</param>
     /// <returns>Order have been successfully created</returns>
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Seller))]
     [SwaggerResponse(200,"Order view", typeof(OrderView))]
     [HttpPost("order")]
-    public async Task<IActionResult> CreateOrder(CreateOrder createOrder, [FromClaim("SellerId")] int sellerId)
+    public async Task<ActionResult<OrderView>> CreateOrder(CreateOrder createOrder, [FromClaim("SellerId")] int sellerId)
     {
         createOrder.SellerId = sellerId;
         return Ok(await _orderService.CreateOrderAsync(createOrder));
@@ -136,10 +136,10 @@ public class SellerController : ControllerBase
     /// <param name="request">Create customer from</param>
     /// <param name="sellerId"></param>
     /// <returns>Customer newly created</returns>
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Seller))]
     [SwaggerResponse(200,"Cart view", typeof(CustomerSView))]
     [HttpPost("customers")]
-    public async Task<IActionResult> CreateCustomer([FromBody]CreateCustomer request, [FromClaim("SellerId")] int sellerId)
+    public async Task<ActionResult<CustomerSView>> CreateCustomer([FromBody]CreateCustomer request, [FromClaim("SellerId")] int sellerId)
     {
         request.UserInfo.Role = Role.Customer;
         return Ok(await _customerService.CreateCustomerAsync(request, sellerId));
@@ -152,7 +152,7 @@ public class SellerController : ControllerBase
     [Authorize(Roles = nameof(Role.Seller))]
     [SwaggerResponse(200,"List of customers been assigned to you", typeof(List<CustomerSView>))]
     [HttpGet("customers")]
-    public async Task<IActionResult> GetCustomer([FromClaim("SellerId")] int? sellerId)
+    public async Task<ActionResult<List<CustomerSView>>> GetCustomer([FromClaim("SellerId")] int? sellerId)
     {
         return Ok(await _work.Get<Customer>().Find<CustomerSView>(c => c.AssignSellerId == sellerId).ToListAsync());
     }
@@ -164,8 +164,8 @@ public class SellerController : ControllerBase
     /// <returns>Customer cart</returns>
     [HttpPost("customers/{customerId:int}/cart/items/")]
     [SwaggerResponse(200,"Cart view", typeof(CartView))]
-    [Authorize]
-    public async Task<IActionResult> AddCartItem(CreateCartItem item, int customerId)
+    [Authorize(Roles = nameof(Role.Seller))]
+    public async Task<ActionResult<CartView>> AddCartItem(CreateCartItem item, int customerId)
     {
         return Ok(await _cartService.AddItemToCart(item, customerId));
     }
@@ -179,7 +179,7 @@ public class SellerController : ControllerBase
     [Authorize(Roles = nameof(Role.Seller))]
     [SwaggerResponse(200,"Cart view", typeof(CartView))]
     [HttpDelete("customers/{customerId:int}/cart/items/{cartItemId:int}")]
-    public async Task<IActionResult> DeleteCartItem(int customerId, int cartItemId)
+    public async Task<ActionResult<CartView?>> DeleteCartItem(int customerId, int cartItemId)
     {
         var cart = await _cartService.GetCartByCustomerAsync(customerId);
         var found = cart.CartItems.FirstOrDefault(c => c.Id == cartItemId);
@@ -199,10 +199,10 @@ public class SellerController : ControllerBase
     /// <param name="updateCartItem"></param>
     /// <param name="customerId"></param>
     /// <returns>cart</returns>
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Seller))]
     [SwaggerResponse(200, "Cart view",typeof(CartView))]
     [HttpPut("customers/{customerId:int}/cart/items/{cartItemId:int}")]
-    public async Task<IActionResult> UpdateCartItem(int cartItemId, UpdateCartItem updateCartItem, int customerId)
+    public async Task<ActionResult<CartView>> UpdateCartItem(int cartItemId, UpdateCartItem updateCartItem, int customerId)
     {
         var cart = await _cartService.GetCartByCustomerAsync(customerId);
         var itemFound = await _work.Get<CartItem>().Find(c => c.CartId == cart.Id && c.Id == cartItemId).FirstOrDefaultAsync();
@@ -219,8 +219,8 @@ public class SellerController : ControllerBase
     /// <returns></returns>
     [HttpGet("customers/{customerId:int}/cart")]
     [SwaggerResponse(200, "Cart view", typeof(CartView))]
-    [Authorize]
-    public async Task<IActionResult> GetCart(int customerId)
+    [Authorize(Roles = nameof(Role.Seller))]
+    public async Task<ActionResult<CartView>> GetCart(int customerId)
     {
         return Ok(await _cartService.GetCartByCustomerAsync(customerId));
     }
@@ -231,10 +231,10 @@ public class SellerController : ControllerBase
     /// <param name="customerId"></param>
     /// <param name="sellerId"></param>
     /// <returns></returns>
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Seller))]
     [HttpPost("customers/{customerId:int}/place-order")]
     [SwaggerResponse(200, "Order View",typeof(OrderView))]
-    public async Task<IActionResult> PlaceOrder(int customerId, [FromClaim("SellerId")]int? sellerId)
+    public async Task<ActionResult<OrderView>> PlaceOrder(int customerId, [FromClaim("SellerId")]int? sellerId)
     {
         //Get User Cart
         var cart = await _cartService.GetCartByCustomerAsync(customerId);

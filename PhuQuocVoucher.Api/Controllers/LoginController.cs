@@ -34,11 +34,14 @@ public class LoginController : ControllerBase
     private readonly IUserService _userService;
     private readonly IMailingService _mailing;
 
-    public LoginController(IConfiguration config, IUnitOfWork work, IUserService userService, IMailingService mailing)
+    private readonly ICartService _cartService;
+
+    public LoginController(IConfiguration config, IUnitOfWork work, IUserService userService, IMailingService mailing, ICartService cartService)
     {
         _config = config;
         _userService = userService;
         _mailing = mailing;
+        _cartService = cartService;
         _work = (PqUnitOfWork?) work ?? throw new RuntimeBinderException();
     }
 
@@ -54,7 +57,7 @@ public class LoginController : ControllerBase
     }
 
     [NonAction]
-    public async Task<IDictionary<string, string?>?> GetAdditionalClaims(User user)
+    private async Task<IDictionary<string, string?>?> GetAdditionalClaims(User user)
     {
         var additionalClaims = default(Dictionary<string, string?>);
         switch (user.Role)
@@ -123,7 +126,12 @@ public class LoginController : ControllerBase
             CustomerName = user.UserName,
             CreateAt = DateTime.Now,
         }; 
+        
         await _work.Get<Customer>().AddAsync(customer);
+
+        var cart = await _cartService.GetCartByCustomerAsync(customer.Id);
+        customer.CartId = cart.Id;
+        await _work.CompleteAsync();
         return user;
     }
 
@@ -243,17 +251,12 @@ public class LoginController : ControllerBase
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private static async Task<UserRecord> GetFireBaseUser(string Uid)
-        {
-            var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(Uid);
-            return userRecord;
-        }
 
         public static async Task<UserRecord> GetFireBaseUserByToken(string token)
         {
             var decode = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
             var uid = decode.Uid;
-            return await GetFireBaseUser(uid);
+            return await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
         }
     }
 

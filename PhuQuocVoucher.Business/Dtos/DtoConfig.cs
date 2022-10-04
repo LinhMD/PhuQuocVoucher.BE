@@ -14,6 +14,7 @@ using PhuQuocVoucher.Business.Dtos.ProviderDto;
 using PhuQuocVoucher.Business.Dtos.ProviderTypeDto;
 using PhuQuocVoucher.Business.Dtos.SellerDto;
 using PhuQuocVoucher.Business.Dtos.ServiceDto;
+using PhuQuocVoucher.Business.Dtos.TagDto;
 using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Data.Models;
@@ -51,15 +52,13 @@ public static class DtoConfig
         Config<VoucherSView>();
         Config<CustomerSimpleView>();
         Config<CustomerView>();
+        Config<TagView>();
 
         Config<CreateUser>();
         Config<CreateProvider>();   
         Config<CreateProviderType>();
         Config<CreateCustomer>();
         Config<CreateBlog>();
-        
         Config<SignUpRequest>();
-        
-
     }
 }

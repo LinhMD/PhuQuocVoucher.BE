@@ -60,8 +60,8 @@ public class ProductController : ControllerBase
     [HttpPost("{id:int}/tags")]
     public async Task<IActionResult> AddTag(IList<string> tags, int id)
     {
-        
-        return null;
+        return Ok(await _productService.AddTagsAsync(tags, id));
+
     } 
 
     [HttpPut("{id:int}")]

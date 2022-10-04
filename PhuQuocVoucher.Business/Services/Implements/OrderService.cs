@@ -37,39 +37,23 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         return (result, total);
     }
 
-    public async Task<OrderView> CreateOrderAsync(CreateOrder createOrder)
-    {
-        try
-        {
-            var orderItems = createOrder.OrderItems
-                .Select(o => (o as ICreateRequest<OrderItem>).CreateNew(UnitOfWork)).ToList();
-            if (!await IsInventoryEnoughAsync(orderItems))
-                throw new ModelValueInvalidException("Voucher inventory insufficient!!");
+   
 
-            await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
-
-            var order = (createOrder as ICreateRequest<Order>).CreateNew(UnitOfWork);
-            order.TotalPrice = orderItems.Select(item => item.Price.Price).Sum();
-            order.OrderItems = orderItems;
-            order.Validate();
-            
-            return (await UnitOfWork.Get<Order>().AddAsync(order)).Adapt<OrderView>();
-        }
-        catch (DbUpdateException e)
-        {
-            e.InnerException?.StackTrace.Dump();
-            throw new DbQueryException(e.InnerException?.Message!, DbError.Create);
-        }
-    }
-
-    private async Task<bool> IsInventoryEnoughAsync(IEnumerable<OrderItem> orderItems)
+    private async Task ValidateInventoryEnoughAsync(IEnumerable<OrderItem> orderItems)
     {
         var itemCount = orderItems.GroupBy(o => o.OrderProductId);
         //check inventory
-        var foundVoucher = await UnitOfWork.Get<Voucher>().Find(voucher => itemCount
-            .Any(i => i.Key == voucher.ProductId && i.Count() >= voucher.Inventory)).CountAsync();
-
-        return Equals(itemCount.Count(), foundVoucher);
+        foreach (var items in itemCount)
+        {
+            var voucher = await UnitOfWork.Get<Voucher>()
+                .Find(voucher => voucher.ProductId == items.Key && voucher.Inventory >= items.Count()).FirstOrDefaultAsync();
+            
+            if (voucher == null)
+            {
+                throw new ModelValueInvalidException($"Voucher with product id {items.ToList().First().OrderProductId} do not have enough inventory");
+            }
+            voucher.Inventory -= items.Count();
+        }
     }
 
     public async Task<OrderView> PlaceOrderAsync(CartView cart, int cusId, int? sellerId = null)
@@ -90,21 +74,53 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         {
             for (var i = 0; i < items.Quantity; i++)
             {
-                orderItems.Add(new OrderItem
+                var orderItem = new OrderItem
                 {
                     PriceId = items.PriceId,
                     OrderProductId = items.ProductId,
                     OrderId = order.Id
-                });
+                };
+                orderItem.Validate();
+                orderItems.Add(orderItem);
                 total += items.Price;
             }
         }
         order.TotalPrice = total;
-        
-        if (!await IsInventoryEnoughAsync(orderItems))
-            throw new ModelValueInvalidException("Voucher inventory insufficient!!");
-
+        await ValidateInventoryEnoughAsync(orderItems);
+        await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
         await UnitOfWork.Get<CartItem>().RemoveAllAsync(cart.CartItems.Select(c => new CartItem{Id = c.Id}));
-        return (await UnitOfWork.Get<Order>().Find<OrderView>(o => o.Id == order.Id).FirstOrDefaultAsync())!;
+        order.OrderItems = orderItems;
+        
+        order.Validate();
+            
+        return order.Adapt<OrderView>();
+    }
+    
+    public async Task<OrderView> CreateOrderAsync(CreateOrder createOrder)
+    {
+        try
+        {
+            var orderItems = createOrder.OrderItems
+                .Select(o => (o as ICreateRequest<OrderItem>).CreateNew(UnitOfWork)).ToList();
+            
+            orderItems.ForEach(o => o.Validate());
+            
+            await ValidateInventoryEnoughAsync(orderItems);
+
+            await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
+
+            var order = (createOrder as ICreateRequest<Order>).CreateNew(UnitOfWork);
+            order.TotalPrice = orderItems.Select(item => item.Price.Price).Sum();
+            
+            order.OrderItems = orderItems;
+            order.Validate();
+            
+            return (await UnitOfWork.Get<Order>().AddAsync(order)).Adapt<OrderView>();
+        }
+        catch (DbUpdateException e)
+        {
+            e.InnerException?.StackTrace.Dump();
+            throw new DbQueryException(e.InnerException?.Message!, DbError.Create);
+        }
     }
 }

@@ -48,11 +48,10 @@ public class ProductService : ServiceCrud<Product>, IProductService
         if (product == null) throw new ModelNotFoundException($"Product Id {productId} Not Found!!");
         foreach (var foundTag in foundTags)
         {
-            foundTag.Products.Add(product);
+            foundTag.Products = new List<Product> {product};
         }
         await Repository.CommitAsync();
-        var view = await Repository.Find<ProductView>(p => p.Id == productId).FirstOrDefaultAsync();
-        view!.Tags = foundTags;
-        return view;
+        return await Repository.Find<ProductView>(p => p.Id == productId).FirstOrDefaultAsync()
+               ?? product.Adapt<ProductView>();
     }
 }

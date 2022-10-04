@@ -23,6 +23,6 @@ public class ProductSView :IView<Product>, IDto
     
     public void InitMapper()
     {
-        TypeAdapterConfig<Product, ProductSView>.NewConfig();
+        TypeAdapterConfig<Product, ProductSView>.NewConfig().Map(view => view.Price, product => product.Prices.FirstOrDefault(p => p.IsDefault).Price);
     }
 }

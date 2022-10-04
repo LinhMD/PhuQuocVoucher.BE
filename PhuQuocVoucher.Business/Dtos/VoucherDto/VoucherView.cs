@@ -40,6 +40,7 @@ public class VoucherView : IView<Voucher>, IDto
 
     public bool IsForKid { get; set; }
 
+    public double Price { get; set; }
     public ProductType Type { get; set; }
     
     public IEnumerable<PriceBookSView> Prices { get; set; }
@@ -52,7 +53,8 @@ public class VoucherView : IView<Voucher>, IDto
             .Map(view => view.BannerImg, voucher => voucher.Product!.BannerImg)
             .Map(view => view.Content, voucher => voucher.Product!.Content)
             .Map(view => view.Type, voucher => voucher.Product!.Type)
-            .Map(view => view.Prices, voucher => voucher.Product!.Prices);
+            .Map(view => view.Prices, voucher => voucher.Product!.Prices)
+            .Map(view => view.Price, voucher => voucher.Product!.Prices.FirstOrDefault(p => p.IsDefault)!.Price);
 
     }
 }

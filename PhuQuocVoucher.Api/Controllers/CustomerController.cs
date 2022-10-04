@@ -3,6 +3,7 @@ using System.Security.Claims;
 using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
+using CrudApiTemplate.Response;
 using CrudApiTemplate.Utilities;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,8 @@ using PhuQuocVoucher.Api.CustomBinding;
 using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
+using PhuQuocVoucher.Business.Dtos.OrderDto;
+using PhuQuocVoucher.Business.Dtos.ProfileDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 
@@ -28,6 +31,8 @@ public class CustomerController : ControllerBase
 
     private readonly IOrderService _orderService;
 
+    private readonly IProfileService _profileService;
+
     private readonly IUnitOfWork _work;
 
     private readonly ILogger<CustomerController> _logger;
@@ -38,13 +43,14 @@ public class CustomerController : ControllerBase
     /// Create Controller.
     /// </summary>
     public CustomerController(ILogger<CustomerController> logger, IUnitOfWork work,
-        ICustomerService customerService, IOrderService orderService, ICartService cartService)
+        ICustomerService customerService, IOrderService orderService, ICartService cartService, IProfileService profileService)
     {
         _customerService = customerService;
         _logger = logger;
         _work = work;
         _orderService = orderService;
         _cartService = cartService;
+        _profileService = profileService;
         _repo = work.Get<Customer>();
     }
 
@@ -70,43 +76,95 @@ public class CustomerController : ControllerBase
         })).ToPagingResponse(paging));
     }
 
-    
+    /// <summary>
+    /// Create Customer, Admin used only
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody]CreateCustomer request)
+    [Authorize(Roles = nameof(Role.Admin))]
+    public async Task<ActionResult<CustomerSView>> Create([FromBody]CreateCustomer request)
     {
         return Ok(await _customerService.CreateCustomerAsync(request));
     }
 
+    /// <summary>
+    /// Get Customer with Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="ModelNotFoundException"></exception>
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> Get(int id)
+    public async Task<ActionResult<CustomerSView>> Get(int id)
     {
         return Ok(await _repo.Find<CustomerSView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Customer)} with id {id}"));
     }
 
+    /// <summary>
+    /// Update Customer, null fill will not be update
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="id"></param>
+    /// <returns>Customer</returns>
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update([FromBody] UpdateCustomer request, int id)
+    [Authorize(Roles = nameof(Role.Admin))]
+    public async Task<ActionResult<Customer>> Update([FromBody] UpdateCustomer request, int id)
     {
         return Ok(await _customerService.UpdateAsync(id, request));
     }
     
 
+    /// <summary>
+    /// Delete customer with {id}
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Customer been delete</returns>
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    [Authorize(Roles = nameof(Role.Admin))]
+    public async Task<ActionResult<Customer>> Delete(int id)
     {
         return Ok(await _customerService.DeleteAsync(id));
     }
 
+    /// <summary>
+    /// Get customer Order
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="paging"></param>
+    /// <param name="orderBy"></param>
+    /// <returns>OrderViews</returns>
     [HttpGet("{id:int}/orders")]
-    public async Task<IActionResult> GetOrder(int id, PagingRequest paging, string? orderBy)
+    [Authorize(Roles = nameof(Role.Admin))]
+    public async Task<ActionResult<PagingResponse<OrderView>>> GetOrder(int id,[FromQuery] PagingRequest paging, string? orderBy)
     {
         var orders = await _orderService.GetOrdersByCustomerId(id, paging, orderBy.ToOrderRequest<Order>());
         return Ok(orders.ToPagingResponse(paging));
     }
     
+    /// <summary>
+    /// Get customer Profiles
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="paging"></param>
+    /// <param name="orderBy"></param>
+    /// <returns>OrderViews</returns>
+    [HttpGet("{id:int}/profiles")]
+    [Authorize(Roles = nameof(Role.Admin))]
+    public async Task<ActionResult<IList<Profile>>> GetProfiles(int id)
+    {
+        var orders = await _profileService.GetProfileOfCustomer(id);
+        return Ok(orders);
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("cart")]
-    [Authorize]
-    public async Task<IActionResult> GetCart([FromClaim("CustomerId")]int id)
+    [Authorize(Roles = nameof(Role.Customer))]
+    public async Task<ActionResult<CartView>> GetCart([FromClaim("CustomerId")]int id)
     {
         var cart = await _work.Get<Cart>()
             .Find<CartView>(cus => cus.CustomerId == id).FirstOrDefaultAsync() ?? 
@@ -117,17 +175,26 @@ public class CustomerController : ControllerBase
         return Ok(cart);
     }
     
+    /// <summary>
+    /// Add product item to login customer cart
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="cusId"></param>
+    /// <returns></returns>
     [HttpPost("cart/items")]
-    [Authorize(Roles = "Customer")]
-    public async Task<IActionResult> AddCartItem(CreateCartItem item, [FromClaim("CustomerId")]int cusId)
+    [Authorize(Roles = nameof(Role.Customer))]
+    public async Task<ActionResult<CartView>> AddCartItem(CreateCartItem item, [FromClaim("CustomerId")]int cusId)
     {
         return Ok(await _cartService.AddItemToCart(item, cusId));
     }
 
-    
-    [Authorize]
+    /// <summary>
+    /// delete product item from login customer cart
+    /// </summary>
+    /// <returns>CartItemView</returns>
+    [Authorize(Roles = nameof(Role.Customer))]
     [HttpDelete("cart/items/{cartItemId:int}")]
-    public async Task<IActionResult> DeleteCartItem(int cartItemId, [FromClaim("CartId")]int cartId)
+    public async Task<ActionResult<CartItemView>> DeleteCartItem(int cartItemId, [FromClaim("CartId")]int cartId)
     {
         var found = await _work.Get<CartItem>().Find(c => c.CartId == cartId && c.Id == cartItemId).FirstOrDefaultAsync();
         if (found == null)
@@ -138,9 +205,13 @@ public class CustomerController : ControllerBase
         return Ok(found.Adapt<CartItemView>());
     }
     
-    [Authorize]
+    /// <summary>
+    /// Add product item to login customer cart
+    /// </summary>
+    /// <returns>CartItemView</returns>
+    [Authorize(Roles = nameof(Role.Customer))]
     [HttpPut("cart/items/{cartItemId:int}")]
-    public async Task<IActionResult> UpdateCartItem(int cartItemId, UpdateCartItem updateCartItem, [FromClaim("CartId")]int cartId)
+    public async Task<ActionResult<CartItemView>> UpdateCartItem(int cartItemId, UpdateCartItem updateCartItem, [FromClaim("CartId")]int cartId)
     {
         var itemFound = await _work.Get<CartItem>().Find(c => c.CartId == cartId && c.Id == cartItemId).FirstOrDefaultAsync();
         if (itemFound == null) return BadRequest($"Cart Item {updateCartItem} not found!!!");
@@ -148,9 +219,13 @@ public class CustomerController : ControllerBase
         return Ok(itemFound.Adapt<CartItemView>());
     }
     
-    [Authorize]
+    /// <summary>
+    /// Create an order from Login Customer Cart, then remove all cart item
+    /// </summary>
+    /// <returns>OrderView</returns>
+    [Authorize(Roles = nameof(Role.Customer))]
     [HttpPost("cart/place-order")]
-    public async Task<IActionResult> PlaceOrder([FromClaim("CustomerId")]int cusId, [FromClaim("CartId")]  int cartId)
+    public async Task<ActionResult<OrderView>> PlaceOrder([FromClaim("CustomerId")]int cusId, [FromClaim("CartId")]  int cartId)
     {
         //Get User Cart
         var cart = await _cartService.GetCartByCustomerAsync(cusId);
@@ -158,21 +233,90 @@ public class CustomerController : ControllerBase
         return Ok(await _orderService.PlaceOrderAsync(cart, cusId));
     }
 
-    [Authorize]
-    [HttpGet("current/orders")]
-    public async Task<IActionResult> GetLoginCustomerOrder([FromClaim("CustomerId")]int id, PagingRequest paging, string? orderBy)
+    
+    /// <summary>
+    /// Get order of login Customer
+    /// </summary>
+    /// <returns>PagingResponse<OrderView></returns>
+    [Authorize(Roles = nameof(Role.Customer))]
+    [HttpGet("orders")]
+    public async Task<ActionResult<PagingResponse<OrderView>>> Get([FromQuery] FindOrder request, [FromQuery] PagingRequest paging, string? orderBy, [FromClaim("CustomerId")]int customerId)
     {
-        var orders = await _orderService.GetOrdersByCustomerId(id, paging, orderBy.ToOrderRequest<Order>());
-        return Ok(orders.ToPagingResponse(paging));
+        request.CustomerId = customerId;
+        
+        return Ok((await _orderService.GetAsync<OrderView>(new GetRequest<Order>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<Order>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
     }
     
+    /// <summary>
+    /// Get Current Login Customer
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>CustomerSView</returns>
+    /// <exception cref="ModelNotFoundException"></exception>
     [HttpGet("current")]
-    [Authorize]
-    public async Task<IActionResult> GetCurrent([FromClaim("CustomerId")]int id)
+    [Authorize(Roles = nameof(Role.Customer))]
+    public async Task<ActionResult<CustomerSView>> GetCurrent([FromClaim("CustomerId")]int id)
     {
         return Ok(await _repo.Find<CustomerSView>(cus => cus.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Customer)} with id {id}"));
     }
     
+    /// <summary>
+    /// Get login customer Profiles
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="paging"></param>
+    /// <param name="orderBy"></param>
+    /// <returns>OrderViews</returns>
+    [HttpGet("profiles")]
+    [Authorize(Roles = nameof(Role.Customer))]
+    public async Task<ActionResult<IList<Profile>>> GetCurrentProfiles([FromClaim("CustomerId")]int id)
+    {
+        var orders = await _profileService.GetProfileOfCustomer(id);
+        return Ok(orders);
+    }
     
+    [Authorize(Roles = nameof(Role.Customer))]
+    [HttpPost("profiles")]
+    public async Task<IActionResult> Create([FromBody] CreateProfile request, [FromClaim("CustomerId")] int customerId)
+    {
+        request.CustomerId = customerId;
+        return Ok(await _profileService.CreateAsync(request));
+    }
+
+    [Authorize(Roles = nameof(Role.Customer))]
+    [HttpGet("profiles/{id:int}")]
+    public async Task<IActionResult> GetProfile(int id, [FromClaim("CustomerId")] int customerId)
+    {
+        return Ok(await _work.Get<Profile>().Find(profile => profile.Id == id && profile.CustomerId == customerId).FirstOrDefaultAsync() ??
+                  throw new ModelNotFoundException($"Not Found {nameof(Profile)} with id {id}"));
+    }
+
+    [Authorize(Roles = nameof(Role.Customer))]
+    [HttpPut("profiles/{id:int}")]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfile request, int id, [FromClaim("CustomerId")] int customerId)
+    {
+        var profile = await _work.Get<Profile>().Find(profile => profile.Id == id && profile.CustomerId == customerId)
+            .FirstOrDefaultAsync();
+        if (profile == null)
+            return NotFound($"Profile with id {id} not found");
+        return Ok(await _profileService.UpdateAsync(id, request));
+    }
+
+    [Authorize(Roles = nameof(Role.Customer))]
+    [HttpDelete("profiles/{id:int}")]
+    public async Task<IActionResult> DeleteProfile(int id,  [FromClaim("CustomerId")] int customerId)
+    {
+        var profile = await _work.Get<Profile>().Find(profile => profile.Id == id && profile.CustomerId == customerId)
+            .FirstOrDefaultAsync();
+        if (profile == null)
+            return NotFound($"Profile with id {id} not found");
+        
+        return Ok(await _profileService.DeleteAsync(id));
+    }
 }

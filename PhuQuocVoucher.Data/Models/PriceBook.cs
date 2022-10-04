@@ -15,5 +15,6 @@ public class PriceBook
     public bool IsDefault { get; set; }
 
     public bool IsSellerPrice { get; set; }
+    
     public double Price { get; set; }
 }
