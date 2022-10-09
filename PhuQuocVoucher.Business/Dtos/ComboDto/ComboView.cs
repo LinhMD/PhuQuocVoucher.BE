@@ -24,7 +24,6 @@ public class ComboView : IView<Combo>, IDto
     public ProductView? Product { get; set; }
     
     
-    public double Price { get; set; }
     public string? Description { get; set; }
 
     public string? Summary { get; set; }
@@ -45,13 +44,12 @@ public class ComboView : IView<Combo>, IDto
 
     public void InitMapper()
     {
-        TypeAdapterConfig<Combo, ComboView>.NewConfig()
-            .Map(view => view.Vouchers, combo => combo.Vouchers)
-            .Map(view => view.Description, combo => combo.Product!.Description)
-            .Map(view => view.Summary, combo => combo.Product!.Summary)
-            .Map(view => view.BannerImg, combo => combo.Product!.BannerImg)
-            .Map(view => view.Content, combo => combo.Product!.Content)
-            .Map(view => view.Type, combo => combo.Product!.Type)
-            .Map(view => view.Price, combo => combo.Product!.Prices.FirstOrDefault(p => p.IsDefault)!.Price);
+        TypeAdapterConfig<Combo, ComboView>.NewConfig();
+        /*.Map(view => view.Vouchers, combo => combo.Vouchers)*/
+        /*.Map(view => view.Description, combo => combo.Product!.Description)
+        .Map(view => view.Summary, combo => combo.Product!.Summary)
+        .Map(view => view.BannerImg, combo => combo.Product!.BannerImg)
+        .Map(view => view.Content, combo => combo.Product!.Content)
+        .Map(view => view.Type, combo => combo.Product!.Type);*/
     }
 }

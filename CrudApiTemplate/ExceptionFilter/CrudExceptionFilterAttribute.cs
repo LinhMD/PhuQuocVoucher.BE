@@ -1,9 +1,9 @@
 ﻿using CrudApiTemplate.CustomException;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using PhuQuocVoucher.Api.Ultility;
+using Microsoft.Extensions.Logging;
 
-namespace PhuQuocVoucher.Api.ExceptionFilter;
+namespace CrudApiTemplate.ExceptionFilter;
 
 public class CrudExceptionFilterAttribute : ExceptionFilterAttribute
 {

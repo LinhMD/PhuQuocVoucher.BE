@@ -1,11 +1,12 @@
-﻿using CrudApiTemplate.CustomException;
+﻿using System.Security.Claims;
+using CrudApiTemplate.CustomBinding;
+using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PhuQuocVoucher.Api.ExceptionFilter;
 using PhuQuocVoucher.Business.Dtos.ComboDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
@@ -30,14 +31,17 @@ public class ComboController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] FindCombo request, [FromQuery] PagingRequest paging, string? orderBy)
+    public async Task<IActionResult> Get([FromQuery] FindCombo request, 
+        [FromQuery] PagingRequest paging, 
+        string? orderBy, 
+        [FromClaim(ClaimTypes.Role)] Role? role)
     {
-        return Ok((await _comboService.GetAsync<ComboView>(new GetRequest<Combo>
+        return Ok((await _comboService.FindComboAsync(new GetRequest<Combo>
         {
             FindRequest = request,
             OrderRequest = orderBy.ToOrderRequest<Combo>(),
             PagingRequest = paging
-        })).ToPagingResponse(paging));
+        }, role)).ToPagingResponse(paging));
     }
 
     [HttpPost]

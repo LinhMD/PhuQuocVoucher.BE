@@ -1,4 +1,4 @@
-﻿namespace PhuQuocVoucher.Api.CustomBinding;
+﻿namespace CrudApiTemplate.CustomBinding;
 
 //https://stackoverflow.com/questions/69651135/hide-parameter-from-swagger-swashbuckle
 public class OpenApiParameterIgnoreFilter : Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter

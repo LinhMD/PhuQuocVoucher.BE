@@ -40,4 +40,9 @@ public class FindVoucher : IFindRequest<Voucher>
     [Contain(target:$"{nameof(Service)}.{nameof(Service.Type)}.{nameof(ServiceType.Name)}")]
     public string? ServiceTypeName { get; set; }
 
+    /// <summary>
+    /// Voucher.Product.Tags.Any(tag => tag.Name.Contains(TagName))
+    /// </summary>
+    [Any(target:$"{nameof(Voucher.Product)}.{nameof(Product.Tags)}", property:nameof(Tag.Name), typeof(ContainAttribute))]
+    public string? TagName { get; set; }
 }

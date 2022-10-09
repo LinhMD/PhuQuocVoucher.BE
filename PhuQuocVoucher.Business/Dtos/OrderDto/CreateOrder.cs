@@ -6,7 +6,6 @@ namespace PhuQuocVoucher.Business.Dtos.OrderDto;
 
 public class CreateOrder : CreateDto, ICreateRequest<Order>
 {
-    public int Id { get; set; }
 
     public DateTime CreateDate { get; set; }
     public OrderStatus OrderStatus => OrderStatus.Processing;

@@ -100,22 +100,44 @@ public class OrderService : ServiceCrud<Order>, IOrderService
     {
         try
         {
+            //create order for the id
+            var order = new Order()
+            {
+                CustomerId = createOrder.CustomerId,
+                TotalPrice = 0D,
+                SellerId = createOrder.SellerId
+            };
+            order.Validate();
+            await UnitOfWork.Get<Order>().AddAsync(order);
+            foreach (var item in createOrder.OrderItems)
+            {
+                item.OrderId = order.Id;
+            }
             var orderItems = createOrder.OrderItems
                 .Select(o => (o as ICreateRequest<OrderItem>).CreateNew(UnitOfWork)).ToList();
             
-            orderItems.ForEach(o => o.Validate());
+            foreach (var item in orderItems)
+            {
+                try
+                {
+                    item.Validate();
+                }
+                catch (Exception e)
+                {
+                    e.StackTrace.Dump();
+                }
+            }
             
             await ValidateInventoryEnoughAsync(orderItems);
 
             await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
 
-            var order = (createOrder as ICreateRequest<Order>).CreateNew(UnitOfWork);
-            order.TotalPrice = orderItems.Select(item => item.Price.Price).Sum();
+            order.TotalPrice = await UnitOfWork.Get<OrderItem>().Find(item => item.OrderId == order.Id).Select(item => item.Price.Price).SumAsync();
             
             order.OrderItems = orderItems;
-            order.Validate();
-            
-            return (await UnitOfWork.Get<Order>().AddAsync(order)).Adapt<OrderView>();
+
+            await UnitOfWork.CompleteAsync();
+            return order.Adapt<OrderView>();
         }
         catch (DbUpdateException e)
         {

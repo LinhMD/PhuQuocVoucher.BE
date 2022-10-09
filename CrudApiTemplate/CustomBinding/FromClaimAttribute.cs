@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace PhuQuocVoucher.Api.CustomBinding;
+namespace CrudApiTemplate.CustomBinding;
 
 //https://www.davidkaya.com/custom-from-attribute-for-controller-actions-in-asp-net-core/ - found it here
 public class FromClaimAttribute : Attribute, IBindingSourceMetadata, IModelNameProvider

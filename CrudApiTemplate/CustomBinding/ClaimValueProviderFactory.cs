@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace PhuQuocVoucher.Api.CustomBinding;
+namespace CrudApiTemplate.CustomBinding;
 
 public class ClaimValueProviderFactory : IValueProviderFactory
 {
