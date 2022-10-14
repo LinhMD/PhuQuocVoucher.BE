@@ -11,11 +11,11 @@ public class FindCombo : IFindRequest<Combo>
     [Contain]
     public string? Name { get; set; }
 
-    [BiggerThan("StartDate")]
-    public DateTime? StartAfterDate { get; set; }
+   
+    /*[LessThan("StartDate")]
+    [BiggerThan("EndDate")]
+    public DateTime? Date { get; } = DateTime.Now;*/
 
-    [LessThan("EndDate")]
-    public DateTime? EndBeforeDate { get; set; }
 
     public int? Status { get; set; }
 

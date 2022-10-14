@@ -22,16 +22,16 @@ public class ProductView : IView<Product>, IDto
 
     public ProductType Type { get; set; }
     
+    public int Inventory { get; set; }
+    
     public IEnumerable<PriceBookSView> Prices { get; set; }
     
-
-    public double Price { get; set; }
     
     public IEnumerable<TagView> Tags { get; set; }
 
     public void InitMapper()
     {
-        TypeAdapterConfig<Product, ProductView>.NewConfig().Map(view => view.Price, product => product.Prices.FirstOrDefault(p => p.IsDefault).Price);
+        TypeAdapterConfig<Product, ProductView>.NewConfig();
 
     }
 }

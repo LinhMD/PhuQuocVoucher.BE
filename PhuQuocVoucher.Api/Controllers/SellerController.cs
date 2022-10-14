@@ -191,6 +191,45 @@ public class SellerController : ControllerBase
         cart.CartItems.Remove(found);
         return Ok(cart);
     }
+    /// <summary>
+    /// update cart item quantity to customer cart
+    /// </summary>
+    /// <returns>CartItemView</returns>
+    [Authorize(Roles = nameof(Role.Seller))]
+    [HttpPut("customers/{customerId:int}/cart/items")]
+    public async Task<ActionResult<CartView>> UpdateCartItem(
+        IList<UpdateCartItem> updateCartItem, int customerId)
+    {
+        var cart = await _cartService.GetCartByCustomerAsync(customerId);
+        return Ok(await _cartService.UpdateCartItems(updateCartItem, cart.Id, customerId));
+    }
+    
+    /// <summary>
+    /// clear cart item of customer cart
+    /// </summary>
+    /// <returns>CartItemView</returns>
+    [Authorize(Roles = nameof(Role.Seller))]
+    [HttpPut("customers/{customerId:int}/cart/clear")]
+    public async Task<ActionResult<CartView>> ClearCart(int customerId)
+    {
+        var cart = await _cartService.GetCartByCustomerAsync(customerId);
+        await _cartService.ClearCart(cart.Id);
+        return Ok();
+    }
+
+
+    /// <summary>
+    /// CLEAR cart then add all new cart item
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
+    [HttpPut("customers/{customerId:int}/cart")]
+    [Authorize(Roles = nameof(Role.Seller))]
+    public async Task<ActionResult<CartView>> UpdateCart(UpdateCart item, int customerId)
+    {
+        return Ok(await _cartService.UpdateCartAsync(item, customerId));
+    }
     
     /// <summary>
     /// Change quantity of a cart item

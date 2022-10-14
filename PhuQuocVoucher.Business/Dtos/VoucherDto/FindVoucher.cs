@@ -24,11 +24,9 @@ public class FindVoucher : IFindRequest<Voucher>
 
     public bool? IsRequireProfileInfo { get; set; }
 
-    [BiggerThan("StartDate")]
-    public DateTime? StartAfterDate { get; set; }
-
-    [LessThan("EndDate")]
-    public DateTime? EndBeforeDate { get; set; }
+    /*[LessThan("StartDate")]
+    [BiggerThan("EndDate")]
+    public DateTime? Date { get; set; } = DateTime.Now;*/
 
     public int? ProductId { get; set; }
 

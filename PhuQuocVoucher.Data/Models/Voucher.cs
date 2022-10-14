@@ -12,7 +12,6 @@ public class Voucher : BaseModel
     public int Id { get; set; }
     public string VoucherName { get; set; }
 
-    public int Inventory { get; set; }
 
     public int? LimitPerDay { get; set; }
 

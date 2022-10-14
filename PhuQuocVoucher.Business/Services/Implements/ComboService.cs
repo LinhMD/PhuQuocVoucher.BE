@@ -58,13 +58,13 @@ public class ComboService : ServiceCrud<Combo>, IComboService
         }
     }
 
-    public async Task<(IList<ComboView>, int)> FindComboAsync(GetRequest<Combo> request, Role? role)
+    public async Task<(IList<ComboView>, int)> FindComboAsync(GetRequest<Combo> request, string? role)
     {
         var queryable = Repository.Find(request.FindRequest.ToPredicate());
 
         var total = queryable.Count();
 
-        Expression<Func<Combo, ComboView>> select = role == Role.Customer?
+        Expression<Func<Combo, ComboView>> select = role == nameof(Role.Customer)?
             c => new ComboView //customer can't see seller price :v 
             {
             Id = c.Id,
@@ -75,7 +75,6 @@ public class ComboService : ServiceCrud<Combo>, IComboService
             Vouchers = c.Vouchers.Select(v => new VoucherSView()
             {
                 Id = v.Id,
-                Inventory = v.Inventory,
                 EndDate = v.EndDate,
                 StartDate = v.StartDate,
                 ProductId = v.ProductId,
@@ -107,7 +106,6 @@ public class ComboService : ServiceCrud<Combo>, IComboService
                 Vouchers = c.Vouchers.Select(v => new VoucherSView()
                 {
                     Id = v.Id,
-                    Inventory = v.Inventory,
                     EndDate = v.EndDate,
                     StartDate = v.StartDate,
                     ProductId = v.ProductId,

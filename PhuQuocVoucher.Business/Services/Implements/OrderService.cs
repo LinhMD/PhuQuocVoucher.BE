@@ -45,14 +45,14 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         //check inventory
         foreach (var items in itemCount)
         {
-            var voucher = await UnitOfWork.Get<Voucher>()
-                .Find(voucher => voucher.ProductId == items.Key && voucher.Inventory >= items.Count()).FirstOrDefaultAsync();
+            var product = await UnitOfWork.Get<Product>()
+                .Find(product =>  product.Id == items.Key && product.Inventory >= items.Count()).FirstOrDefaultAsync();
             
-            if (voucher == null)
+            if (product == null)
             {
                 throw new ModelValueInvalidException($"Voucher with product id {items.ToList().First().OrderProductId} do not have enough inventory");
             }
-            voucher.Inventory -= items.Count();
+            product.Inventory -= items.Count();
         }
     }
 

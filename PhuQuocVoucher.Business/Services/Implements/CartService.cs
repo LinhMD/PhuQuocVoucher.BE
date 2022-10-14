@@ -55,4 +55,59 @@ public class CartService : ServiceCrud<Cart>, ICartService
         cart.CartItems.Add(itemView);
         return cart;
     }
+
+    public async Task<CartView> UpdateCartItems(IList<UpdateCartItem> updateCartItem, int cartId, int customerId)
+    {
+        var itemFound = await UnitOfWork.Get<CartItem>()
+            .Find(c =>
+                c.CartId == cartId
+                && updateCartItem.Select(ci => ci.CartItemId).Contains(c.Id))
+            .ToListAsync();
+       
+        if (!itemFound.Any()) throw new ModelNotFoundException($"Cart Items not found!!!");
+       
+        foreach (var cartItem in itemFound)
+        {
+            foreach (var updateItem in updateCartItem)
+            {
+                if (cartItem.Id == updateItem.CartItemId)
+                {
+                    cartItem.Quantity = updateItem.Quantity;
+                }
+            }
+        }
+
+        await UnitOfWork.CompleteAsync();
+        return await GetCartByCustomerAsync(customerId);
+    }
+
+    public async Task ClearCart(int cartId)
+    {
+        var cartItems = await UnitOfWork.Get<CartItem>().Find(i => i.CartId == cartId).ToListAsync();
+        await UnitOfWork.Get<CartItem>().RemoveAllAsync(cartItems);
+    }
+
+    public async Task<CartView> UpdateCartAsync(UpdateCart updateCart, int customerId)
+    {
+        var cart = await GetCartByCustomerAsync(customerId);
+        await ClearCart(cart.Id);
+        cart.CartItems.Clear();
+        foreach (var item in updateCart.CartItems)
+        {
+            var cartItem = item.Adapt<CartItem>();
+        
+            cartItem.CartId = cart.Id;
+            var priceBook = await UnitOfWork.Get<PriceBook>().GetAsync(item.PriceId);
+        
+            if (priceBook == null)
+            {
+                throw new ModelNotFoundException($"Price Id {item.PriceId} not found!!");
+            }
+            cartItem.ProductId = priceBook.ProductId;
+            var itemView = (await UnitOfWork.Get<CartItem>().AddAsync(cartItem)).Adapt<CartItemView>();
+            cart.CartItems.Add(itemView);
+        }
+        
+        return cart;
+    }
 }

@@ -13,12 +13,13 @@ using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NuGet.Packaging;
+using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.LoginDto;
 using PhuQuocVoucher.Business.Dtos.MailDto;
 using PhuQuocVoucher.Business.Dtos.UserDto;
-using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
+using PhuQuocVoucher.Data.Repositories;
 
 namespace PhuQuocVoucher.Api.Controllers;
 
@@ -33,7 +34,7 @@ public class LoginController : ControllerBase
 
     private readonly IUserService _userService;
     private readonly IMailingService _mailing;
-
+    
     private readonly ICartService _cartService;
 
     public LoginController(IConfiguration config, IUnitOfWork work, IUserService userService, IMailingService mailing, ICartService cartService)
@@ -146,6 +147,36 @@ public class LoginController : ControllerBase
 
         var userView = await _userService.SignUpAsync(userSignUp, hash, salt);
         return Ok(userView);
+    }
+    
+    [HttpPost("signup/customer")]
+    public async Task<IActionResult> SignUpCustomer(CustomerSignUp customerSignUp)
+    {
+        var salt = LoginHelper.GenerateSalt();
+        var hash = LoginHelper.ComputeHash(
+            Encoding.UTF8.GetBytes(customerSignUp.UserInfo.Password),
+            Encoding.UTF8.GetBytes(salt));
+
+        customerSignUp.UserInfo.Role = Role.Customer;
+        
+        var userView = await _userService.SignUpAsync(customerSignUp.UserInfo, hash, salt);
+        
+        var customer = new Customer()
+        {
+            Status = ModelStatus.Active,
+            UserInfoId = userView.Id,
+            CustomerName = customerSignUp.CustomerName,
+            CreateAt = DateTime.Now
+        };
+        await _work.Get<Customer>().AddAsync(customer);
+
+        
+        var cart = await _cartService.GetCartByCustomerAsync(customer.Id);
+
+        customer.CartId = cart.Id;
+
+        await _work.CompleteAsync();
+        return Ok();
     }
 
     [HttpPost("forgot")]

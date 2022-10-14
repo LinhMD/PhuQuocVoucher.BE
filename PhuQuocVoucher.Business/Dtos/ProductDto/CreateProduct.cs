@@ -13,6 +13,9 @@ public class CreateProduct : CreateDto, ICreateRequest<Product>
 
     [Required]
     public string Summary { get; set; }
+    
+    [Required]
+    public int Inventory { get; set; }
 
     [Required]
     public string BannerImg { get; set; }

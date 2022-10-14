@@ -10,4 +10,10 @@ public interface ICartService : IServiceCrud<Cart>
     public Task<CartView> GetCartByCustomerAsync(int customerId);
 
     public Task<CartView> AddItemToCart(CreateCartItem item, int customerId);
+
+    public Task<CartView> UpdateCartItems(IList<UpdateCartItem> updateCartItem, int cartId, int customerId);
+
+    public Task ClearCart(int cartId);
+
+    public Task<CartView> UpdateCartAsync(UpdateCart updateCart, int customerId);
 }

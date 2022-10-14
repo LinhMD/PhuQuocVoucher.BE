@@ -11,6 +11,8 @@ public class PriceBookSView : IView<PriceBook>, IDto
     public string PriceLevelName { get; set; }
 
     public double Price { get; set; }
+    
+    public bool IsDefault { get; set; }
 
     public void InitMapper()
     {

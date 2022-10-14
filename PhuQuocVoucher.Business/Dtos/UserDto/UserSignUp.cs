@@ -3,7 +3,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.UserDto;
 
-public class UserSignUp
+public class UserSignUp : CreateDto
 {
     [Required]
     [EmailAddress]
@@ -21,7 +21,7 @@ public class UserSignUp
     [Required]
     public Role Role { get; set; }
 
-    [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Must be a phone number")]
+    [RegularExpression(@"\(?\d{3}\)?-?\d{3}-?\d{4}", ErrorMessage = "Must be a phone number")]
     public string? PhoneNumber { get; set; }
 
 }

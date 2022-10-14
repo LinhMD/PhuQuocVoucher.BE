@@ -34,7 +34,7 @@ public class ComboController : ControllerBase
     public async Task<IActionResult> Get([FromQuery] FindCombo request, 
         [FromQuery] PagingRequest paging, 
         string? orderBy, 
-        [FromClaim(ClaimTypes.Role)] Role? role)
+        [FromClaim(ClaimTypes.Role)] string? role)
     {
         return Ok((await _comboService.FindComboAsync(new GetRequest<Combo>
         {

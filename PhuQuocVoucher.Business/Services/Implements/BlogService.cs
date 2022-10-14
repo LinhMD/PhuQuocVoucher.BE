@@ -2,7 +2,6 @@
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Services;
 using Microsoft.Extensions.Logging;
-using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 

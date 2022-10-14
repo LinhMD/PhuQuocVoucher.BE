@@ -17,12 +17,12 @@ public class ProductSView :IView<Product>, IDto
 
     public string? Content { get; set; }
 
-    public double Price { get; set; }
+    public int Inventory { get; set; }
     
     public ProductType Type { get; set; }
     
     public void InitMapper()
     {
-        TypeAdapterConfig<Product, ProductSView>.NewConfig().Map(view => view.Price, product => product.Prices.FirstOrDefault(p => p.IsDefault).Price);
+        TypeAdapterConfig<Product, ProductSView>.NewConfig();
     }
 }

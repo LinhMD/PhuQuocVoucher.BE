@@ -9,5 +9,5 @@ public interface IComboService : IServiceCrud<Combo>
 {
     public  Task<ComboView> CreateAsync(CreateCombo createCombo);
 
-    public Task<(IList<ComboView>, int)> FindComboAsync(GetRequest<Combo> request, Role? role = Role.Customer);
+    public Task<(IList<ComboView>, int)> FindComboAsync(GetRequest<Combo> request, string? role = nameof(Role.Customer));
 }

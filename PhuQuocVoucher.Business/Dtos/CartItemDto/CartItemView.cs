@@ -19,6 +19,9 @@ public class CartItemView : IView<CartItem>, IDto
     public int PriceId { get; set; }
     
     
+    public DateTime? UseDate { get; set; }
+    
+    
     public void InitMapper()
     {
         TypeAdapterConfig<CartItem, CartItemView>.NewConfig()

@@ -10,9 +10,6 @@ public class CreateVoucher : CreateDto, ICreateRequest<Voucher>
     [Required]
     public string VoucherName { get; set; }
 
-    [Required]
-    public int Inventory { get; set; }
-
     public int? LimitPerDay { get; set; }
 
     [Required]

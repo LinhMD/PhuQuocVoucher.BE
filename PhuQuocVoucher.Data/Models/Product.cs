@@ -8,6 +8,7 @@ public class Product : BaseModel
 
     public string? Summary { get; set; }
 
+    public int Inventory { get; set; }
     public string? BannerImg { get; set; }
 
     public string? Content { get; set; }

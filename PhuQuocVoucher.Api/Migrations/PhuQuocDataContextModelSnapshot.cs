@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using PhuQuocVoucher.Data;
+using PhuQuocVoucher.Data.Repositories;
 
 #nullable disable
 
@@ -169,6 +169,9 @@ namespace PhuQuocVoucher.Controller.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UseDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -370,8 +373,6 @@ namespace PhuQuocVoucher.Controller.Migrations
                     b.HasIndex("QrCodeId");
 
                     b.ToTable("OrderItems");
-
-                    b.HasAnnotation("LC_TRIGGER_AFTER_INSERT_ORDERITEM", "CREATE TRIGGER LC_TRIGGER_AFTER_INSERT_ORDERITEM ON OrderItems AFTER Insert AS\r\nBEGIN\r\n  DECLARE @NewOrderProductId INT\r\n  DECLARE InsertedOrderItemCursor CURSOR FOR SELECT OrderProductId FROM Inserted\r\n  OPEN InsertedOrderItemCursor\r\n  FETCH NEXT FROM InsertedOrderItemCursor INTO @NewOrderProductId\r\n  WHILE @@FETCH_STATUS = 0\r\n  BEGIN\r\n    UPDATE Vouchers\r\n    SET Inventory = Vouchers.Inventory - 1\r\n    WHERE Vouchers.ProductId = @NewOrderProductId AND Vouchers.Inventory > 0;\r\n    FETCH NEXT FROM InsertedOrderItemCursor INTO @NewOrderProductId\r\n  END\r\n  CLOSE InsertedOrderItemCursor DEALLOCATE InsertedOrderItemCursor\r\nEND");
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.PaymentDetail", b =>
@@ -523,6 +524,9 @@ namespace PhuQuocVoucher.Controller.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Inventory")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -975,9 +979,6 @@ namespace PhuQuocVoucher.Controller.Migrations
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("Inventory")
-                        .HasColumnType("int");
 
                     b.Property<bool>("IsNeedProviderConfirm")
                         .HasColumnType("bit");

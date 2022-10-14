@@ -38,4 +38,6 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
             throw new DbQueryException(e.Message, DbError.Create);
         }
     }
+    
+    
 }

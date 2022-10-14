@@ -74,4 +74,15 @@ public class ProductController : ControllerBase
     {
         return Ok(await _productService.DeleteAsync(id));
     }
+
+    [HttpPost("inventory")]
+    public async Task<ActionResult<IList<ProductInventoryView>>> GetInventory(IList<int> productIds)
+    {
+
+        return Ok(await _work.Get<Product>().Find(c => productIds.Contains(c.Id)).Select(c => new ProductInventoryView
+        {
+            Id = c.Id,
+            Inventory = c.Inventory
+        }).ToListAsync());
+    }
 }

@@ -27,6 +27,6 @@ public class CustomerView : IView<Customer>, IDto
 
     public void InitMapper()
     {
-        TypeAdapterConfig<Customer, CustomerView>.NewConfig();
+        TypeAdapterConfig<Customer, CustomerView>.NewConfig().Map(view => view.CartId, customer => customer.CartId);
     }
 }

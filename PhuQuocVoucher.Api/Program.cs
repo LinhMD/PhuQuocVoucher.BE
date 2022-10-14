@@ -1,7 +1,4 @@
-using System.Configuration;
 using System.Globalization;
-using System.Reflection;
-using System.Resources;
 using System.Text;
 using CrudApiTemplate.CustomBinding;
 using CrudApiTemplate.ExceptionFilter;
@@ -9,17 +6,14 @@ using CrudApiTemplate.Repository;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using PhuQuocVoucher.Api.Ultility;
 using PhuQuocVoucher.Business.Dtos;
 using PhuQuocVoucher.Business.Dtos.MailDto;
-using PhuQuocVoucher.Business.Repositories;
 using PhuQuocVoucher.Business.Services;
-using PhuQuocVoucher.Data;
 using PhuQuocVoucher.Data.Models;
+using PhuQuocVoucher.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;

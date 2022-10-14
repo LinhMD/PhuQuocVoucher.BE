@@ -12,7 +12,9 @@ public class CartItem : BaseModel
     
     public PriceBook? Price { get; set; }
     
+    public DateTime? UseDate { get; set; }
+    
     public int PriceId { get; set; }
-
+    
     public int CartId { get; set; }
 }
