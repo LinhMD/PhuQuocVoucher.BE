@@ -13,4 +13,6 @@ public interface IOrderService : IServiceCrud<Order>{
     public Task<OrderView> CreateOrderAsync(CreateOrder createOrder);
 
     public Task<OrderView> PlaceOrderAsync(CartView cart, int cusId, int? sellerId = null);
+
+    public Task<OrderView> CancelOrderAsync(int id);
 }

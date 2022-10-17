@@ -145,4 +145,15 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             throw new DbQueryException(e.InnerException?.Message!, DbError.Create);
         }
     }
+
+    public async Task<OrderView> CancelOrderAsync(int id)
+    {
+        Order order = await Repository.GetAsync(id);
+        if (order == null) throw new ModelNotFoundException("Order Not Found With " + id);
+        order.OrderStatus = OrderStatus.Canceled;
+        
+        await Repository.CommitAsync();
+        OrderView orderView = await Repository.Find<OrderView>( o => o.Id == id).FirstOrDefaultAsync();
+        return orderView;
+    }
 }

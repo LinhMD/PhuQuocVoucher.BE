@@ -43,4 +43,6 @@ public class FindVoucher : IFindRequest<Voucher>
     /// </summary>
     [Any(target:$"{nameof(Voucher.Product)}.{nameof(Product.Tags)}", property:nameof(Tag.Name), typeof(ContainAttribute))]
     public string? TagName { get; set; }
+    
+    
 }

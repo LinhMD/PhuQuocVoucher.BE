@@ -349,6 +349,4 @@ public class CustomerController : ControllerBase
         
         return Ok(await _profileService.DeleteAsync(id));
     }
-    
-    
 }

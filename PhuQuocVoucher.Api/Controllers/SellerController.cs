@@ -280,4 +280,12 @@ public class SellerController : ControllerBase
         if (!cart.CartItems.Any()) return BadRequest("Cart did not have any item");
         return Ok(await _orderService.PlaceOrderAsync(cart, cart.CustomerId, sellerId));
     }
+    
+    [Authorize(Roles = nameof(Role.Seller))]
+    [SwaggerResponse(200, "Order View",typeof(OrderView))]
+    [HttpPut("customers/orders/{id:int}/cancel")]
+    public async Task<IActionResult> CancelOrder(int id)
+    {
+        return Ok((await _orderService.CancelOrderAsync(id)));
+    }
 }

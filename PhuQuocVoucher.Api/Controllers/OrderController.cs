@@ -63,4 +63,11 @@ public class OrderController : ControllerBase
     {
         return Ok((await _orderService.DeleteAsync(id)).Adapt<OrderView>());
     }
+    
+    [HttpPut("{id:int}/cancel")]
+    public async Task<IActionResult> CancelOrder(int id)
+    {
+        return Ok((await _orderService.CancelOrderAsync(id)));
+    }
+    
 }
