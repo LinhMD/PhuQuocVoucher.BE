@@ -11,7 +11,7 @@ public interface IFindRequest<TModel> where TModel: class
     {
         var param = Expression.Parameter(typeof(TModel), typeof(TModel).Name);
         Expression expressionBody = Expression.Constant(true);
-        foreach (var property in GetType().GetProperties())
+        foreach (var property in this.GetType().GetProperties())
         {
             var value = property?.GetValue(this);
             if(value is null) continue;
@@ -31,7 +31,6 @@ public interface IFindRequest<TModel> where TModel: class
             else
             {
                 tProperty = Expression.Property(param, property!.Name);
-
                 expressionBody = Expression.And(expressionBody, Expression.Equal(tProperty, Expression.Convert(Expression.Constant(value), tProperty.Type)));
             }
         }
