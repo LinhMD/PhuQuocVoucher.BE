@@ -17,7 +17,7 @@ public class FindCombo : IFindRequest<Combo>
     public DateTime? Date { get; } = DateTime.Now;*/
 
 
-    public int? Status { get; set; }
+    public ModelStatus? Status { get; set; }
 
     public double? Price { get; set; }
     
@@ -26,4 +26,6 @@ public class FindCombo : IFindRequest<Combo>
 
     [Any(nameof(Combo.Vouchers),nameof(Voucher.Id), typeof(EqualAttribute))]
     public int? ContainVoucherId { get; set; }
+    
+
 }

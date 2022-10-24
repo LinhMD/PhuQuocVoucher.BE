@@ -21,4 +21,6 @@ public class FindPriceBook : IFindRequest<PriceBook>
     [LessThan(nameof(PriceBook.Price))]
     public double? PriceHigh { get; set; }
 
+    public ModelStatus Status { get; set; }
+
 }

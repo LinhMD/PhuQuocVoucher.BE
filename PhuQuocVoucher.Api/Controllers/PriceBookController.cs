@@ -30,6 +30,18 @@ public class PriceBookController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindPriceBook request, [FromQuery] PagingRequest paging, string? orderBy)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _priceBookService.GetAsync(new GetRequest<PriceBook>
+        {
+            FindRequest = request,
+            OrderRequest = new OrderRequest<PriceBook>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery] FindPriceBook request, [FromQuery] PagingRequest paging, string? orderBy)
+    {
         return Ok((await _priceBookService.GetAsync(new GetRequest<PriceBook>
         {
             FindRequest = request,

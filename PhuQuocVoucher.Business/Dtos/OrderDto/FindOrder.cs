@@ -27,6 +27,8 @@ public class FindOrder : IFindRequest<Order>, IDto
 
     [BiggerThan("CompleteDate")]
     public DateTime? CompleteDateUpBound { get; set; }
+    
+    public ModelStatus Status { get; set; }
 
     public Expression<Func<Order, bool>> ToPredicate()
     {

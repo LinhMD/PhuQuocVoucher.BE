@@ -36,6 +36,21 @@ public class ComboController : ControllerBase
         string? orderBy, 
         [FromClaim(ClaimTypes.Role)] string? role)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _comboService.FindComboAsync(new GetRequest<Combo>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<Combo>(),
+            PagingRequest = paging
+        }, role)).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery] FindCombo request, 
+        [FromQuery] PagingRequest paging, 
+        string? orderBy, 
+        [FromClaim(ClaimTypes.Role)] string? role)
+    {
         return Ok((await _comboService.FindComboAsync(new GetRequest<Combo>
         {
             FindRequest = request,

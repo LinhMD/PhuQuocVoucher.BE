@@ -13,5 +13,7 @@ public class FindPriceLevel : IFindRequest<PriceLevel>
     
     public bool? IsSellerPrice { get; set; }
 
+    public ModelStatus Status { get; set; }
+
     //TODO : 
 }

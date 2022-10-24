@@ -27,10 +27,10 @@ public class VoucherController : ControllerBase
         _repo = work.Get<Voucher>();
     }
 
-    [HttpGet("admin")]
+    [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindVoucher request, [FromQuery] PagingRequest paging, string? orderBy)
     {
-        
+        request.Status = ModelStatus.Active;
         return Ok((await _voucherService.GetAsync<VoucherView>(new GetRequest<Voucher>
         {
             FindRequest = request,
@@ -39,13 +39,13 @@ public class VoucherController : ControllerBase
         })).ToPagingResponse(paging));
     }
     
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery] FindVoucher request, [FromQuery] PagingRequest paging, string? orderBy)
+    {
     
     [HttpGet]
     public async Task<IActionResult> GetDefault([FromQuery] FindVoucher request, [FromQuery] PagingRequest paging, string? orderBy)
     {
-
-        request.Status = ModelStatus.Active;
-        
         return Ok((await _voucherService.GetAsync<VoucherView>(new GetRequest<Voucher>
         {
             FindRequest = request,

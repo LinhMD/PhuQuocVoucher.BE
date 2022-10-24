@@ -35,6 +35,21 @@ public class ServiceTypeController : ControllerBase
         [FromQuery] PagingRequest paging,
         string? orderBy)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _serviceTypeService.GetAsync(new GetRequest<ServiceType>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<ServiceType>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin(
+        [FromQuery] FindServiceType request,
+        [FromQuery] PagingRequest paging,
+        string? orderBy)
+    {
         return Ok((await _serviceTypeService.GetAsync(new GetRequest<ServiceType>
         {
             FindRequest = request,

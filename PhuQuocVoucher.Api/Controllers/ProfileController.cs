@@ -30,6 +30,18 @@ public class ProfileController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindProfile request, [FromQuery] PagingRequest paging, string? orderBy)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _profileService.GetAsync(new GetRequest<Profile>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<Profile>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery] FindProfile request, [FromQuery] PagingRequest paging, string? orderBy)
+    {
         return Ok((await _profileService.GetAsync(new GetRequest<Profile>
         {
             FindRequest = request,

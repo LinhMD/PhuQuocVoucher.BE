@@ -22,6 +22,18 @@ public class ProviderTypeController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery]FindProviderType request, [FromQuery]PagingRequest paging, string? orderBy)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _providerTypeService.GetAsync(new GetRequest<ProviderType>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<ProviderType>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery]FindProviderType request, [FromQuery]PagingRequest paging, string? orderBy)
+    {
         return Ok((await _providerTypeService.GetAsync(new GetRequest<ProviderType>
         {
             FindRequest = request,
