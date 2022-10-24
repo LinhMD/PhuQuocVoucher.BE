@@ -62,6 +62,23 @@ public class SellerController : ControllerBase
         [FromQuery] string? orderBy,
         [FromQuery] DateTime? completeDateLowBound)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _sellerService.FindSellerAsync(new GetRequest<Seller>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<Seller>(),
+            PagingRequest = paging
+        }, completeDateLowBound)).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    [SwaggerResponse(200,"Seller view page", typeof(PagingResponse<SellerView>))]
+    public async Task<ActionResult<PagingResponse<SellerView>>> GetAdmin(
+        [FromQuery] FindSeller request,
+        [FromQuery] PagingRequest paging,
+        [FromQuery] string? orderBy,
+        [FromQuery] DateTime? completeDateLowBound)
+    {
         return Ok((await _sellerService.FindSellerAsync(new GetRequest<Seller>
         {
             FindRequest = request,

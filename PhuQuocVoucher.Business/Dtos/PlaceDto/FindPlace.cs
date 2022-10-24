@@ -15,4 +15,6 @@ public class FindPlace : IFindRequest<Place>
     [Contain]
     public string? MapLocation { get; set; }
 
+    public ModelStatus Status { get; set; }
+
 }

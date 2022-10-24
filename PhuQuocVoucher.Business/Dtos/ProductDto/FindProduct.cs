@@ -23,4 +23,7 @@ public class FindProduct : IFindRequest<Product>
     public string? TagName { get; set; }
 
     public ProductType? Type { get; set; }
+    
+    public ModelStatus Status { get; set; }
+
 }

@@ -26,5 +26,5 @@ public class FindUser : IFindRequest<User>, IDto
     [MaxLength(255)]
     [Equal]
     public string? UserName { get; set; }
-
+    
 }

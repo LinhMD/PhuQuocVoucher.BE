@@ -30,6 +30,18 @@ public class PriceLevelController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindPriceLevel request, [FromQuery] PagingRequest paging, string? orderBy)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _priceLevelService.GetAsync(new GetRequest<PriceLevel>
+        {
+            FindRequest = request,
+            OrderRequest = new OrderRequest<PriceLevel>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery] FindPriceLevel request, [FromQuery] PagingRequest paging, string? orderBy)
+    {
         return Ok((await _priceLevelService.GetAsync(new GetRequest<PriceLevel>
         {
             FindRequest = request,

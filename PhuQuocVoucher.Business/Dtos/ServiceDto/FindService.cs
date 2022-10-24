@@ -33,4 +33,7 @@ public class FindService : IFindRequest<Service> , IDto
 
     [Contain("Provider.Name")]
     public string? ProviderName { get; set; }
+    
+    public ModelStatus Status { get; set; }
+
 }

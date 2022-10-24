@@ -25,6 +25,18 @@ public class ServiceController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery]FindService request, [FromQuery]PagingRequest paging, string? orderBy)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _providerService.GetAsync<ServiceView>(new GetRequest<Service>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<Service>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery]FindService request, [FromQuery]PagingRequest paging, string? orderBy)
+    {
         return Ok((await _providerService.GetAsync<ServiceView>(new GetRequest<Service>
         {
             FindRequest = request,

@@ -30,6 +30,18 @@ public class TagController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindTag request, [FromQuery] PagingRequest paging, string? orderBy)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _tagService.GetAsync(new GetRequest<Tag>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<Tag>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery] FindTag request, [FromQuery] PagingRequest paging, string? orderBy)
+    {
         return Ok((await _tagService.GetAsync(new GetRequest<Tag>
         {
             FindRequest = request,
