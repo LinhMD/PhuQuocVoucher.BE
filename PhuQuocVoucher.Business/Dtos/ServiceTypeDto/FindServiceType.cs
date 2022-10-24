@@ -13,6 +13,6 @@ public class FindServiceType : IFindRequest<ServiceType>
 
     public int? ParentTypeId { get; set; }
     
-    public ModelStatus Status { get; set; }
+    public ModelStatus? Status { get; set; }
 
 }
