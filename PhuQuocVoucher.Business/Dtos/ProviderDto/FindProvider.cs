@@ -49,6 +49,6 @@ public class FindProvider : IFindRequest<Provider>
     [Equal("Type.Id")]
     public int? TypeId { get; set; }
     
-    public ModelStatus Status { get; set; }
+    public ModelStatus? Status { get; set; }
 
 }

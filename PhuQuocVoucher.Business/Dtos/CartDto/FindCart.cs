@@ -10,6 +10,6 @@ public class FindCart : IFindRequest<Cart>, IDto
 
     public int? CustomerId { get; set; }
     
-    public ModelStatus Status { get; set; }
+    public ModelStatus? Status { get; set; }
 
 }

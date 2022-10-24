@@ -24,6 +24,6 @@ public class FindBlog : IFindRequest<Blog>, IDto
     [Any(nameof(Blog.Tags), nameof(Tag.Id), typeof(EqualAttribute))]
     public int? AnyTagId { get; set; }
     
-    public ModelStatus Status { get; set; }
+    public ModelStatus? Status { get; set; }
 
 }

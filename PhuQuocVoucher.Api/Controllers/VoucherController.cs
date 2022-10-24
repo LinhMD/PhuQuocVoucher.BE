@@ -42,10 +42,6 @@ public class VoucherController : ControllerBase
     [HttpGet("admin")]
     public async Task<IActionResult> GetAdmin([FromQuery] FindVoucher request, [FromQuery] PagingRequest paging, string? orderBy)
     {
-    
-    [HttpGet]
-    public async Task<IActionResult> GetDefault([FromQuery] FindVoucher request, [FromQuery] PagingRequest paging, string? orderBy)
-    {
         return Ok((await _voucherService.GetAsync<VoucherView>(new GetRequest<Voucher>
         {
             FindRequest = request,
