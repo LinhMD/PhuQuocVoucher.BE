@@ -5,16 +5,16 @@ namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class ImageController : ControllerBase
+public class FirebaseController : ControllerBase
 {
     private readonly IFirebaseServiceIntegration _firebase;
 
-    public ImageController(IFirebaseServiceIntegration firebase)
+    public FirebaseController(IFirebaseServiceIntegration firebase)
     {
         _firebase = firebase;
     }
 
-    [HttpPost]
+    [HttpPost("files")]
     public async Task<ActionResult<string>> UploadImage(IFormFile file)
     {
         await using var stream = file.OpenReadStream();
