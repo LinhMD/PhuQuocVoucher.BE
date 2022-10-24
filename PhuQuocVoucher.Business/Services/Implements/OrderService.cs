@@ -156,14 +156,4 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         }
     }
 
-    public async Task<Order> testAsync(UpdateOrder tesst)
-    {
-        var order = await UnitOfWork.Get<Order>().GetAsync(1);
-
-        order.OrderStatus = OrderStatus.Canceled;
-
-        await UnitOfWork.CompleteAsync();
-
-        return null;
-    }
 }

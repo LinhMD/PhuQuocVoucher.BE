@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PhuQuocVoucher.Business.Dtos;
 using PhuQuocVoucher.Business.Dtos.MailDto;
-using PhuQuocVoucher.Business.Services;
+using PhuQuocVoucher.Business.Services;using PhuQuocVoucher.Business.Services.Implements;
 using PhuQuocVoucher.Data.Models;
 using PhuQuocVoucher.Data.Repositories;
 
@@ -33,6 +33,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PhuQuocDataContext>();
 builder.Services.AddScoped<IUnitOfWork ,PqUnitOfWork>();
 
+var firebaseService = new FirebaseService();
 //Services
 builder.Services.InitServices();
 builder.Services.AddLocalization(o => o.ResourcesPath = "Resources");
