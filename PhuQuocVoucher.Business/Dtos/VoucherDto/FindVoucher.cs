@@ -46,5 +46,4 @@ public class FindVoucher : IFindRequest<Voucher>
     
     public ModelStatus Status { get; set; }
 
-    
 }

@@ -28,7 +28,7 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
     {
         var filter = Repository.GetAll().Where(request.FindRequest.ToPredicate());
 
-        var total = filter.Count();
+        var total = await filter.CountAsync();
 
         var result = filter
             .OrderBy(request.OrderRequest)
