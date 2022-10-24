@@ -34,6 +34,18 @@ public class PlaceController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery]FindPlace request, [FromQuery]PagingRequest paging, string? orderBy)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _placeService.GetAsync(new GetRequest<Place>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<Place>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery]FindPlace request, [FromQuery]PagingRequest paging, string? orderBy)
+    {
         return Ok((await _placeService.GetAsync(new GetRequest<Place>
         {
             FindRequest = request,

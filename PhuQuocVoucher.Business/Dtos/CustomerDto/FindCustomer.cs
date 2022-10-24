@@ -25,4 +25,7 @@ public class FindCustomer : IFindRequest<Customer>
 
     [Equal(nameof(Customer.AssignSellerId))]
     public int? SellerId { get; set; }
+    
+    public ModelStatus Status { get; set; }
+
 }

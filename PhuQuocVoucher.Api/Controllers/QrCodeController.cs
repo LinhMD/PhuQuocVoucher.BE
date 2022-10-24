@@ -28,7 +28,8 @@ public class QrCodeController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] FindQrCode request, [FromQuery] PagingRequest paging, string? orderBy)
+    public async Task<IActionResult> Get([FromQuery] FindQrCode request, [FromQuery] PagingRequest paging,
+        string? orderBy)
     {
         return Ok((await _qrCodeService.GetAsync(new GetRequest<QrCodeInfo>
         {

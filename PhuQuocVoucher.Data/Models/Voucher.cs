@@ -36,7 +36,5 @@ public class Voucher : BaseModel
 
     public IList<QrCodeInfo> QrCodeInfos { get; set; }
     public IEnumerable<Combo> Combos { get; set; }
-    
-    
 
 }

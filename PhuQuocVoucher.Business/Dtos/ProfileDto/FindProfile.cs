@@ -21,4 +21,5 @@ public class FindProfile : IFindRequest<Profile>
 
     public int? CustomerId { get; set; }
 
+    public ModelStatus Status { get; set; }
 }

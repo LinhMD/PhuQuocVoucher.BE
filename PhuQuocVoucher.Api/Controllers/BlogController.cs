@@ -31,6 +31,18 @@ public class BlogController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery]FindBlog request, [FromQuery]PagingRequest paging, string? orderBy)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _blogService.GetAsync(new GetRequest<Blog>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<Blog>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery]FindBlog request, [FromQuery]PagingRequest paging, string? orderBy)
+    {
         return Ok((await _blogService.GetAsync(new GetRequest<Blog>
         {
             FindRequest = request,

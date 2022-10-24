@@ -17,7 +17,7 @@ public class FindCombo : IFindRequest<Combo>
     public DateTime? Date { get; } = DateTime.Now;*/
 
 
-    public int? Status { get; set; }
+    public ModelStatus Status { get; set; }
 
     public double? Price { get; set; }
     

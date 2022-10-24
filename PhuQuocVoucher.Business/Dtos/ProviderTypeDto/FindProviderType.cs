@@ -8,4 +8,6 @@ public class FindProviderType : IFindRequest<ProviderType>
 {
     [Contain]
     public string? Name { get; set; }
+    
+    public ModelStatus Status { get; set; }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Business.Dtos.ProviderDto;
 using PhuQuocVoucher.Business.Services.Core;
+using PhuQuocVoucher.Data.Models;
 using ServiceProvider = PhuQuocVoucher.Data.Models.ServiceProvider;
 
 namespace PhuQuocVoucher.Api.Controllers;
@@ -25,6 +26,18 @@ public class ProviderController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery]FindProvider request, [FromQuery]PagingRequest paging, string? orderBy)
+    {
+        request.Status = ModelStatus.Active;
+        return Ok((await _providerService.GetAsync<ProviderView>(new GetRequest<ServiceProvider>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<ServiceProvider>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery]FindProvider request, [FromQuery]PagingRequest paging, string? orderBy)
     {
         return Ok((await _providerService.GetAsync<ProviderView>(new GetRequest<ServiceProvider>
         {

@@ -34,6 +34,21 @@ public class UserController : ControllerBase
         [FromQuery]PagingRequest paging,
         [RegularExpression(SortByRegexString)] string? orderBy)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _userService.GetAsync<UserView>(new GetRequest<User>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<User>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin(
+        [FromQuery]FindUser request,
+        [FromQuery]PagingRequest paging,
+        [RegularExpression(SortByRegexString)] string? orderBy)
+    {
 
         return Ok((await _userService.GetAsync<UserView>(new GetRequest<User>
         {

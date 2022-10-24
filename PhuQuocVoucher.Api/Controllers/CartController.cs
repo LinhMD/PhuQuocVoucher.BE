@@ -31,6 +31,18 @@ public class CartController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindCart request, [FromQuery] PagingRequest paging, string? orderBy)
     {
+        request.Status = ModelStatus.Active;
+        return Ok((await _cartService.GetAsync<CartView>(new GetRequest<Cart>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<Cart>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery] FindCart request, [FromQuery] PagingRequest paging, string? orderBy)
+    {
         return Ok((await _cartService.GetAsync<CartView>(new GetRequest<Cart>
         {
             FindRequest = request,
