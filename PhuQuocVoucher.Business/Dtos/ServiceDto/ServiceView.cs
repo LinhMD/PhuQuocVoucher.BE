@@ -14,11 +14,11 @@ public class ServiceView : IView<Service>, IDto
     public string? Description { get; set; }
 
     public string? Type { get; set; }
+    
     public string? LocationName { get; set; }
-
-    public SimpleProviderView? Provider { get; set; }
-
-
+    
+    public SimpleProviderView? Provider { get; set; } 
+    
     public void InitMapper()
     {
         TypeAdapterConfig<Service, ServiceView>.NewConfig()

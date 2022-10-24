@@ -34,7 +34,6 @@ public class UserController : ControllerBase
         [FromQuery]PagingRequest paging,
         [RegularExpression(SortByRegexString)] string? orderBy)
     {
-
         return Ok((await _userService.GetAsync<UserView>(new GetRequest<User>
         {
             FindRequest = request,
@@ -43,7 +42,7 @@ public class UserController : ControllerBase
         })).ToPagingResponse(paging));
     }
 
-
+    
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {

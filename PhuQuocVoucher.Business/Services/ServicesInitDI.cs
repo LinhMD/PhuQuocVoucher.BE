@@ -31,7 +31,8 @@ public static class ServicesInitDi
         serviceCollection.AddScoped<ITagService, TagService>();
         serviceCollection.AddScoped<IUserService, UserService>();
         serviceCollection.AddScoped<IVoucherService, VoucherService>();
-
+        
+        serviceCollection.AddScoped<IFirebaseServiceIntegration, FirebaseService>();
         serviceCollection.AddScoped<IMailingService, MailingService>();
 
         serviceCollection.AddScoped<IPriceBookService, PriceBookService>();

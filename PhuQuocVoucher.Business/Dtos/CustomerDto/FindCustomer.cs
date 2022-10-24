@@ -7,7 +7,19 @@ namespace PhuQuocVoucher.Business.Dtos.CustomerDto;
 public class FindCustomer : IFindRequest<Customer>
 {
     public int? Id { get; set; }
+    
+    [In(target:"Id")]
+    public IList<int>? Ids { get; set; }
+    
+    [In(target:"UserInfo.Id")]
+    public IList<int>? UserIds { get; set; }
 
+    [In(target:"UserInfo.Email")]
+    public IList<string>? Emails { get; set; }
+
+    [In(target:"UserInfo.PhoneNumber")]
+    public IList<string>? PhoneNumbers { get; set; }
+    
     [Contain]
     public string? CustomerName { get; set; }
 

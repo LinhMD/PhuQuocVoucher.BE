@@ -18,4 +18,17 @@ public class OrderRepository : Repository<Order> , IOrderRepository
             .Include(o => o.PaymentDetail)
             .Include(o => o.OrderItems);
     }
+
+
+    public async Task<Order> UpdateOrderAsync(Order orderToUpdate, int id)
+    {
+        var order = await Models.FindAsync(id);
+
+        if(order != null)
+            order.OrderStatus = OrderStatus.Canceled;
+        
+        await this.CommitAsync(); //luu DB
+
+        return order;
+    }
 }
