@@ -12,22 +12,15 @@ public class FirebaseService : IFirebaseServiceIntegration
     private static readonly string Bucket = "phuquoc-client.appspot.com";
     private static readonly string AuthEmail = "adminuser@gmail.com";
     private static readonly string AuthPassword = "123456789";
-
-    private static readonly FirebaseAuthLink AuthLink;
-
-    static  FirebaseService()
-    {
-        var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
-        AuthLink = auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword).Result;
-        Console.WriteLine(AuthLink);
-    }
     
     
     public async Task<string> UploadFileAsync(Stream file, string name)
     {
+        var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+        var authLink = auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword).Result;
         var task = new FirebaseStorage(Bucket, new FirebaseStorageOptions()
         {
-            AuthTokenAsyncFactory = () => Task.FromResult(AuthLink.FirebaseToken),
+            AuthTokenAsyncFactory = () => Task.FromResult(authLink.FirebaseToken),
             ThrowOnCancel = true,
         });
         try
