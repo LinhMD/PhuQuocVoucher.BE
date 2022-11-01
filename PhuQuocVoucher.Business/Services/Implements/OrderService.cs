@@ -124,7 +124,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
 
             var orderItems = createOrder.OrderItems
                 .Select(o => (o as ICreateRequest<OrderItem>).CreateNew(UnitOfWork)).ToList();
-
+            orderItems.ForEach(Console.WriteLine);
             foreach (var item in orderItems)
             {
                 try

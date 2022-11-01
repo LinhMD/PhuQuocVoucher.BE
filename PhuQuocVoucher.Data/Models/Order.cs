@@ -18,6 +18,10 @@ public class Order : BaseModel
 
     public PaymentDetail? PaymentDetail { get; set; }
 
+    public int PaymentDetailId { get; set; }
+    
+    public Guid? PaymentRequestId { get; set; }
+
     public IEnumerable<OrderItem> OrderItems { get; set; }
 
 }

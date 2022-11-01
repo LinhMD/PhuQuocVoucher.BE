@@ -38,5 +38,7 @@ public static class ServicesInitDi
         serviceCollection.AddScoped<IPriceBookService, PriceBookService>();
         serviceCollection.AddScoped<IPriceLevelService, PriceLevelService>();
         serviceCollection.AddScoped<IQrCodeService, QrCodeService>();
+        serviceCollection.AddScoped<MomoSetting>();
+        serviceCollection.AddScoped<PaymentService>();
     }
 }

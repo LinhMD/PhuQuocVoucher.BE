@@ -1,6 +1,8 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class PaymentStatus
+public enum PaymentStatus
 {
-    
+    Success,
+    Failed,
+    Pending
 }

@@ -16,8 +16,7 @@ public static class PaymentRequest
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("Authorization",
                 "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes("momo:momo")));
-            var result = await client
-                .PostAsync(endpoint, new StringContent(postJsonString, Encoding.UTF8, "application/json"));
+            var result = await client.PostAsync(endpoint, new StringContent(postJsonString, Encoding.UTF8, "application/json"));
             var resultString = "";
 
 

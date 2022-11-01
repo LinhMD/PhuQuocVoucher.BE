@@ -28,8 +28,4 @@ public class FindOrder : IFindRequest<Order>, IDto
     [BiggerThan("CompleteDate")]
     public DateTime? CompleteDateUpBound { get; set; }
 
-    public Expression<Func<Order, bool>> ToPredicate()
-    {
-        return order => order.Id == this.Id && order.TotalPrice == this.TotalPrice;
-    }
 }
