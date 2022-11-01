@@ -17,6 +17,8 @@ public class Service : BaseModel
     public int TypeId { get; set; }
     public Place ServiceLocation { get; set; }
 
+    public double CommissionRate { get; set; }
+    
     public int ServiceLocationId { get; set; }
 
     public ServiceProvider Provider { get; set; }

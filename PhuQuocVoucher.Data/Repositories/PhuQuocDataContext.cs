@@ -17,7 +17,7 @@ public class PhuQuocDataContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer(
-            _config["ConnectionStrings:localBK"],
+            _config["ConnectionStrings:PhuQuocDB_devops"],
             b => b.MigrationsAssembly("PhuQuocVoucher.Api")
                 .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
     }
@@ -29,7 +29,11 @@ public class PhuQuocDataContext : DbContext
             .WithOne(a => a.Customer)
             .HasForeignKey<Cart>(c => c.CustomerId);
 
-        
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.PaymentDetail)
+            .WithOne(p => p.Order)
+            .HasForeignKey<PaymentDetail>(p => p.OrderId);
+
         /*modelBuilder.Entity<OrderItem>().AfterInsert(trigger => trigger
             .Action(action => action
                 .Update<Voucher>(

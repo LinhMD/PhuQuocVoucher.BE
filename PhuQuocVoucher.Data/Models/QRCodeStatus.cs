@@ -6,4 +6,5 @@ public enum QRCodeStatus
     Commit, //set when order been confirmed by provider
     Used,   //set when qr code get scan
     Disable //set when get delete
+    
 } 

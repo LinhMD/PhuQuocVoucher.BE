@@ -14,4 +14,6 @@ public class ServiceType : BaseModel
     public ServiceType?  ParentType { get; set; }
 
     public int? ParentTypeId { get; set; }
+    
+    public double?  DefaultCommissionRate { get; set; }
 }
