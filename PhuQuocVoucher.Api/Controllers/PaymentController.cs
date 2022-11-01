@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Business.Dtos.MomoDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
+using PhuQuocVoucher.Business.Services.Implements;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Api.Controllers;
@@ -11,11 +12,14 @@ namespace PhuQuocVoucher.Api.Controllers;
 [Route("api/v1/[controller]")]
 public class PaymentController : ControllerBase
 {
-    private IUnitOfWork _work;
+    private readonly IUnitOfWork _work;
 
-    public PaymentController(IUnitOfWork work)
+    private readonly PaymentService _paymentService;
+
+    public PaymentController(IUnitOfWork work, PaymentService paymentService)
     {
         _work = work;
+        _paymentService = paymentService;
     }
 
     /// <summary>
@@ -26,12 +30,8 @@ public class PaymentController : ControllerBase
     [HttpGet("momo/{orderId:int}")]
     public async Task<IActionResult> RequestPaymentMethod(int orderId)
     {
-        var order = await _work.Get<Order>().Find<OrderView>(o => o.Id == orderId).FirstOrDefaultAsync();
-        if (order == null) return NotFound($"Order not found with id {orderId}");
         
-        
-        
-        return Ok();
+        return Ok(await _paymentService.CreatePaymentRequest(orderId));
     }
 
     /// <summary>
@@ -40,7 +40,7 @@ public class PaymentController : ControllerBase
     /// <param name="callbackRequest"></param>
     /// <returns></returns>
     [HttpPost("momo/callback")]
-    public async Task<IActionResult> InpCallback(MomoIPNRequest callbackRequest)
+    public async Task<IActionResult> CallBack([FromBody] MomoIPNRequest callbackRequest)
     {
         
         return NoContent();

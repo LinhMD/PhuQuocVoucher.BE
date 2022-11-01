@@ -30,7 +30,7 @@ public class ProfileController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindProfile request, [FromQuery] PagingRequest paging, string? orderBy)
     {
-        return Ok((await _profileService.GetAsync(new GetRequest<Profile>
+        return Ok((await _profileService.GetAsync<ProfileView>(new GetRequest<Profile>
         {
             FindRequest = request,
             OrderRequest = orderBy.ToOrderRequest<Profile>(),
@@ -47,7 +47,7 @@ public class ProfileController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
-        return Ok(await _repo.Find(profile => profile.Id == id).FirstOrDefaultAsync() ??
+        return Ok(await _repo.Find<ProfileView>(profile => profile.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Profile)} with id {id}"));
     }
 
