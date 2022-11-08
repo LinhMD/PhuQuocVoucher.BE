@@ -54,17 +54,12 @@ public class PhuQuocDataContext : DbContext
 
     public DbSet<ServiceProvider> Providers { get; set; }
 
-    public DbSet<ProviderType> ProviderTypes { get; set; }
-
     public DbSet<Service> Services { get; set; }
 
     public DbSet<ServiceType> ServiceTypes { get; set; }
 
     public DbSet<Voucher>  Vouchers { get; set; }
 
-    public DbSet<Combo> Combos { get; set; }
-
-    public DbSet<Product> Products { get; set; }
 
     public DbSet<Order> Orders { get; set; }
 
@@ -81,8 +76,6 @@ public class PhuQuocDataContext : DbContext
     public DbSet<Blog> Blogs { get; set; }
 
     public DbSet<Tag> Tags { get; set; }
-    
-    public DbSet<PriceLevel> PriceLevels { get; set; }
     
     public DbSet<PriceBook> PriceBooks { get; set; }
     

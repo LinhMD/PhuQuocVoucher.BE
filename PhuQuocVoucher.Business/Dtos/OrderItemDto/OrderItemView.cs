@@ -2,6 +2,7 @@
 using Mapster;
 using PhuQuocVoucher.Business.Dtos.PriceBookDto;
 using PhuQuocVoucher.Business.Dtos.QrCodeDto;
+using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.OrderItemDto;
@@ -12,7 +13,9 @@ public class OrderItemView : IView<OrderItem>, IDto
 
     public int OrderId { get; set; }
 
-    public int OrderProductId { get; set; }
+    public int VoucherId { get; set; }
+
+    public VoucherSView Voucher { get; set; }
     
     public int PriceId { get; set; }
     

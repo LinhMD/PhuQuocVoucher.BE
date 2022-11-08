@@ -25,7 +25,6 @@ public class ServiceProvider : BaseModel
 
     public IEnumerable<Service> Services { get; set; }
 
-    public ProviderType Type { get; set; }
 
     public int TypeId { get; set; }
 }

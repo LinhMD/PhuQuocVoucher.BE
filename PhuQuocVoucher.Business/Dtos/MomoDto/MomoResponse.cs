@@ -6,7 +6,7 @@ public class MomoResponse
 
     public string requestId { get; set; }
     
-    public string orderId { get; set; }
+    public int orderId { get; set; }
 
     public long amount { get; set; }
 
@@ -21,4 +21,6 @@ public class MomoResponse
     public string? qrCodeUrl { get; set; }
 
     public string deeplinkMiniApp { get; set; }
+
+    public string? Signature { get; set; }
 }

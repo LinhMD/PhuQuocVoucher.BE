@@ -15,7 +15,7 @@ public class ProviderRepository : Repository<ServiceProvider>, IProviderReposito
     {
         return Models
             .Include(s => s.UserInfo)
-            .Include(s => s.AssignedSeller)
-            .Include(s => s.Type);
+            .Include(s => s.AssignedSeller);
+
     }
 }

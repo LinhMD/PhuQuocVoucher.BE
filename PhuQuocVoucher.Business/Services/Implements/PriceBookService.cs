@@ -17,16 +17,16 @@ public class PriceBookService : ServiceCrud<PriceBook>, IPriceBookService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<PriceBookView>> CreateManyAsync(IEnumerable<CreatePriceBookSimple> priceBooks, int productId)
+    public async Task<IEnumerable<PriceBookView>> CreateManyAsync(IEnumerable<CreatePriceBookSimple> priceBooks, int voucherId)
     {
         var prices = priceBooks.Select(p => new PriceBook
         {
             Price = p.Price, 
-            ProductId = productId, 
+            VoucherId = voucherId, 
             PriceLevelId = p.PriceLevelId
         });
         await Repository.AddAllAsync(prices);
-        return await Repository.Find<PriceBookView>(p => p.ProductId == productId).ToListAsync();
+        return await Repository.Find<PriceBookView>(p => p.VoucherId == voucherId).ToListAsync();
     }
 
 }

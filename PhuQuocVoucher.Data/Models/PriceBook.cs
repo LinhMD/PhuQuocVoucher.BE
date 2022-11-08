@@ -1,4 +1,6 @@
-﻿namespace PhuQuocVoucher.Data.Models;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
+namespace PhuQuocVoucher.Data.Models;
 
 public class PriceBook
 {
@@ -7,14 +9,11 @@ public class PriceBook
     public PriceLevel PriceLevel { get; set; }
     
     public int PriceLevelId { get; set; }
-    
-    public Product Product { get; set; }
-    
-    public int ProductId { get; set; }
-    
-    public bool IsDefault { get; set; }
 
-    public bool IsSellerPrice { get; set; }
+    public Voucher Voucher { get; set; }
+
+    public int VoucherId { get; set; }
     
     public double Price { get; set; }
+
 }

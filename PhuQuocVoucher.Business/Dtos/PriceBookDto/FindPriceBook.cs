@@ -13,7 +13,7 @@ public class FindPriceBook : IFindRequest<PriceBook>
     public int? PriceLevelId { get; set; }
 
     [Equal]
-    public int? ProductId { get; set; }
+    public int? VoucherId { get; set; }
     
     [BiggerThan(nameof(PriceBook.Price))]
     public double? PriceLow { get; set; }

@@ -16,6 +16,10 @@
       <PackageReference Include="Firebase.Auth" Version="1.0.0" />
       <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
       <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
+      <PackageReference Include="Hangfire" Version="1.7.31" />
+      <PackageReference Include="Hangfire.AspNetCore" Version="1.7.31" />
+      <PackageReference Include="Hangfire.Core" Version="1.7.31" />
+      <PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
       <PackageReference Include="Laraue.EfCoreTriggers.Common" Version="6.3.3" />
       <PackageReference Include="Laraue.EfCoreTriggers.SqlServer" Version="6.3.3" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.6" />

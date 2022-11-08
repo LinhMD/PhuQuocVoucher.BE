@@ -6,10 +6,12 @@ namespace PhuQuocVoucher.Business.Dtos.OrderItemDto;
 public class CreateOrderItem : CreateDto, ICreateRequest<OrderItem>
 {
     public int OrderId { get; set; }
-
-    public int OrderProductId { get; set; }
     
+    public int VoucherId { get; set; }
+
     public int PriceId { get; set; }
+    
+    public bool IsComboPrice { get; set; }
 
     public int? ProfileId { get; set; }
 

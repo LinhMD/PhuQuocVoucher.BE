@@ -4,14 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PhuQuocVoucher.Data.Models;
 
-[Index(nameof(ProductId), IsUnique = true)]
 [Index(nameof(VoucherName), IsUnique = true)]
 public class Voucher : BaseModel
 {
 
     public int Id { get; set; }
     public string VoucherName { get; set; }
-
 
     public int? LimitPerDay { get; set; }
 
@@ -21,23 +19,30 @@ public class Voucher : BaseModel
 
     public DateTime? EndDate { get; set; }
 
-    public Product? Product { get; set; }
-
-    public int? ProductId { get; set; }
-    
-    /// <summary>
-    /// if true then when order this voucher send notification to provider to confirm
-    /// </summary>
-    public bool IsNeedProviderConfirm { get; set; } 
-
     public Service Service { get; set; }
 
     public int ServiceId { get; set; }
 
     public IList<QrCodeInfo> QrCodeInfos { get; set; }
-    public IEnumerable<Combo> Combos { get; set; }
     
     public int SlotNumber { get; set; }
+
+    public int ProviderId { get; set; }
+
+    public ServiceProvider Provider { get; set; }
     
+    public string? Description { get; set; }
+
+    public string? Summary { get; set; }
+
+    public int Inventory { get; set; }
+    
+    public string? BannerImg { get; set; }
+
+    public string? Content { get; set; }
+
+    public IEnumerable<PriceBook> Prices { get; set; }
+    
+    public IEnumerable<Tag> Tags { get; set; }
 
 }

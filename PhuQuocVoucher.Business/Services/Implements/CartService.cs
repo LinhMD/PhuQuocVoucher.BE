@@ -49,7 +49,7 @@ public class CartService : ServiceCrud<Cart>, ICartService
             throw new ModelNotFoundException($"Price Id {item.PriceId} not found!!");
         } 
         
-        cartItem.ProductId = priceBook.ProductId;
+        cartItem.VoucherId = priceBook.VoucherId;
         
         var itemView = (await UnitOfWork.Get<CartItem>().AddAsync(cartItem)).Adapt<CartItemView>();
         cart.CartItems.Add(itemView);
@@ -103,7 +103,7 @@ public class CartService : ServiceCrud<Cart>, ICartService
             {
                 throw new ModelNotFoundException($"Price Id {item.PriceId} not found!!");
             }
-            cartItem.ProductId = priceBook.ProductId;
+            cartItem.VoucherId = priceBook.VoucherId;
             var itemView = (await UnitOfWork.Get<CartItem>().AddAsync(cartItem)).Adapt<CartItemView>();
             cart.CartItems.Add(itemView);
         }

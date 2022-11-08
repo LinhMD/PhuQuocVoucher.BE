@@ -11,4 +11,7 @@ public class CreateServiceType : CreateDto, ICreateRequest<ServiceType>
     public string Name { get; set; }
 
     public int?  ParentTypeId { get; set; }
+    
+    [Required]
+    public double?  DefaultCommissionRate { get; set; }
 }

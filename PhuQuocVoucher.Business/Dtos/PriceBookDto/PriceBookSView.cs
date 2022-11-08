@@ -1,6 +1,5 @@
 ﻿using CrudApiTemplate.View;
 using Mapster;
-using PhuQuocVoucher.Business.Dtos.ProductDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.PriceBookDto;
@@ -16,6 +15,6 @@ public class PriceBookSView : IView<PriceBook>, IDto
 
     public void InitMapper()
     {
-        TypeAdapterConfig<PriceBook, PriceBookSView>.NewConfig().Map(view => view.PriceLevelName, book => book.PriceLevel.Name);
+        TypeAdapterConfig<PriceBook, PriceBookSView>.NewConfig().Map(view => view.PriceLevelName, book => book.PriceLevel.ToString());
     }
 }

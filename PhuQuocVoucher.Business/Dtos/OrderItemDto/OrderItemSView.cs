@@ -10,7 +10,7 @@ public class OrderItemSView : IView<OrderItem>, IDto
 
     public int OrderId { get; set; }
 
-    public int OrderProductId { get; set; }
+    public int VoucherId { get; set; }
     
     public int PriceId { get; set; }
     

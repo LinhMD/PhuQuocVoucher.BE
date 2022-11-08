@@ -15,21 +15,16 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
 {
     private ILogger<VoucherService> _logger;
 
-    private readonly IProductService _productService;
-    public VoucherService(IUnitOfWork work, ILogger<VoucherService> logger, IProductService productService) : base(work.Get<Voucher>(), work, logger)
+    public VoucherService(IUnitOfWork work, ILogger<VoucherService> logger) : base(work.Get<Voucher>(), work, logger)
     {
         _logger = logger;
-        _productService = productService;
     }
 
     public async Task<VoucherView> CreateAsync(CreateVoucher createVoucher)
     {
         try
         {
-            createVoucher.CreateProduct.Type = ProductType.Voucher;
-            var product = await _productService.CreateProductAsync(createVoucher.CreateProduct);
             var voucher = (createVoucher as ICreateRequest<Voucher>).CreateNew(UnitOfWork);
-            voucher.ProductId = product.Id;
             var voucherView = (await UnitOfWork.Get<Voucher>().AddAsync(voucher)).Adapt<VoucherView>();
             return await UnitOfWork.Get<Voucher>().Find<VoucherView>(v => v.Id == voucherView.Id).FirstOrDefaultAsync() ?? voucherView;
         }

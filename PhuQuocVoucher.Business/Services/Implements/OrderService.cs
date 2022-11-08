@@ -1,4 +1,5 @@
-﻿using CrudApiTemplate.CustomException;
+﻿using System.Runtime.InteropServices;
+using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Services;
@@ -44,7 +45,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
     }
 
 
-    private async Task ValidateInventoryEnoughAsync(IEnumerable<OrderItem> orderItems)
+    /*private async Task ValidateInventoryEnoughAsync(IEnumerable<OrderItem> orderItems)
     {
         var itemCount = orderItems.GroupBy(o => o.OrderProductId);
         //check inventory
@@ -58,10 +59,10 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 throw new ModelValueInvalidException(
                     $"Voucher with product id {items.ToList().First().OrderProductId} do not have enough inventory");
             }
-
             product.Inventory -= items.Count();
         }
-    }
+        await UnitOfWork.CompleteAsync();
+    }*/
 
     public async Task<OrderView> PlaceOrderAsync(CartView cart, int cusId, int? sellerId = null)
     {
@@ -73,19 +74,38 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             SellerId = sellerId
         };
         await UnitOfWork.Get<Order>().AddAsync(order);
-
+        
         double total = 0;
         //create order item
         var orderItems = new List<OrderItem>();
+        var priceIds = cart.CartItems.Select(o => o.PriceId).ToList();
+        var priceBooks = await UnitOfWork.Get<PriceBook>().Find(pb => priceIds.Contains(pb.Id)).ToListAsync();
+        var priceBooksDic = priceBooks.ToDictionary(book => book.Id, book => book.Price);
+        var voucherIds = priceBooks.Select(p => p.VoucherId).Distinct();
+        var vouchers = await UnitOfWork.Get<Voucher>().Find(v => voucherIds.Contains(v.Id))
+            .ToDictionaryAsync(v => v.Id, v => v);
+        var qrCodes = await UnitOfWork.Get<QrCodeInfo>().Find(qr => voucherIds.Contains(qr.VoucherId))
+            .GroupBy(qr => qr.VoucherId)
+            .ToDictionaryAsync(
+                qrs => qrs.Key,
+                qrs => new Stack<QrCodeInfo>(qrs.ToList()));
+
         foreach (var items in cart!.CartItems)
         {
             for (var i = 0; i < items.Quantity; i++)
             {
                 var orderItem = new OrderItem
                 {
-                    PriceId = items.PriceId,
-                    OrderProductId = items.ProductId,
-                    OrderId = order.Id
+                    OrderId = order.Id,
+                    PriceId = cart!.CartItems[i].PriceId,
+                    SoldPrice = priceBooksDic[cart!.CartItems[i].PriceId],
+                    ProfileId = cart!.CartItems[i].PriceId,
+                    ProviderId = vouchers[cart!.CartItems[i].VoucherId].ProviderId,
+                    CreateAt = DateTime.Now,
+                    SellerId = sellerId,
+                    Status = ModelStatus.Active,
+                    QrCodeId = qrCodes[cart!.CartItems[i].VoucherId].Pop().Id,
+                    VoucherId = cart!.CartItems[i].VoucherId
                 };
                 orderItem.Validate();
                 orderItems.Add(orderItem);
@@ -94,7 +114,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         }
 
         order.TotalPrice = total;
-        await ValidateInventoryEnoughAsync(orderItems);
+        /*await ValidateInventoryEnoughAsync(orderItems);*/
         await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
         await UnitOfWork.Get<CartItem>().RemoveAllAsync(cart.CartItems.Select(c => new CartItem {Id = c.Id}));
         order.OrderItems = orderItems;
@@ -104,7 +124,8 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         return order.Adapt<OrderView>();
     }
 
-    public async Task<OrderView> CreateOrderAsync(CreateOrder createOrder)
+    
+    public async Task<OrderView> CreateOrderAsync(CreateOrder createOrder, int? sellerId = null)
     {
         try
         {
@@ -122,9 +143,37 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 item.OrderId = order.Id;
             }
 
+            /*var orderItems = createOrder.OrderItems
+                .Select(o => (o as ICreateRequest<OrderItem>).CreateNew(UnitOfWork)).ToList();*/
+            var priceIds = createOrder.OrderItems.Select(o => o.PriceId).ToList();
+
+            var priceBooks = await UnitOfWork.Get<PriceBook>().Find(pb => priceIds.Contains(pb.Id)).ToListAsync();
+            var priceBooksDic = priceBooks.ToDictionary(book => book.Id, book => book.Price);
+            var voucherIds = priceBooks.Select(p => p.VoucherId).Distinct();
+            var vouchers = await UnitOfWork.Get<Voucher>().Find(v => voucherIds.Contains(v.Id))
+                .ToDictionaryAsync(v => v.Id, v => v);
+            var qrCodes = await UnitOfWork.Get<QrCodeInfo>().Find(qr => voucherIds.Contains(qr.VoucherId))
+                .GroupBy(qr => qr.VoucherId)
+                .ToDictionaryAsync(
+                    qrs => qrs.Key,
+                    qrs => new Stack<QrCodeInfo>(qrs.ToList()));
+            
             var orderItems = createOrder.OrderItems
-                .Select(o => (o as ICreateRequest<OrderItem>).CreateNew(UnitOfWork)).ToList();
-            orderItems.ForEach(Console.WriteLine);
+                .Select(o => new OrderItem
+                {
+                    OrderId = order.Id,
+                    PriceId = o.PriceId,
+                    SoldPrice = priceBooksDic[o.PriceId],
+                    ProfileId = o.ProfileId,
+                    ProviderId = vouchers[o.VoucherId].ProviderId,
+                    CreateAt = DateTime.Now,
+                    SellerId = sellerId,
+                    Status = ModelStatus.Active,
+                    QrCodeId = qrCodes[o.VoucherId].Pop().Id,
+                    VoucherId = o.VoucherId
+                }).ToList();
+            
+            
             foreach (var item in orderItems)
             {
                 try
@@ -137,7 +186,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 }
             }
 
-            await ValidateInventoryEnoughAsync(orderItems);
+            /*await ValidateInventoryEnoughAsync(orderItems)*/;
 
             await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
 
@@ -158,12 +207,12 @@ public class OrderService : ServiceCrud<Order>, IOrderService
 
     public async Task<OrderView> CancelOrderAsync(int id)
     {
-        Order order = await Repository.GetAsync(id);
+        var order = await Repository.GetAsync(id);
         if (order == null) throw new ModelNotFoundException("Order Not Found With " + id);
         order.OrderStatus = OrderStatus.Canceled;
-        
+
         await Repository.CommitAsync();
-        OrderView orderView = await Repository.Find<OrderView>( o => o.Id == id).FirstOrDefaultAsync();
-        return orderView;
+        var orderView = await Repository.Find<OrderView>(o => o.Id == id).FirstOrDefaultAsync();
+        return orderView!;
     }
 }

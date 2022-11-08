@@ -14,16 +14,13 @@ public static class ServicesInitDi
         serviceCollection.AddScoped<IBlogService, BlogService>();
         serviceCollection.AddScoped<ICartItemService, CartItemService>();
         serviceCollection.AddScoped<ICartService, CartService>();
-        serviceCollection.AddScoped<IComboService, ComboService>();
         serviceCollection.AddScoped<ICustomerService, CustomerService>();
         serviceCollection.AddScoped<IOrderService, OrderService>();
         serviceCollection.AddScoped<IOrderItemService, OrderItemService>();
         serviceCollection.AddScoped<IPaymentDetailService, PaymentDetailService>();
         serviceCollection.AddScoped<IPlaceService, PlaceService>();
-        serviceCollection.AddScoped<IProductService, ProductService>();
         serviceCollection.AddScoped<IProfileService, ProfileService>();
         serviceCollection.AddScoped<IProviderService, ProviderService>();
-        serviceCollection.AddScoped<IProviderTypeService, ProviderTypeService>();
         serviceCollection.AddScoped<IReviewService, ReviewService>();
         serviceCollection.AddScoped<ISellerService, SellerService>();
         serviceCollection.AddScoped<IServiceService, ServiceService>();
@@ -36,7 +33,6 @@ public static class ServicesInitDi
         serviceCollection.AddScoped<IMailingService, MailingService>();
 
         serviceCollection.AddScoped<IPriceBookService, PriceBookService>();
-        serviceCollection.AddScoped<IPriceLevelService, PriceLevelService>();
         serviceCollection.AddScoped<IQrCodeService, QrCodeService>();
         serviceCollection.AddScoped<MomoSetting>();
         serviceCollection.AddScoped<PaymentService>();

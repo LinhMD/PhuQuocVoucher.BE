@@ -13,6 +13,6 @@ public class CartItemRepository : Repository<CartItem>, ICartItemRepository
 
     public override IQueryable<CartItem> IncludeAll()
     {
-        return Models.Include(o => o.Product);
+        return Models.AsQueryable();
     }
 }

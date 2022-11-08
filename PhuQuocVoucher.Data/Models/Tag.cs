@@ -11,5 +11,5 @@ public class Tag : BaseModel
     
     public IList<Blog> Blogs { get; set; }
     
-    public IList<Product> Products { get; set; }
+    public IList<Voucher> Vouchers { get; set; }
 }

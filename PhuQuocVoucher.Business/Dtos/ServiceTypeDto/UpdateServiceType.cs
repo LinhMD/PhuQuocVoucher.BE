@@ -9,5 +9,8 @@ public class UpdateServiceType : UpdateDto, IUpdateRequest<ServiceType>
 
     [MaxLength(255)]
     public string? Name { get; set; }
+    
     public int? ParentTypeId { get; set; }
+    
+    public double?  DefaultCommissionRate { get; set; }
 }

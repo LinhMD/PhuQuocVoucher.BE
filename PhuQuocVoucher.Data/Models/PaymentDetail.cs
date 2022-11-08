@@ -5,6 +5,8 @@ public class PaymentDetail  : BaseModel
     public int Id { get; set; }
 
     public double TotalAmount { get; set; }
+    
+    public Guid RequestId { get; set; }
 
     public DateTime PaymentDate { get; set; }
 

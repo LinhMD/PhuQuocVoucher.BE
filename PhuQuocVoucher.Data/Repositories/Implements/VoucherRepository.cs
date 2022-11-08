@@ -14,7 +14,6 @@ public class VoucherRepository : Repository<Voucher>, IVoucherRepository
     public override IQueryable<Voucher> IncludeAll()
     {
         return Models
-            .Include(v => v.Service)
-            .Include(v => v.Combos);
+            .Include(v => v.Service);
     }
 }

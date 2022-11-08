@@ -11,7 +11,7 @@ public class CreatePriceBook : CreateDto, ICreateRequest<PriceBook>
     public int PriceLevelId { get; set; }
 
     [Required]
-    public int ProductId { get; set; }
+    public int VoucherId { get; set; }
     
     [Required]
     [Range(1, double.MaxValue, ErrorMessage = "Only positive number allowed")]

@@ -28,7 +28,7 @@ public class FindVoucher : IFindRequest<Voucher>
     [BiggerThan("EndDate")]
     public DateTime? Date { get; set; } = DateTime.Now;*/
 
-    public int? ProductId { get; set; }
+    public int? VoucherId { get; set; }
 
     public int? ServiceId { get; set; }
     
@@ -41,7 +41,7 @@ public class FindVoucher : IFindRequest<Voucher>
     /// <summary>
     /// Voucher.Product.Tags.Any(tag => tag.Name.Contains(TagName))
     /// </summary>
-    [Any(target:$"{nameof(Voucher.Product)}.{nameof(Product.Tags)}", property:nameof(Tag.Name), typeof(ContainAttribute))]
+    [Any(target:$"{nameof(Voucher.Tags)}", property:nameof(Tag.Name), typeof(ContainAttribute))]
     public string? TagName { get; set; }
     
     public ModelStatus Status { get; set; }

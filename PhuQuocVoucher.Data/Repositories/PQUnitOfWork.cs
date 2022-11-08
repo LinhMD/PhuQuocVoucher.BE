@@ -17,15 +17,12 @@ public class PqUnitOfWork : UnitOfWork
         Add(new CartRepository(dataContext));
         Add(new CartItemRepository(dataContext));
         Add(new CustomerRepository(dataContext));
-        Add(new ComboRepository(dataContext));
         Add(new OrderItemRepository(dataContext));
         Add(new OrderRepository(dataContext));
         Add(new PaymentDetailRepository(dataContext));
         Add(new PlaceRepository(dataContext));
-        Add(new ProductRepository(dataContext));
         Add(new ProfileRepository(dataContext));
         Add(new ProviderRepository(dataContext));
-        Add(new ProviderTypeRepository(dataContext));
         Add(new ReviewRepository(dataContext));
         Add(new SellerRepository(dataContext));
         Add(new ServiceRepository(dataContext));
@@ -42,7 +39,7 @@ public class PqUnitOfWork : UnitOfWork
 
     public ICartItemRepository CartItems => (ICartItemRepository) Get<CartItem>();
 
-    public IComboRepository Combos => (IComboRepository) Get<Combo>();
+    //public IComboRepository Combos => (IComboRepository) Get<Combo>();
 
     public IOrderItemRepository OrderItems => (IOrderItemRepository) Get<OrderItem>();
 
@@ -52,13 +49,11 @@ public class PqUnitOfWork : UnitOfWork
 
     public IPlaceRepository Places => (IPlaceRepository) Get<Place>();
 
-    public IProductRepository Products => (IProductRepository) Get<Product>();
+    /*public IProductRepository Products => (IProductRepository) Get<Product>();*/
 
     public IProfileRepository Profiles => (IProfileRepository) Get<Profile>();
 
     public IProviderRepository Providers => (IProviderRepository) Get<ServiceProvider>();
-
-    public IProviderTypeRepository ProviderTypes => (IProviderTypeRepository) Get<ProviderType>();
 
     public IReviewRepository Reviews => (IReviewRepository) Get<Review>();
 

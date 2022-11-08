@@ -10,7 +10,7 @@ public class FindCartItem : IFindRequest<CartItem>, IDto
 
     public int? Quantity { get; set; }
 
-    public int? ProductId { get; set; }
+    public int? VoucherId { get; set; }
 
     public int? CartId { get; set; }
 }

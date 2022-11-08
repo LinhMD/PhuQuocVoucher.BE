@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CrudApiTemplate.View;
 using Mapster;
-using PhuQuocVoucher.Business.Dtos.ProviderTypeDto;
 using PhuQuocVoucher.Business.Dtos.SellerDto;
 using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Data.Models;
@@ -24,8 +23,6 @@ public class ProviderView : IView<ServiceProvider>, IDto
     public SellerView? AssignedSeller { get; set; }
 
     public int AssignedSellerId { get; set; }
-
-    public ProviderTypeSView? Type { get; set; }
 
     public void InitMapper()
     {

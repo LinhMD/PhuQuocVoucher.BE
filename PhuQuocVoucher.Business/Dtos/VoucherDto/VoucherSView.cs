@@ -22,8 +22,6 @@ public class VoucherSView : IView<Voucher>, IDto
 
     public DateTime? EndDate { get; set; }
 
-    public int? ProductId { get; set; }
-
     public int ServiceId { get; set; }
 
     public void InitMapper()

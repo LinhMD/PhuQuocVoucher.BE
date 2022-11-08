@@ -42,9 +42,5 @@ public class FindProvider : IFindRequest<Provider>
     [Equal("AssignedSeller.Id")]
     public int? AssignedSellerId { get; set; }
 
-    [Contain(target:"Type.Name")]
-    public string? TypeName { get; set; }
 
-    [Equal("Type.Id")]
-    public int? TypeId { get; set; }
 }

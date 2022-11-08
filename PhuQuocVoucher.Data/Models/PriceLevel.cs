@@ -1,11 +1,13 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class PriceLevel
+public enum PriceLevel
 {
-    public int Id { get; set; }
-    
-    public string Name { get; set; }
-    
-    
-    public IEnumerable<PriceBook> PriceBooks { get; set; }
+   ChildrenCustomer,
+   AdultCustomer,
+   ChildrenSeller,
+   AdultSeller,
+   ChildrenProvider,
+   AdultProvider,
+   Combo,
+   Default
 }
