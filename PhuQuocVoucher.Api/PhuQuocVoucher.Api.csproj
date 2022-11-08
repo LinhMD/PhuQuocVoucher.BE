@@ -8,6 +8,10 @@
     </PropertyGroup>
     
     <ItemGroup>
+        <PackageReference Include="Hangfire" Version="1.7.31" />
+        <PackageReference Include="Hangfire.AspNetCore" Version="1.7.31" />
+        <PackageReference Include="Hangfire.Core" Version="1.7.31" />
+        <PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
         <PackageReference Include="Laraue.EfCoreTriggers.Common" Version="6.3.3" />
         <PackageReference Include="Mapster" Version="7.3.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.6" />

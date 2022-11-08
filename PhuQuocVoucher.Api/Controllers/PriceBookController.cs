@@ -47,7 +47,7 @@ public class PriceBookController : ControllerBase
     [HttpPost("many")]
     public async Task<IActionResult> CreateMultiple([FromBody] CreateListPriceBook request)
     {
-        return Ok(await _priceBookService.CreateManyAsync(request.PriceBooks, request.ProductId));
+        return Ok(await _priceBookService.CreateManyAsync(request.PriceBooks, request.VoucherId));
     }
 
     [HttpGet("{id:int}")]

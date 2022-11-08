@@ -39,6 +39,17 @@ public class BlogController : ControllerBase
         })).ToPagingResponse(paging));
     }
 
+    [HttpPost("query")]
+    public async Task<IActionResult> GetAdmin([FromBody]FindBlog request, [FromQuery]PagingRequest paging, string? orderBy)
+    {
+        return Ok((await _blogService.GetAsync(new GetRequest<Blog>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<Blog>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
     [HttpPost]
     public async Task<IActionResult> Create([FromBody]CreateBlog request)
     {

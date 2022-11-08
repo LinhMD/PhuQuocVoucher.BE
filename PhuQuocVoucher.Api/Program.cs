@@ -5,13 +5,16 @@ using CrudApiTemplate.ExceptionFilter;
 using CrudApiTemplate.Repository;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using Hangfire;
+using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PhuQuocVoucher.Business.Dtos;
 using PhuQuocVoucher.Business.Dtos.MailDto;
-using PhuQuocVoucher.Business.Services;using PhuQuocVoucher.Business.Services.Implements;
+using PhuQuocVoucher.Business.Services;
+using PhuQuocVoucher.Business.Services.Implements;
 using PhuQuocVoucher.Data.Models;
 using PhuQuocVoucher.Data.Repositories;
 
@@ -104,6 +107,16 @@ builder.Services.AddLogging(config =>
     config.AddConsole();
 });
 
+builder.Services.AddHangfire(globalConfiguration =>
+{
+    globalConfiguration.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseDefaultTypeSerializer()
+        .UseMemoryStorage();
+});
+
+builder.Services.AddHangfireServer();
+
 //Firebase
 FirebaseApp.Create(new AppOptions()
 {
@@ -125,6 +138,8 @@ builder.Services.AddSingleton(new MailSetting()
     Password = configuration["MailSettings:Password"],
     Port = int.Parse(configuration["MailSettings:Port"])
 });
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -146,4 +161,5 @@ app.UseAuthentication();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.UseHangfireDashboard();
 app.Run();

@@ -1,4 +1,6 @@
-﻿using CrudApiTemplate.Repository;
+﻿using CrudApiTemplate.CustomBinding;
+using CrudApiTemplate.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Business.Dtos.MomoDto;
@@ -27,11 +29,11 @@ public class PaymentController : ControllerBase
     /// </summary>
     /// <param name="orderId"></param>
     /// <returns></returns>
+    [Authorize]
     [HttpGet("momo/{orderId:int}")]
-    public async Task<IActionResult> RequestPaymentMethod(int orderId)
+    public async Task<IActionResult> RequestPaymentMethod(int orderId, [FromClaim("UserId")] int userId)
     {
-        
-        return Ok(await _paymentService.CreatePaymentRequest(orderId));
+        return Ok(await _paymentService.CreatePaymentRequest(orderId, userId));
     }
 
     /// <summary>
@@ -42,7 +44,7 @@ public class PaymentController : ControllerBase
     [HttpPost("momo/callback")]
     public async Task<IActionResult> CallBack([FromBody] MomoIPNRequest callbackRequest)
     {
-        
+        await _paymentService.UpdateStatusWhenSuccessAsync(callbackRequest);
         return NoContent();
     }
 }
