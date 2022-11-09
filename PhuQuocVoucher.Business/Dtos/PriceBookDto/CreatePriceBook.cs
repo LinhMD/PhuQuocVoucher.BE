@@ -8,7 +8,7 @@ public class CreatePriceBook : CreateDto, ICreateRequest<PriceBook>
 {
 
     [Required]
-    public int PriceLevelId { get; set; }
+    public PriceLevel PriceLevel { get; set; }
 
     [Required]
     public int VoucherId { get; set; }

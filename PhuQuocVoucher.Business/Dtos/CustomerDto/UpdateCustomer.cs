@@ -12,4 +12,5 @@ public class UpdateCustomer : UpdateDto, IUpdateRequest<Customer>
     
     public int? AssignSellerId { get; set; }
 
+    public ModelStatus? Status { get; set; }
 }

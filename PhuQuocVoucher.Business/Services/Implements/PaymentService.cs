@@ -23,12 +23,12 @@ public class PaymentService
         _backgroundJobClient = backgroundJobClient;
     }
 
-    public async Task<MomoResponse> CreatePaymentRequest(int orderId,int userId, bool isMobile = false)
+    public async Task<MomoResponse> CreatePaymentRequest(int orderId, int userId, bool isMobile = false)
     {
         var order = await _work.Get<Order>().GetAsync(orderId);
         if (order == null) throw new ModelNotFoundException($"Order not found with id {orderId}");
 
-        if (order.OrderStatus == OrderStatus.Completed || 
+        if (order.OrderStatus == OrderStatus.Completed ||
             order.OrderStatus == OrderStatus.Used ||
             order.OrderStatus == OrderStatus.Canceled)
             throw new ModelValueInvalidException("Can not create payment request for order " + orderId);
@@ -37,7 +37,7 @@ public class PaymentService
         var accessKey = _momoSetting.AccessKey;
         var secretKey = _momoSetting.SecretKey;
         var orderInfo = DateTime.Now.ToString("yyyyMMddHHmmss") + "-" + order.Id;
-        var redirectUrl = isMobile? "https://phuquocvoucher.page.link/TG78" : "";
+        var redirectUrl = isMobile ? "https://phuquocvoucher.page.link/TG78" : "https://phuquocvoucher.page.link/TG78";
         var ipnUrl = "https://webapp-221010174451.azurewebsites.net/api/v1/momo/callback";
         var requestType = "captureWallet";
 
@@ -54,27 +54,27 @@ public class PaymentService
 
         var message = new JObject
         {
-            { "partnerCode", partnerCode },
-            { "partnerName", "Phu Quoc Company" },
-            { "storeId", "Phu QuocVoucher" },
-            { "requestId", requestId },
-            { "amount", amount },
-            { "orderId", orderId },
-            { "orderInfo", orderInfo },
-            { "redirectUrl", redirectUrl },
-            { "ipnUrl", ipnUrl },
-            { "lang", "en" },
-            { "autoCapture", false},
-            { "extraData", extraData },
-            { "requestType", requestType },
-            { "signature", signature }
+            {"partnerCode", partnerCode},
+            {"partnerName", "Phu Quoc Company"},
+            {"storeId", "Phu QuocVoucher"},
+            {"requestId", requestId},
+            {"amount", amount},
+            {"orderId", orderId},
+            {"orderInfo", orderInfo},
+            {"redirectUrl", redirectUrl},
+            {"ipnUrl", ipnUrl},
+            {"lang", "en"},
+            {"autoCapture", false},
+            {"extraData", extraData},
+            {"requestType", requestType},
+            {"signature", signature}
         };
-        
+
         var response = await PaymentRequest.SendPaymentRequestAsync(endpoint!, message.ToString());
         var jMessage = JObject.Parse(response);
         Console.WriteLine(jMessage.ToString());
         var momoResponse = jMessage.ToObject<MomoResponse>();
-        if (momoResponse == null) 
+        if (momoResponse == null)
             throw new ModelValueInvalidException("Can not create a payment request");
 
         order.PaymentRequestId = requestId;
@@ -100,24 +100,26 @@ public class PaymentService
 
     public async Task UpdateStatusWhenSuccessAsync(MomoIPNRequest request)
     {
-        if (request.ResultCode != 9000) throw new ModelValueInvalidException("Something went wrong when processing payment");
-        
+        if (request.ResultCode != 9000)
+            throw new ModelValueInvalidException("Something went wrong when processing payment");
+
         var accessKey = _momoSetting.AccessKey;
         var secretKey = _momoSetting.SecretKey;
         var description = "";
         var requestType = "capture";
-        
+
         var orderId = request.OrderId;
         var order = await _work.Get<Order>().GetAsync(orderId);
-        
-        if (order == null) 
+
+        if (order == null)
             throw new ModelNotFoundException($"Order not found with id {request.OrderId}");
-        
-        var paymentDetail = await _work.Get<PaymentDetail>().Find(p => p.RequestId.ToString() == request.RequestId).FirstOrDefaultAsync();
+
+        var paymentDetail = await _work.Get<PaymentDetail>().Find(p => p.RequestId.ToString() == request.RequestId)
+            .FirstOrDefaultAsync();
 
         if (paymentDetail == null || paymentDetail.OrderId != orderId)
             throw new ModelValueInvalidException("");
-        
+
         var momoResponse = await ConfirmPaymentAsync(request);
         var rawHash = "accessKey=" + accessKey + "&amount=" + request.Amount + "&description=" + description +
                       "&orderId=" + request.OrderId + "&partnerCode=" + request.PartnerCode + "&requestId=" +
@@ -128,17 +130,24 @@ public class PaymentService
         if (signature != momoResponse.Signature)
             throw new ModelValueInvalidException("Signature is not valid");
 
-        if (momoResponse.resultCode != 0) 
+        if (momoResponse.resultCode != 0)
             throw new ModelValueInvalidException("Failed when update status");
 
-        if (Math.Abs(momoResponse.amount - paymentDetail.TotalAmount) > 0.1)
+        if (Math.Abs(momoResponse.amount - paymentDetail!.TotalAmount ?? 0) > 0.1)
             throw new ModelValueInvalidException("Amount is not valid");
-        
+
         paymentDetail.PaymentStatus = PaymentStatus.Success;
+
+        var qrCodeIds = await _work.Get<OrderItem>().Find(item => item.OrderId == order.Id && item.QrCodeId != null)
+            .Select(item => item.QrCodeId).ToListAsync();
+
+        var qrCodeInfos = await _work.Get<QrCodeInfo>().Find(qr => qrCodeIds.Contains(qr.Id)).ToListAsync();
+        qrCodeInfos.ForEach(qr => qr.Status = QRCodeStatus.Commit);
+
         order.OrderStatus = OrderStatus.Completed;
 
         await _work.CompleteAsync();
-        
+
         /*entity.Status = PaymentStatus.Success.ToString();
         await _paymentRepository.Update(entity);
 
@@ -175,10 +184,9 @@ public class PaymentService
 
         _backgroundJobClient.Enqueue( () =>
             _emailSender.SendMailConfirmAsync(customerEmail, "Payment Information", message));*/
-
     }
-    
-    private async Task PaymentFailed(int paymentId)
+
+    public async Task PaymentFailed(int paymentId)
     {
         var payment = await _work.Get<PaymentDetail>().GetAsync(paymentId);
         if (payment is {PaymentStatus: PaymentStatus.Pending})
@@ -188,8 +196,8 @@ public class PaymentService
             await _work.CompleteAsync();
         }
     }
-    
-    private async Task<MomoResponse> ConfirmPaymentAsync(MomoIPNRequest request)
+
+    public async Task<MomoResponse> ConfirmPaymentAsync(MomoIPNRequest request)
     {
         var partnerCode = request.PartnerCode;
         var orderId = request.OrderId;
@@ -209,21 +217,21 @@ public class PaymentService
 
         var message = new JObject
         {
-            { "partnerCode", partnerCode },
-            { "requestId", requestId },
-            { "orderId", orderId },
-            { "requestType", requestType },
-            { "amount", amount },
-            { "lang", "en" },
-            { "description", description },
-            { "signature", signature}
+            {"partnerCode", partnerCode},
+            {"requestId", requestId},
+            {"orderId", orderId},
+            {"requestType", requestType},
+            {"amount", amount},
+            {"lang", "en"},
+            {"description", description},
+            {"signature", signature}
         };
 
         var response = await PaymentRequest.SendConfirmPaymentRequest(url, message.ToString());
         var momoResponse = JObject.Parse(response).ToObject<MomoResponse>();
         if (momoResponse == null)
             throw new CodingException("Can not connect to momo");
-        
+
         momoResponse.Signature = signature;
         return momoResponse;
     }

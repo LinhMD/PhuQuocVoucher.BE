@@ -9,4 +9,7 @@ public class UpdatePriceBook: UpdateDto, IUpdateRequest<PriceBook>
     [Required]
     [Range(1, double.MaxValue, ErrorMessage = "Only positive number allowed")]
     public double Price { get; set; }
+    
+    
+    public ModelStatus? Status { get; set; }
 }

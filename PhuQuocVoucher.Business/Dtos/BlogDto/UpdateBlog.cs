@@ -12,4 +12,6 @@ public class UpdateBlog : UpdateDto, IUpdateRequest<Blog>
     public string Title { get; set; }
 
     public string Summary { get; set; }
+    
+    public ModelStatus? Status { get; set; }
 }

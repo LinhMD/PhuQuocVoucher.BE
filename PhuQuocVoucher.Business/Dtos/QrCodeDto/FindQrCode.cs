@@ -10,5 +10,5 @@ public class FindQrCode : IFindRequest<QrCodeInfo>
     
     public int? VoucherId { get; set; }
 
-    public QRCodeStatus? Status { get; set; } = QRCodeStatus.Active;
+    public QRCodeStatus? Status { get; set; }
 }

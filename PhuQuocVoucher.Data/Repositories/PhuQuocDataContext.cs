@@ -33,6 +33,12 @@ public class PhuQuocDataContext : DbContext
             .HasOne(o => o.PaymentDetail)
             .WithOne(p => p.Order)
             .HasForeignKey<PaymentDetail>(p => p.OrderId);
+        
+        foreach (var foreignKey in modelBuilder.Model.GetEntityTypes()
+                     .SelectMany(e => e.GetForeignKeys()))
+        {
+            foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+        }
 
         /*modelBuilder.Entity<OrderItem>().AfterInsert(trigger => trigger
             .Action(action => action

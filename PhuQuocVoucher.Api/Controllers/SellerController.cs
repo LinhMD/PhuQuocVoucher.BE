@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 using CrudApiTemplate.CustomBinding;
 using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
@@ -287,5 +288,14 @@ public class SellerController : ControllerBase
     public async Task<IActionResult> CancelOrder(int id)
     {
         return Ok((await _orderService.CancelOrderAsync(id)));
+    }
+    
+    
+    [Authorize(Roles = nameof(Role.Seller))]
+    [SwaggerResponse(200, "Order View",typeof(OrderView))]
+    [HttpPut("kpi")]
+    public async Task<IActionResult> KPI([FromClaim("SellerId")]int sellerId, [Range(1, 12)]int month, [Range(2000, 2100)]int year)
+    {
+        return Ok((await _sellerService.GetSellerKpis(sellerId, month, year)));
     }
 }

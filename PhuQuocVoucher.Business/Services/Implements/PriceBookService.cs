@@ -23,7 +23,7 @@ public class PriceBookService : ServiceCrud<PriceBook>, IPriceBookService
         {
             Price = p.Price, 
             VoucherId = voucherId, 
-            PriceLevelId = p.PriceLevelId
+            PriceLevel = p.PriceLevel
         });
         await Repository.AddAllAsync(prices);
         return await Repository.Find<PriceBookView>(p => p.VoucherId == voucherId).ToListAsync();

@@ -23,7 +23,7 @@ public class OrderItemView : IView<OrderItem>, IDto
     
     public DateTime? UseDate { get; set; }
     
-    public PriceBookView Price { get; set; }
+    public PriceBookSView Price { get; set; }
     
     public QrCodeView QrCode { get; set; }
 

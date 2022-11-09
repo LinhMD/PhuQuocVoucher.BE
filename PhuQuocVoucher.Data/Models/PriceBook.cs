@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
 
 namespace PhuQuocVoucher.Data.Models;
 
@@ -8,8 +9,8 @@ public class PriceBook
     
     public PriceLevel PriceLevel { get; set; }
     
-    public int PriceLevelId { get; set; }
 
+    [JsonIgnore]
     public Voucher Voucher { get; set; }
 
     public int VoucherId { get; set; }

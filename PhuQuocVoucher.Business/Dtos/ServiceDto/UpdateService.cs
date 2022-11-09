@@ -9,4 +9,6 @@ public class UpdateService : UpdateDto, IUpdateRequest<Service>
 
     public string Description { get; set; }
 
+    
+    public ModelStatus? Status { get; set; }
 }

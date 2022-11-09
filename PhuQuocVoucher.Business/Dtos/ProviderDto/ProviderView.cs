@@ -23,6 +23,8 @@ public class ProviderView : IView<ServiceProvider>, IDto
     public SellerView? AssignedSeller { get; set; }
 
     public int AssignedSellerId { get; set; }
+    
+    public ModelStatus Status { get; set; }
 
     public void InitMapper()
     {

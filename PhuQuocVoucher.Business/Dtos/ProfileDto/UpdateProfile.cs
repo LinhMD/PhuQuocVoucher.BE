@@ -20,4 +20,6 @@ public class UpdateProfile : UpdateDto, IUpdateRequest<Profile>
     public string? CivilIdentify { get; set; }
 
     public int? CustomerId { get; set; }
+    
+    public ModelStatus? Status { get; set; }
 }

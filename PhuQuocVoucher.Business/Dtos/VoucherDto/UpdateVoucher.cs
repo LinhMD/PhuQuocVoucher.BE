@@ -20,4 +20,5 @@ public class UpdateVoucher : UpdateDto, IUpdateRequest<Voucher>
 
     public DateTime? EndDate { get; set; }
 
+    public ModelStatus? Status { get; set; }
 }

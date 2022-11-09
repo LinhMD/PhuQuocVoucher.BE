@@ -10,4 +10,7 @@ public class UpdatePlace : UpdateDto, IUpdateRequest<Place>
     public string? MapLocation { get; set; }
 
     public string? Image { get; set; }
+    
+    
+    public ModelStatus? Status { get; set; }
 }

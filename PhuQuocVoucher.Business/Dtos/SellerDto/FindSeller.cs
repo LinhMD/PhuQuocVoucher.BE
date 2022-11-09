@@ -34,5 +34,7 @@ public class FindSeller : IFindRequest<Seller>
 
     [Contain(target:"UserInfo.UserName")]
     public string? UserName { get; set; }
+
+    public BusyLevel? BusyLevel { get; set; }
     
 }

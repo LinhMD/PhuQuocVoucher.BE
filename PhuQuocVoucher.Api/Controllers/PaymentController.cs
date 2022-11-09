@@ -31,7 +31,7 @@ public class PaymentController : ControllerBase
     /// <returns></returns>
     [Authorize]
     [HttpGet("momo/{orderId:int}")]
-    public async Task<IActionResult> RequestPaymentMethod(int orderId, [FromClaim("UserId")] int userId)
+    public async Task<IActionResult> RequestPaymentMethod(int orderId, [FromClaim("Id")] int userId)
     {
         return Ok(await _paymentService.CreatePaymentRequest(orderId, userId));
     }

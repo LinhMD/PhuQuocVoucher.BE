@@ -1,4 +1,5 @@
 ﻿using CrudApiTemplate.Request;
+using PhuQuocVoucher.Data.Models;
 using Provider = PhuQuocVoucher.Data.Models.ServiceProvider;
 
 namespace PhuQuocVoucher.Business.Dtos.ProviderDto;
@@ -16,5 +17,6 @@ public class UpdateProvider :  UpdateDto, IUpdateRequest<Provider>
     public int? AssignedSellerId { get; set; }
 
     public int? TypeId { get; set; }
-
+    
+    public ModelStatus? Status { get; set; }
 }

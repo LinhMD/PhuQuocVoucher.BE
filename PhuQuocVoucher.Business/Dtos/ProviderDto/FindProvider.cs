@@ -1,5 +1,6 @@
 ﻿using CrudApiTemplate.Attributes.Search;
 using CrudApiTemplate.Request;
+using PhuQuocVoucher.Data.Models;
 using Provider = PhuQuocVoucher.Data.Models.ServiceProvider;
 
 namespace PhuQuocVoucher.Business.Dtos.ProviderDto;
@@ -42,5 +43,6 @@ public class FindProvider : IFindRequest<Provider>
     [Equal("AssignedSeller.Id")]
     public int? AssignedSellerId { get; set; }
 
-
+    
+    public ModelStatus? Status { get; set; }
 }
