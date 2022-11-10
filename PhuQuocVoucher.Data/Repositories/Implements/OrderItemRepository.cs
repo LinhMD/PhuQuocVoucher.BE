@@ -14,6 +14,7 @@ public class OrderItemRepository : Repository<OrderItem> , IOrderItemRepository
     public override IQueryable<OrderItem> IncludeAll()
     {
         return Models.Include(o => o.Order)
+            .Include(o => o.QrCode)
             .Include(o => o.Profile)
             .Include(o => o.Review);
     }

@@ -2,7 +2,7 @@
 
 public class MomoResponse
 {
-    public string PartnerCode { get; set; }
+    public string partnerCode { get; set; }
 
     public string requestId { get; set; }
     

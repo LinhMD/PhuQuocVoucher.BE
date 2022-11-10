@@ -3,6 +3,7 @@ using CrudApiTemplate.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PhuQuocVoucher.Api.Ultility;
 using PhuQuocVoucher.Business.Dtos.MomoDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
 using PhuQuocVoucher.Business.Services.Implements;
@@ -44,7 +45,18 @@ public class PaymentController : ControllerBase
     [HttpPost("momo/callback")]
     public async Task<IActionResult> CallBack([FromBody] MomoIPNRequest callbackRequest)
     {
-        await _paymentService.UpdateStatusWhenSuccessAsync(callbackRequest);
+        try
+        {
+            await _paymentService.UpdateStatusWhenSuccessAsync(callbackRequest);
+        }
+        catch (Exception e)
+        {
+            e.Message.Dump();
+            e.StackTrace.Dump();
+            var paymentId = await _work.Get<PaymentDetail>().Find(p => p.RequestId.ToString() == callbackRequest.RequestId)
+                .Select(p => p.Id).FirstOrDefaultAsync();
+            await _paymentService.PaymentFailed(callbackRequest.OrderId, paymentId);
+        }
         return NoContent();
     }
 }

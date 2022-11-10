@@ -16,5 +16,6 @@ public class CartItem : BaseModel
     
     public int PriceId { get; set; }
     
+    
     public int CartId { get; set; }
 }

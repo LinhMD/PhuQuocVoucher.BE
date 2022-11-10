@@ -29,8 +29,6 @@ public class PaymentRequest
 
     public string extraData { get; set; } = "";
 
-    public IList<Item>? Items { get; set; }
-    
     public object userInfo { get; set; }
     
     public bool autoCapture { get; set; }

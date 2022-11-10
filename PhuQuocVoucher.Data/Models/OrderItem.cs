@@ -11,9 +11,11 @@ public class OrderItem  : BaseModel
      public Voucher Voucher { get; set; }
 
      public int VoucherId { get; set; }
+     
      public Profile? Profile { get; set; }
  
      public int? ProfileId { get; set; }
+     
      public Review? Review { get; set; }
  
      public DateTime? UseDate { get; set; }
