@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using CrudApiTemplate.Attributes.Search;
+using PhuQuocVoucher.Api.Ultility;
 
 namespace CrudApiTemplate.Request;
 
@@ -10,14 +11,13 @@ public interface IFindRequest<TModel> where TModel: class
     {
         var param = Expression.Parameter(typeof(TModel), typeof(TModel).Name);
         Expression expressionBody = Expression.Constant(true);
-        foreach (var property in GetType().GetProperties())
+        foreach (var property in this.GetType().GetProperties())
         {
             var value = property?.GetValue(this);
             if(value is null) continue;
 
-
             Expression tProperty;
-            FilterAttribute[] filters = Attribute.GetCustomAttributes(property!, typeof(FilterAttribute)) as FilterAttribute[] ?? Array.Empty<FilterAttribute>();
+            var filters = Attribute.GetCustomAttributes(property!, typeof(FilterAttribute)) as FilterAttribute[] ?? Array.Empty<FilterAttribute>();
             if (filters.Any())
             {
                 foreach (var filter in filters)
@@ -31,7 +31,7 @@ public interface IFindRequest<TModel> where TModel: class
             else
             {
                 tProperty = Expression.Property(param, property!.Name);
-                expressionBody = Expression.And(expressionBody, Expression.Equal(tProperty, Expression.Constant(value))!);
+                expressionBody = Expression.And(expressionBody, Expression.Equal(tProperty, Expression.Convert(Expression.Constant(value), tProperty.Type)));
             }
         }
 
@@ -43,15 +43,9 @@ public interface IFindRequest<TModel> where TModel: class
 
     private static Expression Navigate(Expression param, IList<string>? list, MemberInfo? property)
     {
-        Expression tProperty = Expression.Property(param, list?[0] ?? property!.Name);
         //if have more member navigation like t.Role.Name
-        if (list == null) return tProperty;
+        Expression tProperty = Expression.Property(param, list?[0] ?? property!.Name);
 
-        foreach (var propertyName in list.Skip(1))
-        {
-            tProperty = Expression.PropertyOrField(tProperty, propertyName);
-        }
-
-        return tProperty;
+        return list == null ? tProperty : list.Skip(1).Aggregate(tProperty, Expression.Property);
     }
 }

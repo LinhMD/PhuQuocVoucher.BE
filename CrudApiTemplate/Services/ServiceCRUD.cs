@@ -1,39 +1,100 @@
 ﻿using CrudApiTemplate.CustomException;
-using CrudApiTemplate.Repositories;
+using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
 using CrudApiTemplate.View;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace CrudApiTemplate.Services;
 
 public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : class
 {
     protected readonly IRepository<TModel> Repository;
-    protected IUnitOfWork UnitOfWork;
+    protected readonly IUnitOfWork UnitOfWork;
 
-    public ServiceCrud(IRepository<TModel> repository, IUnitOfWork work)
+    protected readonly ILogger<ServiceCrud<TModel>> Logger;
+
+    protected ServiceCrud(IRepository<TModel> repository, IUnitOfWork work, ILogger<ServiceCrud<TModel>> logger)
     {
         Repository = repository;
         UnitOfWork = work;
+        Logger = logger;
     }
-
-
 
     public TModel Create(ICreateRequest<TModel> createRequest)
     {
-        var model = createRequest.CreateNew(UnitOfWork);
-
-        model.Validate();
-
+        var model = createRequest.CreateNew(UnitOfWork).Validate();
         try
         {
             model = Repository.Add(model);
         }
         catch(Exception ex)
         {
-            throw new DbQueryException(ex);
+            var message = $"Create {typeof(TModel).Name} failed with message: {ex.Message}";
+            Logger.LogError(ex, message);
+            throw new DbQueryException(message, DbError.Create);
         }
+        return model;
+    }
 
+    public async Task<TModel> CreateAsync(ICreateRequest<TModel> createRequest)
+    {
+        var model = createRequest.CreateNew(UnitOfWork).Validate();
+
+        try
+        {
+            model = await Repository.AddAsync(model);
+        }
+        catch(DbUpdateException e)
+        {
+            var exceptionMessage = e.InnerException?.Message ?? "";
+            Logger.LogError(e.InnerException, exceptionMessage);
+            if (exceptionMessage.Contains("duplicate"))
+            {
+                var dupValue = exceptionMessage.Substring(exceptionMessage.IndexOf('(') + 1,
+                    (exceptionMessage.IndexOf(')') - exceptionMessage.IndexOf('(') - 1));
+                throw new DbQueryException($"Duplicate value: {dupValue}", DbError.Create);
+            }
+            throw new DbQueryException($"Error create {typeof(TModel).Name}  with message: {exceptionMessage}.", DbError.Create);
+        }
+        return model;
+    }
+
+    public TModel Update(int id, IUpdateRequest<TModel> updateRequest)
+    {
+        var model = Get(id);
+        updateRequest.UpdateModel(ref model, UnitOfWork);
+        model.Validate();
+        try
+        {
+            Repository.Commit();
+        }
+        catch(Exception ex)
+        {
+            var mess = $"Update {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}";
+            Logger.LogError(ex, mess);
+            throw new DbQueryException(mess, DbError.Update);
+        }
+        return model;
+    }
+    public async Task<TModel> UpdateAsync(int id, IUpdateRequest<TModel> updateRequest)
+    {
+        var model = await GetAsync(id);
+
+        updateRequest.UpdateModel(ref model, UnitOfWork);
+        model.Validate();
+        try
+        {
+            await Repository.CommitAsync();
+        }
+        catch(Exception ex)
+        {
+            var message = $"Update {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}";
+            Logger.LogError(ex, message);
+            throw new DbQueryException(message, DbError.Update);
+        }
 
         return model;
     }
@@ -41,15 +102,50 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     public TModel Delete(int id)
     {
         var model = Get(id);
-
         try
         {
             Repository.Remove(model);
         }
         catch (Exception ex)
         {
-            throw new DbQueryException(ex);
+            var mess = $"Delete {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}";
+            Logger.LogError(ex, mess);
+            throw new DbQueryException(mess, DbError.Delete);
         }
+        return model;
+    }
+
+    public async Task<TModel> DeleteAsync(int id)
+    {
+        var model = await GetAsync(id);
+
+        try
+        {
+            Repository.RemoveAsync(model);
+        }
+        catch (Exception ex)
+        {
+            var message = $"Delete {typeof(TModel).Name} id: {id}, failed with message: {ex.Message}";
+            Logger.LogError(ex, message);
+            throw new DbQueryException(message, DbError.Delete);
+        }
+
+        return model;
+    }
+
+    public TModel Get(int id)
+    {
+        var model = Repository.Get(id);
+
+        if (model == null) throw new ModelNotFoundException($"Not Found {typeof(TModel).Name} with id {id}");
+
+        return model;
+    }
+    public async Task<TModel> GetAsync(int id)
+    {
+        var model = await Repository.GetAsync(id);
+
+        if (model == null) throw new ModelNotFoundException($"Not Found {typeof(TModel).Name} with id {id}");
 
         return model;
     }
@@ -58,71 +154,114 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     {
         var view = Repository.Get<TView>(id);
 
-        if (view == null) throw new ModelNotFoundException<TModel>(typeof(TModel).Name);
+        if (view == null) throw new ModelNotFoundException($"Not Found {typeof(TModel).Name} with id {id}");
+
+        return view;
+    }
+
+    public async Task<TView> GetAsync<TView>(int id) where TView : class, IView<TModel>, new()
+    {
+        var view = await Repository.GetAsync<TView>(id);
+
+        if (view == null) throw new ModelNotFoundException($"Not Found {typeof(TModel).Name} with id {id}");
 
         return view;
     }
 
 
-
-    public IEnumerable<TModel> Find(IFindRequest<TModel> findRequest)
+    public IList<TModel> Find(IFindRequest<TModel> findRequest)
     {
-        return Repository.Find(findRequest.ToPredicate());
+        return Repository.Find(findRequest.ToPredicate()).ToList();
     }
 
-    public IEnumerable<TView> Find<TView>(IFindRequest<TModel> findRequest) where TView : class, IView<TModel>, new()
+    public async Task<IList<TModel>> FindAsync(IFindRequest<TModel> findRequest)
     {
-        return Repository.Find<TView>(findRequest.ToPredicate());
+        return await Repository.Find(findRequest.ToPredicate()).ToListAsync();
     }
 
-    public (IEnumerable<TModel> models, int total) FindSortedPaging(IOrderRequest<TModel> orderRequest)
+    public IList<TView> Find<TView>(IFindRequest<TModel> findRequest) where TView : class, IView<TModel>, new()
     {
-        PagingRequest paging = orderRequest.GetPaging();
-        return Repository.FindOrderedPaging(orderRequest.ToPredicate(), orderRequest, paging.Page, paging.PageSize);
+        return Repository.Find<TView>(findRequest.ToPredicate()).ToList();
     }
 
-    public (IEnumerable<TView> models, int total) FindSortedPaging<TView>(IOrderRequest<TModel> orderRequest) where TView : class, IView<TModel>, new()
+    public async Task<IList<TView>> FindAsync<TView>(IFindRequest<TModel> findRequest) where TView : class, IView<TModel>, new()
     {
-        PagingRequest paging = orderRequest.GetPaging();
-
-        return Repository.FindOrderedPaging<TView>(orderRequest.ToPredicate(), orderRequest, paging.Page, paging.PageSize);
-    }
-    public TModel Get(int id)
-    {
-        TModel? model = Repository.Get(id);
-
-        if (model == null) throw new ModelNotFoundException<TModel>(typeof(TModel).Name);
-
-        return model;
+        return await Repository.Find<TView>(findRequest.ToPredicate()).ToListAsync();
     }
 
-    public IEnumerable<TModel> GetAll()
+    public (IList<TModel> models, int total) Get(GetRequest<TModel> getRequest)
     {
-        return Repository.GetAll();
+        var filter = Repository.Find(getRequest.FindRequest.ToPredicate());
+        var total = filter.Count();
+        var result = filter
+            .OrderBy(getRequest.OrderRequest)
+            .Paging(getRequest.GetPaging()).ToList();
+
+        return (result, total);
     }
 
-    public IEnumerable<TView> GetAll<TView>() where TView : class, IView<TModel>, new()
+
+    public async Task<(IList<TModel> models, int total)> GetAsync(GetRequest<TModel> getRequest)
     {
-        return Repository.GetAll<TView>();
+
+        var filter = Repository.Find(getRequest.FindRequest.ToPredicate());
+
+        var total = await filter.CountAsync();
+
+        var result = await filter
+            .OrderBy(getRequest.OrderRequest)
+            .Paging(getRequest.GetPaging())
+            .ToListAsync();
+
+        return (result, total);
     }
 
-    public TModel Update(int id, IUpdateRequest<TModel> updateRequest)
+    public (IList<TView> models, int total) Get<TView>(GetRequest<TModel> getRequest) where TView : class, IView<TModel>, new()
     {
-        var model = Get(id);
+        var queryable = Repository.Find(getRequest.FindRequest.ToPredicate());
 
-        updateRequest.UpdateModel(ref model, UnitOfWork);
+        var total = queryable.Count();
 
-        model.Validate();
+        var result = queryable
+            .OrderBy(getRequest.OrderRequest)
+            .Paging(getRequest.GetPaging())
+            .ProjectToType<TView>().ToList();
 
-        try
-        {
-            Repository.Commit();
-        }
-        catch(Exception ex)
-        {
-            throw new DbQueryException(ex);
-        }
-
-        return model;
+        return (result, total);
     }
+
+    public async Task<(IList<TView> models, int total)> GetAsync<TView>(GetRequest<TModel> getRequest) where TView : class, IView<TModel>, new()
+    {
+        var filter = Repository.Find(getRequest.FindRequest.ToPredicate());
+        var total = await filter.CountAsync();
+        var result = await filter
+            .OrderBy(getRequest.OrderRequest)
+            .Paging(getRequest.GetPaging())
+            .ProjectToType<TView>()
+            .ToListAsync();
+
+        return (result, total);
+    }
+
+    public IList<TModel> GetAll()
+    {
+        return Repository.GetAll().ToList();
+    }
+
+    public async Task<IList<TModel>> GetAllAsync()
+    {
+        return await Repository.GetAll().ToListAsync();
+    }
+
+    public IList<TView> GetAll<TView>() where TView : class, IView<TModel>, new()
+    {
+        return Repository.GetAll<TView>().ToList();
+    }
+
+    public async Task<IList<TView>> GetAllAsync<TView>() where TView : class, IView<TModel>, new()
+    {
+        return await Repository.GetAll<TView>().ToListAsync();
+    }
+
+
 }

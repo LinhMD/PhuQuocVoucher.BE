@@ -1,6 +1,6 @@
 ﻿namespace CrudApiTemplate.CustomException
 {
-    public class ModelNotFoundException<TModel> : UserRequestException
+    public class ModelNotFoundException : UserRequestException
     {
         public ModelNotFoundException(string error): base(error)
         {
