@@ -34,7 +34,6 @@ public class VoucherView : IView<Voucher>, IDto
 
     public bool IsForKid { get; set; }
 
-    public ProductType Type { get; set; }
     
     public double? DisplayPrice { get; set; }
     

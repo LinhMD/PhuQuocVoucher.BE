@@ -1,8 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
+using CrudApiTemplate.OrderBy;
+using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Data.Models;
 
-public class Service : BaseModel
+public class Service : BaseModel, IOrderAble
 {
     public int Id { get; set; }
 
@@ -24,5 +27,9 @@ public class Service : BaseModel
     public ServiceProvider Provider { get; set; }
 
     public int ProviderId { get; set; }
-
+    public void ConfigOrderBy()
+    {
+        Expression<Func<Service, ModelStatus>> orderByStatus = service => service.Status;
+        OrderByProvider<Service>.OrderByDic.Add(nameof(Status),orderByStatus);
+    }
 }

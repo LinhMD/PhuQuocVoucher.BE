@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
+using CrudApiTemplate.OrderBy;
 using Microsoft.EntityFrameworkCore;
+using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Data.Models;
 
 [Index(nameof(UserInfoId), IsUnique = true)]
-public class Customer : BaseModel
+public class Customer : BaseModel, IOrderAble
 {
     [Required]
     public int Id { get; set; }
@@ -30,6 +33,10 @@ public class Customer : BaseModel
 
     public IEnumerable<Review> Reviews { get; set; }
     
-    
+    public void ConfigOrderBy()
+    {
+        Expression<Func<Customer, ModelStatus>> orderByStatus = customer => customer.Status;
+        OrderByProvider<Customer>.OrderByDic.Add(nameof(Status),orderByStatus);
+    }
 
 }

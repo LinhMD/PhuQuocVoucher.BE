@@ -1,6 +1,10 @@
-﻿namespace PhuQuocVoucher.Data.Models;
+﻿using System.Linq.Expressions;
+using CrudApiTemplate.OrderBy;
+using PhuQuocVoucher.Data.Repositories.Core;
 
-public class CartItem : BaseModel
+namespace PhuQuocVoucher.Data.Models;
+
+public class CartItem : BaseModel, IOrderAble
 {
     public int Id { get; set; }
 
@@ -21,4 +25,9 @@ public class CartItem : BaseModel
     public Profile Profile { get; set; }
     
     public int CartId { get; set; }
+    public void ConfigOrderBy()
+    {
+        Expression<Func<CartItem, ModelStatus>> orderByStatus = cartItem => cartItem.Status;
+        OrderByProvider<Voucher>.OrderByDic.Add(nameof(Status),orderByStatus);
+    }
 }

@@ -1,11 +1,14 @@
 ﻿
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq.Expressions;
+using CrudApiTemplate.OrderBy;
 using Microsoft.EntityFrameworkCore;
+using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Data.Models;
 
 [Index(nameof(VoucherName), IsUnique = true)]
-public class Voucher : BaseModel
+public class Voucher : BaseModel, IOrderAble
 {
 
     public int Id { get; set; }
@@ -48,4 +51,9 @@ public class Voucher : BaseModel
 
     public IEnumerable<Review> Reviews { get; set; }
 
+    public void ConfigOrderBy()
+    {
+        Expression<Func<Voucher, ModelStatus>> orderByStatus = voucher => voucher.Status;
+        OrderByProvider<Voucher>.OrderByDic.Add(nameof(Status),orderByStatus);
+    }
 }

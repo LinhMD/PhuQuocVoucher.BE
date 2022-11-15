@@ -1,6 +1,10 @@
-﻿namespace PhuQuocVoucher.Data.Models;
+﻿using System.Linq.Expressions;
+using CrudApiTemplate.OrderBy;
+using PhuQuocVoucher.Data.Repositories.Core;
 
-public class Blog : BaseModel
+namespace PhuQuocVoucher.Data.Models;
+
+public class Blog : BaseModel, IOrderAble
 {
     public int Id { get; set; }
 
@@ -15,4 +19,9 @@ public class Blog : BaseModel
     public IEnumerable<Place> Places { get; set; }
 
     public IEnumerable<Tag>? Tags { get; set; }
+    public void ConfigOrderBy()
+    {
+        Expression<Func<Blog, ModelStatus>> orderByStatus = blog => blog.Status;
+        OrderByProvider<Blog>.OrderByDic.Add(nameof(Status),orderByStatus);
+    }
 }

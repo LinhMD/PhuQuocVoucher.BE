@@ -125,6 +125,7 @@ FirebaseApp.Create(new AppOptions()
 
 //Mapper
 DtoConfig.ConfigMapper();
+builder.Services.ConfigOrderBy();
 
 //Custom Binding
 builder.Services.AddControllersWithViews(options => options.ValueProviderFactories.Add(new ClaimValueProviderFactory()));

@@ -1,4 +1,6 @@
 ﻿using System.Linq.Expressions;
+using CrudApiTemplate.CustomException;
+using CrudApiTemplate.OrderBy;
 using CrudApiTemplate.Request;
 
 namespace CrudApiTemplate.Utilities;
@@ -60,13 +62,11 @@ public static class QueryableExtensions
         {
             return Order<TModel, object>(models, orderModel);
         }
-
         //string type
         if (member.Type == typeof(string))
         {
             return Order<TModel, string>(models, orderModel);
         }
-
         //Integer types:
         if (member.Type == typeof(int))
         {
@@ -107,6 +107,19 @@ public static class QueryableExtensions
             return Order<TModel, char>(models, orderModel);
         }
         
+        try
+        {
+            var expression = OrderByProvider<TModel>.OrderByDic[member.Member.Name];
+            var sortModels = orderModel.IsAscending
+                ? Queryable.OrderBy(models, expression)
+                : Queryable.OrderByDescending(models, expression);
+            return sortModels;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.StackTrace);
+            throw new ModelNotFoundException($"Can not sort by property {member.Member.Name}");
+        }
         throw new Exception($"Unsupported type {member.Type}");
     }
 
@@ -171,6 +184,17 @@ public static class QueryableExtensions
             return ThenOrder<TModel, char>(models, orderModel);
         }
 
-        throw new Exception($"Unsupported type {member.Type}");
+        try
+        {
+            var expression = OrderByProvider<TModel>.OrderByDic[member.Member.Name];
+            var sortModels = orderModel.IsAscending
+                ? Queryable.ThenBy(models, expression)
+                : Queryable.ThenByDescending(models, expression);
+            return sortModels;
+        }
+        catch (Exception e)
+        {
+            throw new ModelNotFoundException($"Can not sort by property {member.Member.Name}");
+        }
     }
 }

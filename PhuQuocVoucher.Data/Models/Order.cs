@@ -1,6 +1,10 @@
-﻿namespace PhuQuocVoucher.Data.Models;
+﻿using System.Linq.Expressions;
+using CrudApiTemplate.OrderBy;
+using PhuQuocVoucher.Data.Repositories.Core;
 
-public class Order : BaseModel
+namespace PhuQuocVoucher.Data.Models;
+
+public class Order : BaseModel, IOrderAble
 {
     public int Id { get; set; }
 
@@ -23,5 +27,11 @@ public class Order : BaseModel
     public Guid? PaymentRequestId { get; set; }
 
     public IEnumerable<OrderItem> OrderItems { get; set; }
+    
+    public void ConfigOrderBy()
+    {
+        Expression<Func<Order, OrderStatus>> orderByStatus = order => order.OrderStatus;
+        OrderByProvider<Order>.OrderByDic.Add(nameof(OrderStatus),orderByStatus);
+    }
 
 } 

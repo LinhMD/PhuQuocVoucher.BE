@@ -1,10 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
+using CrudApiTemplate.OrderBy;
 using Microsoft.EntityFrameworkCore;
+using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Data.Models;
 
 [Index(nameof(UserInfoId), IsUnique = true)]
-public class Seller : BaseModel
+public class Seller : BaseModel, IOrderAble
+
 {
     [Required]
     public int Id { get; set; }
@@ -24,4 +28,9 @@ public class Seller : BaseModel
     public IEnumerable<Order> HandleOrders { get; set; }
 
     public IEnumerable<Customer> Customers { get; set; }
+    public void ConfigOrderBy()
+    {
+        Expression<Func<Seller, ModelStatus>> orderByStatus = seller => seller.Status;
+        OrderByProvider<Seller>.OrderByDic.Add(nameof(Status),orderByStatus);
+    }
 }

@@ -21,4 +21,6 @@ public class BlogView : IView<Blog>, IDto
     public IEnumerable<PlaceSView> Places { get; set; }
 
     public IEnumerable<TagView>? Tags { get; set; }
+    
+    public ModelStatus? Status { get; set; }
 }

@@ -23,6 +23,8 @@ public class FindBlog : IFindRequest<Blog>, IDto
 
     [Any(nameof(Blog.Tags), nameof(Tag.Id), typeof(EqualAttribute))]
     public int? AnyTagId { get; set; }
+
+    public ModelStatus? Status { get; set; }
     
     [BiggerThan(nameof(BaseModel.UpdateAt))]
     public DateTime? UpdateAt_startTime { get; set; }

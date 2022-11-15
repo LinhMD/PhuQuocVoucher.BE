@@ -1,13 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
+using CrudApiTemplate.OrderBy;
 using Microsoft.EntityFrameworkCore;
+using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Data.Models;
 
 [Index(nameof(UserName), IsUnique = true)]
 [Index(nameof(Email), IsUnique = true)]
-public class User : BaseModel
+public class User : BaseModel, IOrderAble
 {
     public int Id { get; set; }
 
@@ -33,7 +36,11 @@ public class User : BaseModel
     [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Must be a phone number")]
     [MaxLength(10)]
     public string? PhoneNumber { get; set; }
-    
+    public void ConfigOrderBy()
+    {
+        Expression<Func<User, ModelStatus>> orderByStatus = user => user.Status;
+        OrderByProvider<User>.OrderByDic.Add(nameof(Status),orderByStatus);
+    }
     
     
 
