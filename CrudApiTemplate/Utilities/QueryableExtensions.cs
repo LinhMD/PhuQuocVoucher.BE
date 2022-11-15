@@ -100,7 +100,7 @@ public static class QueryableExtensions
         {
             return Order<TModel, bool>(models, orderModel);
         }
-
+        
         //char type
         if(member.Type == typeof(char))
         {

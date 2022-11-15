@@ -177,6 +177,20 @@ public class CustomerController : ControllerBase
     }
     
     /// <summary>
+    /// clean all cart item, then add new cart item 
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
+    [HttpPut("cart")]
+    [Authorize(Roles = nameof(Role.Customer))]
+    public async Task<ActionResult<CartView>> UpdateCart([FromBody]UpdateCart item, [FromClaim("CustomerId")] int customerId)
+    {
+        return Ok(await _cartService.UpdateCartAsync(item, customerId));
+    }
+
+    
+    /// <summary>
     /// Add product item to login customer cart
     /// </summary>
     /// <param name="item"></param>
@@ -281,6 +295,24 @@ public class CustomerController : ControllerBase
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }
+    /// <summary>
+    /// Update profile of order item
+    /// </summary>
+    /// <returns>OrderView</returns>
+    [Authorize(Roles = nameof(Role.Customer))]
+    [HttpPut("orders/{orderId:int}/items/{itemId:int}/")]
+    public async Task<ActionResult<OrderView>> UpdateOrderItem([FromClaim("CustomerId")]int customerId, int itemId, int orderId,[FromBody] int profileId)
+    {
+        var order = await _work.Get<Order>().GetAsync(orderId);
+        if (order is null || order.CustomerId != customerId)
+            throw new ModelNotFoundException($"Order not found with id: {orderId}");
+        var orderItems = order.OrderItems.FirstOrDefault(item => item.Id == itemId);
+
+        if (orderItems is null) throw new ModelNotFoundException($"Order item not found with id: {orderId}");
+        orderItems.ProfileId = profileId;
+        await _work.CompleteAsync();
+        return Ok(await _work.Get<Order>().GetAsync<OrderView>(orderId));
+    }
     
     /// <summary>
     /// Get Current Login Customer
@@ -311,6 +343,12 @@ public class CustomerController : ControllerBase
         return Ok(orders);
     }
     
+    /// <summary>
+    /// create a profile
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
     [Authorize(Roles = nameof(Role.Customer))]
     [HttpPost("profiles")]
     public async Task<IActionResult> CreateProfile([FromBody] CreateProfile request, [FromClaim("CustomerId")] int customerId)
@@ -319,6 +357,13 @@ public class CustomerController : ControllerBase
         return Ok(await _profileService.CreateAsync(request));
     }
 
+    /// <summary>
+    /// get a profile with {id} of login customer
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
+    /// <exception cref="ModelNotFoundException"></exception>
     [Authorize(Roles = nameof(Role.Customer))]
     [HttpGet("profiles/{id:int}")]
     public async Task<IActionResult> GetProfile(int id, [FromClaim("CustomerId")] int customerId)
@@ -327,6 +372,7 @@ public class CustomerController : ControllerBase
                   throw new ModelNotFoundException($"Not Found {nameof(Profile)} with id {id}"));
     }
 
+    
     [Authorize(Roles = nameof(Role.Customer))]
     [HttpPut("profiles/{id:int}")]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfile request, int id, [FromClaim("CustomerId")] int customerId)
@@ -348,5 +394,13 @@ public class CustomerController : ControllerBase
             return NotFound($"Profile with id {id} not found");
         
         return Ok(await _profileService.DeleteAsync(id));
+    }
+
+    [Authorize(Roles = nameof(Role.Customer))]
+    [HttpGet("voucher/review")]
+    public async Task<ActionResult<bool>> IsAllowCustomerReview(int voucherId, [FromClaim("CustomerId")] int customerId)
+    {
+        return Ok(await _work.Get<OrderItem>()
+            .Find(item => item.CustomerId == customerId && item.VoucherId == voucherId).AnyAsync());
     }
 }

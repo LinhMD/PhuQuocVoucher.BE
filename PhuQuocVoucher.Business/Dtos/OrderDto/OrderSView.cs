@@ -7,6 +7,8 @@ namespace PhuQuocVoucher.Business.Dtos.OrderDto;
 
 public class OrderSView : IView<Order>, IDto
 {
+    public DateTime? CreateAt { get; set; }
+    
     public int Id { get; set; }
 
     public double TotalPrice { get; set; }

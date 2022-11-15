@@ -13,6 +13,8 @@ public class UpdateVoucher : UpdateDto, IUpdateRequest<Voucher>
     public int? Inventory { get; set; }
 
     public int? LimitPerDay { get; set; }
+    
+    public double? DisplayPrice { get; set; }
 
     public bool? IsRequireProfileInfo { get; set; }
 

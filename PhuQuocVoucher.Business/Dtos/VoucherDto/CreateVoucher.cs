@@ -27,6 +27,9 @@ public class CreateVoucher : CreateDto, ICreateRequest<Voucher>
     [Required]
     [Range(1, 20)]
     public int SlotNumber { get; set; }
+    
+    public double? DisplayPrice { get; set; }
+
 
     public string? BannerImg { get; set; }
 }

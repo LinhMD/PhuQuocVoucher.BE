@@ -8,7 +8,10 @@ public class Review : BaseModel
 
     public string Comment { get; set; }
 
-    public OrderItem OrderItem { get; set;}
+    public int? VoucherId { get; set; }
 
-    public int OrderItemId { get; set; }
+    public int? CustomerId { get; set; }
+
+    public Customer? Customer { get; set; }
+    
 }

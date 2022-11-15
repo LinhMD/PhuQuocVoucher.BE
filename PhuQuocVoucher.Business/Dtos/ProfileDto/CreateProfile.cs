@@ -20,7 +20,6 @@ public class CreateProfile : CreateDto, ICreateRequest<Profile>
     [MaxLength(255)]
     public string Name { get; set; }
 
-    [Required]
     public string CivilIdentify { get; set; }
 
     [Required]

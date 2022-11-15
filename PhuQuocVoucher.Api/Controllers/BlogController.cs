@@ -2,6 +2,7 @@
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Business.Dtos.BlogDto;
@@ -31,7 +32,7 @@ public class BlogController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery]FindBlog request, [FromQuery]PagingRequest paging, string? orderBy)
     {
-        return Ok((await _blogService.GetAsync(new GetRequest<Blog>
+        return Ok((await _blogService.GetAsync<BlogView>(new GetRequest<Blog>
         {
             FindRequest = request,
             OrderRequest = orderBy.ToOrderRequest<Blog>(),
@@ -42,7 +43,7 @@ public class BlogController : ControllerBase
     [HttpPost("query")]
     public async Task<IActionResult> GetAdmin([FromBody]FindBlog request, [FromQuery]PagingRequest paging, string? orderBy)
     {
-        return Ok((await _blogService.GetAsync(new GetRequest<Blog>
+        return Ok((await _blogService.GetAsync<BlogView>(new GetRequest<Blog>
         {
             FindRequest = request,
             OrderRequest = orderBy.ToOrderRequest<Blog>(),
@@ -51,9 +52,9 @@ public class BlogController : ControllerBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody]CreateBlog request)
+    public async Task<ActionResult<BlogView>> Create([FromBody]CreateBlog request)
     {
-        return Ok(await _blogService.CreateAsync(request));
+        return Ok(await _blogService.CreateBlogAsync(request));
     }
 
     [HttpGet("{id:int}")]
@@ -66,12 +67,12 @@ public class BlogController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromBody] UpdateBlog request, int id)
     {
-        return Ok(await _blogService.UpdateAsync(id, request));
+        return Ok((await _blogService.UpdateAsync(id, request)).Adapt<BlogView>());
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        return Ok(await _blogService.DeleteAsync(id));
+        return Ok((await _blogService.DeleteAsync(id)).Adapt<BlogView>());
     }
 }

@@ -36,8 +36,8 @@ public class PaymentService
         var secretKey = _momoSetting.SecretKey;
         var orderInfo = DateTime.Now.ToString("yyyyMMddHHmmss") + "-" + order.Id;
         var redirectUrl = isMobile ? _momoSetting.MobileRedirect : _momoSetting.WebRedirect;
-        const string ipnUrl = "https://webapp-221010174451.azurewebsites.net/api/v1/momo/callback";
-        const string requestType = "captureWallet";
+        var ipnUrl = _momoSetting.IpnCallback;
+        var requestType = "captureWallet";
 
 
         var requestId = Guid.NewGuid();
@@ -107,11 +107,11 @@ public class PaymentService
 
     public async Task UpdateStatusWhenSuccessAsync(MomoIPNRequest request)
     {
-        if (request.ResultCode != 9000)
-            throw new ModelValueInvalidException("Something went wrong when processing payment");
+        /*if (request.ResultCode != 9000 && request.ResultCode != 0 )
+            throw new ModelValueInvalidException("Something went wrong when processing payment");*/
 
-        var orderId = request.OrderId;
-        var order = await _work.Get<Order>().GetAsync(orderId);
+        var paymentId = request.OrderId;
+        var order = await _work.Get<Order>().Find(order => order.PaymentDetailId == paymentId).FirstOrDefaultAsync();
 
         if (order == null)
             throw new ModelNotFoundException($"Order not found with id {request.OrderId}");
@@ -124,7 +124,10 @@ public class PaymentService
         var paymentDetail = await _work.Get<PaymentDetail>().Find(p => p.RequestId.ToString() == request.RequestId)
             .FirstOrDefaultAsync();
 
-        if (paymentDetail == null || paymentDetail.OrderId != orderId)
+        order.OrderStatus = OrderStatus.Completed;
+        
+        await _work.CompleteAsync();
+        if (paymentDetail == null || paymentDetail.OrderId != order.Id)
             throw new ModelValueInvalidException("");
 
         var momoResponse = await ConfirmPaymentAsync(paymentDetail);

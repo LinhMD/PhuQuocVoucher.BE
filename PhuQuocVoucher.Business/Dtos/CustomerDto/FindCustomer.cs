@@ -37,4 +37,17 @@ public class FindCustomer : IFindRequest<Customer>
 
     [Equal(nameof(Customer.AssignSellerId))]
     public int? SellerId { get; set; }
+    
+    [BiggerThan(nameof(BaseModel.UpdateAt))]
+    public DateTime? UpdateAt_startTime { get; set; }
+    
+    [LessThan(nameof(BaseModel.UpdateAt))]
+    public DateTime? UpdateAt_endTime { get; set; }
+
+    [BiggerThan(nameof(BaseModel.CreateAt))]
+    public DateTime? CreateAt_startTime { get; set; }
+    
+    [LessThan(nameof(BaseModel.CreateAt))]
+    public DateTime? CrateAt_endTime { get; set; }
+
 }

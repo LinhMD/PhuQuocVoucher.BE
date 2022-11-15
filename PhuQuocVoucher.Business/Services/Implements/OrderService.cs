@@ -111,7 +111,9 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         var voucherIdsNotHaveEnoughQrCode = qrCodes.Keys.Intersect(voucherQuantities.Keys).Where(voucherId => voucherQuantities[voucherId] > qrCodes[voucherId].Count).ToList();
         if (voucherIdsNotHaveEnoughQrCode.Any())
         {
-            throw new ModelValueInvalidException($"Voucher ids out of QrCode : {string.Join(",", voucherIdsNotHaveEnoughQrCode)}");
+            var vouchersNotHaveEnough = voucherIdsNotHaveEnoughQrCode
+                .Select(id => $"{id} - quantity: {voucherQuantities[id]}").ToList();
+            throw new ModelValueInvalidException($"Voucher ids out of QrCode : {string.Join(",", vouchersNotHaveEnough)}");
         }
         
         foreach (var items in cart!.CartItems)
@@ -133,7 +135,9 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                     VoucherId = items.VoucherId,
                     SellerRate = sellerRate * priceBooksDic[items.PriceId],
                     ProviderRate = serviceRates[vouchers[items.VoucherId].ProviderId] * priceBooksDic[items.PriceId],
-                    UseDate = items.UseDate
+                    UseDate = items.UseDate,
+                    ProfileId = items.ProfileId,
+                    CustomerId = order.CustomerId
                 };
                 orderItem.Validate();
                 qrCode.Status = QRCodeStatus.Pending;
@@ -204,14 +208,14 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                     group => group.ToList().Count);
             
             var idsOutOfQrCode = voucherQuantities.Keys.Except(qrCodes.Keys).ToList();
-            if (!idsOutOfQrCode.Any())
+            if (idsOutOfQrCode.Any())
             {
                 throw new ModelValueInvalidException($"Voucher ids out of QrCode : {string.Join(",", idsOutOfQrCode)}");
             }
 
             var voucherIdsNotHaveEnoughQrCode = qrCodes.Keys.Intersect(voucherQuantities.Keys)
                 .Where(voucherId => voucherQuantities[voucherId] > qrCodes[voucherId].Count).ToList();
-            if (!voucherIdsNotHaveEnoughQrCode.Any())
+            if (voucherIdsNotHaveEnoughQrCode.Any())
             {
                 throw new ModelValueInvalidException($"Voucher ids out of QrCode : {string.Join(",", voucherIdsNotHaveEnoughQrCode)}");
             }
@@ -230,7 +234,9 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                     VoucherId = o.VoucherId,
                     SellerRate = sellerRate * priceBooksDic[o.PriceId],
                     ProviderRate = serviceRates[vouchers[o.VoucherId].ProviderId] * priceBooksDic[o.PriceId],
-                    UseDate = o.UseDate
+                    UseDate = o.UseDate,
+                    ProfileId = o.ProfileId,
+                    CustomerId = order.CustomerId
                 }).Peek(o =>
                 {
                     o.QrCodeId = o.QrCode!.Id;

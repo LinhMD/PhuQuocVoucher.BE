@@ -17,6 +17,18 @@ public class FindUser : IFindRequest<User>, IDto
     [In(target:"PhoneNumber")]
     public IList<string>? PhoneNumbers { get; set; }
 
+    [BiggerThan(nameof(BaseModel.UpdateAt))]
+    public DateTime? UpdateAt_startTime { get; set; }
+    
+    [LessThan(nameof(BaseModel.UpdateAt))]
+    public DateTime? UpdateAt_endTime { get; set; }
+
+    [BiggerThan(nameof(BaseModel.CreateAt))]
+    public DateTime? CreateAt_startTime { get; set; }
+    
+    [LessThan(nameof(BaseModel.CreateAt))]
+    public DateTime? CrateAt_endTime { get; set; }
+
     [Equal]
     public ModelStatus? Status { get; set; }
 

@@ -36,6 +36,8 @@ public class VoucherView : IView<Voucher>, IDto
 
     public ProductType Type { get; set; }
     
+    public double? DisplayPrice { get; set; }
+    
     public IEnumerable<PriceBookSView> Prices { get; set; }
     
     public int SlotNumber { get; set; }

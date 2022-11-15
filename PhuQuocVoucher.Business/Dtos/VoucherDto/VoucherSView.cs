@@ -21,6 +21,8 @@ public class VoucherSView : IView<Voucher>, IDto
     public DateTime? StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
+    
+    public double? DisplayPrice { get; set; }
 
     public int ServiceId { get; set; }
     public int SlotNumber { get; set; }

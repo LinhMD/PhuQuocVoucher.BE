@@ -17,7 +17,8 @@ public class CartItemView : IView<CartItem>, IDto
     public double Price { get; set; }
     
     public int PriceId { get; set; }
-    
+
+    public int? ProfileId { get; set; }
     
     public DateTime? UseDate { get; set; }
     

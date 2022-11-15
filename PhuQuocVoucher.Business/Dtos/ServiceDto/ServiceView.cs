@@ -17,8 +17,14 @@ public class ServiceView : IView<Service>, IDto
     public string? Type { get; set; }
     
     public string? LocationName { get; set; }
+
+    public int? ServiceLocationId { get; set; }
     
-    public SimpleProviderView? Provider { get; set; } 
+    public SimpleProviderView? Provider { get; set; }
+    
+    public int  ProviderId { get; set; }
+
+    public ModelStatus Status { get; set; }
     
     public void InitMapper()
     {

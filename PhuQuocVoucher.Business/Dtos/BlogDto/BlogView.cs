@@ -1,4 +1,6 @@
 ﻿using CrudApiTemplate.View;
+using PhuQuocVoucher.Business.Dtos.PlaceDto;
+using PhuQuocVoucher.Business.Dtos.TagDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.BlogDto;
@@ -16,7 +18,7 @@ public class BlogView : IView<Blog>, IDto
 
     public string Summary { get; set; }
 
-    public IEnumerable<Place> Places { get; set; }
+    public IEnumerable<PlaceSView> Places { get; set; }
 
-    public IEnumerable<Tag>? Tags { get; set; }
+    public IEnumerable<TagView>? Tags { get; set; }
 }

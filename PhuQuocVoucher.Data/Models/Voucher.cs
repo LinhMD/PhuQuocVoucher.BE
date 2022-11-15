@@ -36,7 +36,8 @@ public class Voucher : BaseModel
     public string? Summary { get; set; }
 
     public int Inventory { get; set; }
-    
+
+    public double? DisplayPrice { get; set; }
     public string? BannerImg { get; set; }
 
     public string? Content { get; set; }
@@ -44,5 +45,7 @@ public class Voucher : BaseModel
     public IEnumerable<PriceBook> Prices { get; set; }
     
     public IEnumerable<Tag> Tags { get; set; }
+
+    public IEnumerable<Review> Reviews { get; set; }
 
 }

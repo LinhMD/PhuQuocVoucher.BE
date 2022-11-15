@@ -20,6 +20,17 @@ public class FindService : IFindRequest<Service> , IDto
     [Contain("Type.Name")]
     public string? TypeName { get; set; }
 
+    [BiggerThan(nameof(BaseModel.UpdateAt))]
+    public DateTime? UpdateAt_startTime { get; set; }
+    
+    [LessThan(nameof(BaseModel.UpdateAt))]
+    public DateTime? UpdateAt_endTime { get; set; }
+
+    [BiggerThan(nameof(BaseModel.CreateAt))]
+    public DateTime? CreateAt_startTime { get; set; }
+    
+    [LessThan(nameof(BaseModel.CreateAt))]
+    public DateTime? CrateAt_endTime { get; set; }
 
     [Equal("ServiceLocation.Id")]
     public int? PlaceId { get; set; }
@@ -33,4 +44,4 @@ public class FindService : IFindRequest<Service> , IDto
 
     [Contain("Provider.Name")]
     public string? ProviderName { get; set; }
-}
+}                                                                                                                                                                                                    

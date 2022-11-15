@@ -21,8 +21,26 @@ public class FindVoucher : IFindRequest<Voucher>
     public int? Inventory { get; set; }
 
     public int? LimitPerDay { get; set; }
-
+    
     public bool? IsRequireProfileInfo { get; set; }
+    
+    [BiggerThan("DisplayPrice")]
+    public double? MinDisplayPrice { get; set; }
+    
+    [LessThan("DisplayPrice")]
+    public double? MaxDisplayPrice { get; set; }
+    
+    [BiggerThan(nameof(BaseModel.UpdateAt))]
+    public DateTime? UpdateAt_startTime { get; set; }
+    
+    [LessThan(nameof(BaseModel.UpdateAt))]
+    public DateTime? UpdateAt_endTime { get; set; }
+
+    [BiggerThan(nameof(BaseModel.CreateAt))]
+    public DateTime? CreateAt_startTime { get; set; }
+    
+    [LessThan(nameof(BaseModel.CreateAt))]
+    public DateTime? CrateAt_endTime { get; set; }
 
     /*[LessThan("StartDate")]
     [BiggerThan("EndDate")]

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhuQuocVoucher.Data.Repositories;
 
@@ -11,9 +12,10 @@ using PhuQuocVoucher.Data.Repositories;
 namespace PhuQuocVoucher.Api.Migrations
 {
     [DbContext(typeof(PhuQuocDataContext))]
-    partial class PhuQuocDataContextModelSnapshot : ModelSnapshot
+    [Migration("20221110191551_cart_profile")]
+    partial class cart_profile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,9 +283,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<DateTime?>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("DeleteAt")
                         .HasColumnType("datetime2");
 
@@ -303,9 +302,6 @@ namespace PhuQuocVoucher.Api.Migrations
                         .HasColumnType("float");
 
                     b.Property<int?>("QrCodeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ReviewId")
                         .HasColumnType("int");
 
                     b.Property<int?>("SellerId")
@@ -331,8 +327,6 @@ namespace PhuQuocVoucher.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("OrderId");
 
                     b.HasIndex("PriceId");
@@ -342,8 +336,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.HasIndex("ProviderId");
 
                     b.HasIndex("QrCodeId");
-
-                    b.HasIndex("ReviewId");
 
                     b.HasIndex("SellerId");
 
@@ -566,6 +558,9 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<DateTime?>("DeleteAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("OrderItemId")
+                        .HasColumnType("int");
+
                     b.Property<byte>("Rating")
                         .HasColumnType("tinyint");
 
@@ -575,14 +570,12 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("VoucherId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("VoucherId");
+                    b.HasIndex("OrderItemId")
+                        .IsUnique();
 
                     b.ToTable("Reviews");
                 });
@@ -879,9 +872,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("DisplayPrice")
-                        .HasColumnType("float");
-
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -1055,11 +1045,6 @@ namespace PhuQuocVoucher.Api.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.OrderItem", b =>
                 {
-                    b.HasOne("PhuQuocVoucher.Data.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PhuQuocVoucher.Data.Models.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
@@ -1088,11 +1073,6 @@ namespace PhuQuocVoucher.Api.Migrations
                         .HasForeignKey("QrCodeId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("PhuQuocVoucher.Data.Models.Review", "Review")
-                        .WithMany()
-                        .HasForeignKey("ReviewId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PhuQuocVoucher.Data.Models.Seller", "Seller")
                         .WithMany()
                         .HasForeignKey("SellerId")
@@ -1104,8 +1084,6 @@ namespace PhuQuocVoucher.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Customer");
-
                     b.Navigation("Order");
 
                     b.Navigation("Price");
@@ -1115,8 +1093,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Navigation("Provider");
 
                     b.Navigation("QrCode");
-
-                    b.Navigation("Review");
 
                     b.Navigation("Seller");
 
@@ -1175,17 +1151,18 @@ namespace PhuQuocVoucher.Api.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Review", b =>
                 {
-                    b.HasOne("PhuQuocVoucher.Data.Models.Customer", "Customer")
+                    b.HasOne("PhuQuocVoucher.Data.Models.Customer", null)
                         .WithMany("Reviews")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("PhuQuocVoucher.Data.Models.Voucher", null)
-                        .WithMany("Reviews")
-                        .HasForeignKey("VoucherId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("PhuQuocVoucher.Data.Models.OrderItem", "OrderItem")
+                        .WithOne("Review")
+                        .HasForeignKey("PhuQuocVoucher.Data.Models.Review", "OrderItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.Navigation("OrderItem");
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Seller", b =>
@@ -1311,6 +1288,11 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Navigation("PaymentDetail");
                 });
 
+            modelBuilder.Entity("PhuQuocVoucher.Data.Models.OrderItem", b =>
+                {
+                    b.Navigation("Review");
+                });
+
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Place", b =>
                 {
                     b.Navigation("Services");
@@ -1333,8 +1315,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Navigation("Prices");
 
                     b.Navigation("QrCodeInfos");
-
-                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

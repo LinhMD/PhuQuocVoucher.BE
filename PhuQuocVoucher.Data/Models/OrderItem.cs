@@ -41,4 +41,8 @@ public class OrderItem  : BaseModel
      public ServiceProvider Provider { get; set; }
      
      public double ProviderRate { get; set; }
+
+     public int?  CustomerId { get; set; }
+
+     public Customer? Customer { get; set; }
 }

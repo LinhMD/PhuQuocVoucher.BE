@@ -37,4 +37,16 @@ public class FindSeller : IFindRequest<Seller>
 
     public BusyLevel? BusyLevel { get; set; }
     
+    [BiggerThan(nameof(BaseModel.UpdateAt))]
+    public DateTime? UpdateAt_startTime { get; set; }
+    
+    [LessThan(nameof(BaseModel.UpdateAt))]
+    public DateTime? UpdateAt_endTime { get; set; }
+
+    [BiggerThan(nameof(BaseModel.CreateAt))]
+    public DateTime? CreateAt_startTime { get; set; }
+    
+    [LessThan(nameof(BaseModel.CreateAt))]
+    public DateTime? CrateAt_endTime { get; set; }
+
 }

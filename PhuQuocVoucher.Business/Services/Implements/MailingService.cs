@@ -61,4 +61,5 @@ public class MailingService : IMailingService
         SendEmailAsync(templateRequest.MailRequest, true);
     }
 
+
 }

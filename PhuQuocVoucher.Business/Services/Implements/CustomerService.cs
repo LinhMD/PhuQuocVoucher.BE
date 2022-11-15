@@ -16,7 +16,7 @@ public class CustomerService : ServiceCrud<Customer>, ICustomerService
         _logger = logger;
     }
 
-    public async Task<CustomerSView> CreateCustomerAsync(CreateCustomer createCustomer, int? sellerId = null)
+    public async Task<CustomerView> CreateCustomerAsync(CreateCustomer createCustomer, int? sellerId = null)
     {
         var user = createCustomer.UserInfo.Adapt<User>();
         user.Role = Role.Customer;
@@ -40,6 +40,6 @@ public class CustomerService : ServiceCrud<Customer>, ICustomerService
         customer.CartId = cart.Id;
         customer.Cart = cart;
         await Repository.CommitAsync();
-        return customer.Adapt<CustomerSView>();
+        return customer.Adapt<CustomerView>();
     }
 }

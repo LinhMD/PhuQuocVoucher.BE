@@ -13,6 +13,7 @@ using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
+using PhuQuocVoucher.Business.Dtos.ProfileDto;
 using PhuQuocVoucher.Business.Dtos.SellerDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
@@ -37,7 +38,9 @@ public class SellerController : ControllerBase
     private readonly IRepository<Seller> _repo;
 
     private readonly IUnitOfWork _work;
-    public SellerController(ISellerService sellerService, ILogger<SellerController> logger, IUnitOfWork work, IOrderService orderService, ICustomerService customerService, ICartService cartService)
+    private IProfileService _profileService;
+
+    public SellerController(ISellerService sellerService, ILogger<SellerController> logger, IUnitOfWork work, IOrderService orderService, ICustomerService customerService, ICartService cartService, IProfileService profileService)
     {
         _sellerService = sellerService;
         _logger = logger;
@@ -45,6 +48,7 @@ public class SellerController : ControllerBase
         _orderService = orderService;
         _customerService = customerService;
         _cartService = cartService;
+        _profileService = profileService;
         _repo = work.Get<Seller>();
     }
 
@@ -138,9 +142,9 @@ public class SellerController : ControllerBase
     /// <param name="sellerId"></param>
     /// <returns>Customer newly created</returns>
     [Authorize(Roles = nameof(Role.Seller))]
-    [SwaggerResponse(200,"Cart view", typeof(CustomerSView))]
+    [SwaggerResponse(200,"Cart view", typeof(CustomerView))]
     [HttpPost("customers")]
-    public async Task<ActionResult<CustomerSView>> CreateCustomer([FromBody]CreateCustomer request, [FromClaim("SellerId")] int sellerId)
+    public async Task<ActionResult<CustomerView>> CreateCustomer([FromBody]CreateCustomer request, [FromClaim("SellerId")] int sellerId)
     {
         request.UserInfo.Role = Role.Customer;
         return Ok(await _customerService.CreateCustomerAsync(request, sellerId));
@@ -151,11 +155,63 @@ public class SellerController : ControllerBase
     /// <param name="sellerId">Get from claims</param>
     /// <returns>all customers  this seller support</returns>
     [Authorize(Roles = nameof(Role.Seller))]
-    [SwaggerResponse(200,"List of customers been assigned to you", typeof(List<CustomerSView>))]
+    [SwaggerResponse(200,"List of customers been assigned to you", typeof(List<CustomerView>))]
     [HttpGet("customers")]
-    public async Task<ActionResult<List<CustomerSView>>> GetCustomer([FromClaim("SellerId")] int? sellerId)
+    public async Task<ActionResult<List<CustomerView>>> GetCustomer([FromClaim("SellerId")] int? sellerId)
     {
-        return Ok(await _work.Get<Customer>().Find<CustomerSView>(c => c.AssignSellerId == sellerId).ToListAsync());
+        return Ok(await _work.Get<Customer>().Find<CustomerView>(c => c.AssignSellerId == sellerId).ToListAsync());
+    }
+    
+    /// <summary>
+    /// Get customer Profiles
+    /// </summary>
+    /// <param name="customerId"></param>
+    /// <param name="paging"></param>
+    /// <param name="orderBy"></param>
+    /// <returns>OrderViews</returns>
+    [HttpGet("customers/{customerId:int}/profiles")]
+    [Authorize(Roles = nameof(Role.Seller))]
+    public async Task<ActionResult<IList<Profile>>> GetProfiles(int customerId)
+    {
+        var orders = await _profileService.GetProfileOfCustomer(customerId);
+        return Ok(orders);
+    }
+    
+    /// <summary>
+    /// create a profile
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="customerId"></param>
+    /// <returns></returns>
+    [Authorize(Roles = nameof(Role.Seller))]
+    [HttpPost("customers/{customerId:int}/profiles")]
+    public async Task<ActionResult<Profile>> CreateProfile([FromBody] CreateProfile request, int customerId)
+    {
+        request.CustomerId = customerId;
+        return Ok(await _profileService.CreateAsync(request));
+    }
+    
+    [Authorize(Roles = nameof(Role.Seller))]
+    [HttpPut("customers/{customerId:int}/profiles/{id:int}")]
+    public async Task<ActionResult<Profile>> UpdateProfile([FromBody] UpdateProfile request, int id,  int customerId)
+    {
+        var profile = await _work.Get<Profile>().Find(profile => profile.Id == id && profile.CustomerId == customerId)
+            .FirstOrDefaultAsync();
+        if (profile == null)
+            return NotFound($"Profile with id {id} not found");
+        return Ok(await _profileService.UpdateAsync(id, request));
+    }
+    
+    [Authorize(Roles = nameof(Role.Seller))]
+    [HttpDelete("customers/{customerId:int}/profiles/{id:int}")]
+    public async Task<IActionResult> DeleteProfile(int id, int customerId)
+    {
+        var profile = await _work.Get<Profile>().Find(profile => profile.Id == id && profile.CustomerId == customerId)
+            .FirstOrDefaultAsync();
+        if (profile == null)
+            return NotFound($"Profile with id {id} not found");
+        
+        return Ok(await _profileService.DeleteAsync(id));
     }
     /// <summary>
     /// Add an cart item
@@ -170,6 +226,7 @@ public class SellerController : ControllerBase
     {
         return Ok(await _cartService.AddItemToCart(item, customerId));
     }
+    
     
     /// <summary>
     /// Delete a cart items

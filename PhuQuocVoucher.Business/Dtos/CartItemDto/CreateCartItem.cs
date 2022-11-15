@@ -9,7 +9,8 @@ public class CreateCartItem : CreateDto, ICreateRequest<CartItem>
 
     public int PriceId { get; set; }
     
+    public int? ProfileId { get; set; }
+    
     public DateTime? UseDate { get; set; }
     
-
 }

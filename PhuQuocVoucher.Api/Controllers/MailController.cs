@@ -38,4 +38,5 @@ public class MailController : ControllerBase
         });
         return Ok();
     }
+
 }

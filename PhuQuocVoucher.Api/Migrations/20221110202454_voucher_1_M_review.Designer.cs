@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhuQuocVoucher.Data.Repositories;
 
@@ -11,9 +12,10 @@ using PhuQuocVoucher.Data.Repositories;
 namespace PhuQuocVoucher.Api.Migrations
 {
     [DbContext(typeof(PhuQuocDataContext))]
-    partial class PhuQuocDataContextModelSnapshot : ModelSnapshot
+    [Migration("20221110202454_voucher_1_M_review")]
+    partial class voucher_1_M_review
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,9 +283,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<DateTime?>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("DeleteAt")
                         .HasColumnType("datetime2");
 
@@ -330,8 +329,6 @@ namespace PhuQuocVoucher.Api.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
 
                     b.HasIndex("OrderId");
 
@@ -575,7 +572,7 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("VoucherId")
+                    b.Property<int>("VoucherId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -879,9 +876,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("DisplayPrice")
-                        .HasColumnType("float");
-
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -1055,11 +1049,6 @@ namespace PhuQuocVoucher.Api.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.OrderItem", b =>
                 {
-                    b.HasOne("PhuQuocVoucher.Data.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PhuQuocVoucher.Data.Models.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
@@ -1103,8 +1092,6 @@ namespace PhuQuocVoucher.Api.Migrations
                         .HasForeignKey("VoucherId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Customer");
 
                     b.Navigation("Order");
 
@@ -1175,7 +1162,7 @@ namespace PhuQuocVoucher.Api.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Review", b =>
                 {
-                    b.HasOne("PhuQuocVoucher.Data.Models.Customer", "Customer")
+                    b.HasOne("PhuQuocVoucher.Data.Models.Customer", null)
                         .WithMany("Reviews")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -1183,9 +1170,8 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.Voucher", null)
                         .WithMany("Reviews")
                         .HasForeignKey("VoucherId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Customer");
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Seller", b =>
