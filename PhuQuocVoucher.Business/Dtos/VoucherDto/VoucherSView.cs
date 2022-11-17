@@ -25,6 +25,7 @@ public class VoucherSView : IView<Voucher>, IDto
     public double? DisplayPrice { get; set; }
 
     public int ServiceId { get; set; }
+    
     public int SlotNumber { get; set; }
 
     public void InitMapper()

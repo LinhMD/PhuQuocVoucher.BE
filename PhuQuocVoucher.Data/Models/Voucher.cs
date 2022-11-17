@@ -47,7 +47,7 @@ public class Voucher : BaseModel, IOrderAble
 
     public IEnumerable<PriceBook> Prices { get; set; }
     
-    public IEnumerable<Tag> Tags { get; set; }
+    public IEnumerable<TagVoucher> Tags { get; set; }
 
     public IEnumerable<Review> Reviews { get; set; }
 

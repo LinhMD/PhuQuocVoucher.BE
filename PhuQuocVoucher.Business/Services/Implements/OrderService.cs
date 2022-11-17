@@ -35,11 +35,21 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         var filter = Repository.Find(order => order.CustomerId == cusId);
 
         var total = filter.Count();
-
-        var result = await filter
-            .OrderBy(sortBy)
-            .ProjectToType<OrderView>()
-            .Paging(request).ToListAsync();
+        var result = default(IList<OrderView>);
+        try
+        {
+            result = await filter
+                .OrderBy(sortBy)
+                .ProjectToType<OrderView>()
+                .Paging(request).ToListAsync();
+        }
+        catch (Exception e)
+        {
+            result = await filter
+                .ProjectToType<OrderView>()
+                .Paging(request).ToListAsync();
+        }
+       
 
         return (result, total);
     }

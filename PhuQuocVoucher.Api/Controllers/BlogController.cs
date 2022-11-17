@@ -67,7 +67,7 @@ public class BlogController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromBody] UpdateBlog request, int id)
     {
-        return Ok((await _blogService.UpdateAsync(id, request)).Adapt<BlogView>());
+        return Ok((await _blogService.UpdateBlogAsync( request, id)).Adapt<BlogView>());
     }
 
     [HttpDelete("{id:int}")]

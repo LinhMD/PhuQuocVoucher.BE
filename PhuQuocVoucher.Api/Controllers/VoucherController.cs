@@ -72,7 +72,12 @@ public class VoucherController : ControllerBase
     {
         return Ok(await _voucherService.UpdateAsync(id, request));
     }
-
+    [HttpPut("{id:int}/tag")]
+    public async Task<IActionResult> UpdateTags([FromBody] IList<int> tags, int id)
+    {
+        return Ok(await _voucherService.UpdateTag(tags, id));
+    }
+    
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

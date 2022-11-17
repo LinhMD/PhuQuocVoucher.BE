@@ -49,4 +49,5 @@ public class FindSeller : IFindRequest<Seller>
     [LessThan(nameof(BaseModel.CreateAt))]
     public DateTime? CrateAt_endTime { get; set; }
 
+    public ModelStatus? Status { get; set; }
 }

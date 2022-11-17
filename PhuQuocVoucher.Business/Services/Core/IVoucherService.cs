@@ -8,4 +8,5 @@ public interface IVoucherService : IServiceCrud<Voucher>
 {
     public Task<VoucherView> CreateAsync(CreateVoucher createVoucher);
 
+    public Task<VoucherView> UpdateTag(IList<int> tagIds, int voucherId);
 }

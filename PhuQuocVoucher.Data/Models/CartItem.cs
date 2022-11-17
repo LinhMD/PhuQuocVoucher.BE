@@ -28,6 +28,6 @@ public class CartItem : BaseModel, IOrderAble
     public void ConfigOrderBy()
     {
         Expression<Func<CartItem, ModelStatus>> orderByStatus = cartItem => cartItem.Status;
-        OrderByProvider<Voucher>.OrderByDic.Add(nameof(Status),orderByStatus);
+        OrderByProvider<CartItem>.OrderByDic.Add(nameof(Status),orderByStatus);
     }
 }

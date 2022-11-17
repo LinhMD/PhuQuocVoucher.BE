@@ -4,10 +4,13 @@ public class SellerKpiView
 {
     public int  SellerId { get; set; }
 
-    public int CloseOrder { get; set; }
+    public Dictionary<int,int> CloseOrderPerMonth { get; set; }
 
-    public double Revenue { get; set; }
+    public Dictionary<int,int> NoOfNewCustomerPerMonth { get; set; }
 
-    public int NoOfNewCustomer { get; set; }
-    
+    public Dictionary<int,double> RevenuesPerMonths
+    {
+        get;
+        set;
+    }
 }

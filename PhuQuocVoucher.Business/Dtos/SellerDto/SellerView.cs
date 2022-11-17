@@ -25,7 +25,7 @@ public class SellerView : IView<Seller>, IDto
 
     public BusyLevel BusyLevel { get; set; } = BusyLevel.Free;
 
-
+    public ModelStatus? Status { get; set; }
     public void InitMapper()
     {
         TypeAdapterConfig<Seller, SellerView>.NewConfig().Map(

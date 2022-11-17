@@ -31,10 +31,20 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
 
         var total = await filter.CountAsync();
 
-        var result = filter
+        /*var result = filter
             .OrderBy(request.OrderRequest)
-            .Paging(request.GetPaging());
-
+            .Paging(request.GetPaging());*/
+        var result = default(IQueryable<Seller>);
+        try
+        {
+            result = filter
+                .Paging(request.GetPaging());;
+        }
+        catch (Exception e)
+        {
+            result =  filter
+                .Paging(request.GetPaging());
+        }
         var sellerViews = result.Select(s => new SellerView()
         {
             Id = s.Id,
@@ -48,7 +58,8 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
             CommissionRate = s.CommissionRate,
             SellerName = s.SellerName,
             UserInfo = s.UserInfo.Adapt<UserView>(),
-            UserInfoId = s.UserInfoId
+            UserInfoId = s.UserInfoId,
+            Status = s.Status
         });
 
         return (await sellerViews.ToListAsync(), total);
@@ -60,34 +71,58 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
         return null;
     }
 
-    public async Task<SellerKpiView> GetSellerKpis(int sellerId, int month, int year)
+    public async Task<SellerKpiView> GetSellerKpis(int sellerId, int year)
     {
-        var orderItems = await UnitOfWork.Get<OrderItem>().Find(item => item.CreateAt != null && item.SellerId == sellerId && 
-                                                                        item.CreateAt.Value.Month == month &&
-                                                                        item.CreateAt.Value.Year == year).ToListAsync();
+        var orderItems = (await UnitOfWork.Get<OrderItem>()
+            .Find(item => item.CreateAt != null && 
+                          item.SellerId == sellerId && 
+                          item.CreateAt.Value.Year == year && 
+                          (item.Order.OrderStatus == OrderStatus.Completed || item.Order.OrderStatus == OrderStatus.Used))
+            .Select(item => new
+            {
+                item.CreateAt.Value.Date.Month,
+                item.SellerRate
+            })
+            .ToListAsync()).GroupBy(order => order.Month)
+            .ToDictionary( g => g.Key, g => g.ToList().Sum(arg => arg.SellerRate));
         
-        var orders = await UnitOfWork.Get<Order>()
+        
+        var orders = (await UnitOfWork.Get<Order>()
             .Find(order => order.CreateAt != null && 
                            order.SellerId == sellerId && 
-                           order.CreateAt.Value.Month == month &&
                            order.CreateAt.Value.Year == year && 
                            (order.OrderStatus == OrderStatus.Completed || order.OrderStatus == OrderStatus.Used))
-            .ToListAsync();
+            .Select(order => new
+            {
+                order.CreateAt.Value.Date.Month,
+                order.Id
+            })
+            .ToListAsync())
+            .GroupBy(order => order.Month)
+            .ToDictionary( g => g.Key, g => g.Count());
 
-        var customers = await UnitOfWork.Get<Customer>().Find(c => c.CreateAt != null && c.AssignSellerId == sellerId && 
-                                                                   c.CreateAt.Value.Month == month &&
-                                                                   c.CreateAt.Value.Year == year).ToListAsync();
+        var customers = (await UnitOfWork.Get<Customer>()
+            .Find(c => c.CreateAt != null && 
+                       c.AssignSellerId == sellerId && 
+                       c.CreateAt.Value.Year == year)
+            .Select(customer => new
+            {
+                customer.CreateAt.Value.Date.Month,
+                customer.Id
+            })
+            .ToListAsync())
+            .GroupBy(customer => customer.Month)
+            .ToDictionary( g => g.Key, g => g.Count());
+        
 
-        var closeOrder = orders.Count;
-        var amount = orderItems.Select(item => item.SellerRate).Sum();
         var newCustomer = customers.Count;
         
         var sellerKpi = new SellerKpiView()
         {
-            CloseOrder = closeOrder,
-            Revenue = amount,
+            CloseOrderPerMonth = orders,
             SellerId = sellerId,
-            NoOfNewCustomer = newCustomer
+            NoOfNewCustomerPerMonth = customers,
+            RevenuesPerMonths = orderItems
         };
         return sellerKpi;
     }

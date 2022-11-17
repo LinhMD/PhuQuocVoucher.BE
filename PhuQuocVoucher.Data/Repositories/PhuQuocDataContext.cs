@@ -39,14 +39,13 @@ public class PhuQuocDataContext : DbContext
         {
             foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
         }
-
-        /*modelBuilder.Entity<OrderItem>().AfterInsert(trigger => trigger
-            .Action(action => action
-                .Update<Voucher>(
-                    (item, voucher) => voucher.ProductId == item.OrderProductId && voucher.Inventory > 0, //Matching product id
-                    (item, oldVoucher) => new Voucher {Inventory = oldVoucher.Inventory - 1})// reduce 1 inventory
-            )
-        );*/
+        modelBuilder.Entity<BlogPlace>()
+            .HasKey(c => new { c.BlogId, c.PlaceId });
+        
+        modelBuilder.Entity<BlogTag>()
+            .HasKey(c => new { c.BlogId, c.TagId });
+        modelBuilder.Entity<TagVoucher>()
+            .HasKey(c => new {TagsId = c.TagId, VouchersId = c.VoucherId });
     }
 
 
@@ -80,6 +79,10 @@ public class PhuQuocDataContext : DbContext
     public DbSet<Place> Places { get; set; }
 
     public DbSet<Blog> Blogs { get; set; }
+    
+    public DbSet<BlogTag> BlogTag { get; set; }
+
+    public DbSet<BlogPlace> BlogPlace { get; set; }
 
     public DbSet<Tag> Tags { get; set; }
     

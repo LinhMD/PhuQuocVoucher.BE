@@ -350,9 +350,16 @@ public class SellerController : ControllerBase
     
     [Authorize(Roles = nameof(Role.Seller))]
     [SwaggerResponse(200, "Order View",typeof(OrderView))]
-    [HttpPut("kpi")]
-    public async Task<IActionResult> KPI([FromClaim("SellerId")]int sellerId, [Range(1, 12)]int month, [Range(2000, 2100)]int year)
+    [HttpGet("kpi")]
+    public async Task<IActionResult> KPI([FromClaim("SellerId")]int sellerId, [Range(2000, 2100)]int year)
     {
-        return Ok((await _sellerService.GetSellerKpis(sellerId, month, year)));
+        return Ok((await _sellerService.GetSellerKpis(sellerId, year)));
+    }
+    
+    [SwaggerResponse(200, "Order View",typeof(OrderView))]
+    [HttpGet("kpi-admin")]
+    public async Task<IActionResult> KPIAdmin(int sellerId, [Range(2000, 2100)]int year)
+    {
+        return Ok((await _sellerService.GetSellerKpis(sellerId, year)));
     }
 }

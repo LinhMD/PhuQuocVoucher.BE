@@ -31,6 +31,8 @@ public class Seller : BaseModel, IOrderAble
     public void ConfigOrderBy()
     {
         Expression<Func<Seller, ModelStatus>> orderByStatus = seller => seller.Status;
+        Expression<Func<Seller, BusyLevel>> orderByBusyLevel = seller => seller.BusyLevel;
         OrderByProvider<Seller>.OrderByDic.Add(nameof(Status),orderByStatus);
+        OrderByProvider<Seller>.OrderByDic.Add(nameof(BusyLevel), orderByBusyLevel);
     }
 }

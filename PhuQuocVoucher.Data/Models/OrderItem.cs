@@ -52,6 +52,6 @@ public class OrderItem  : BaseModel, IOrderAble
      public void ConfigOrderBy()
      {
           Expression<Func<OrderItem, ModelStatus>> orderByStatus = item => item.Status;
-          OrderByProvider<Voucher>.OrderByDic.Add(nameof(Status),orderByStatus);
+          OrderByProvider<OrderItem>.OrderByDic.Add(nameof(Status),orderByStatus);
      }
 }

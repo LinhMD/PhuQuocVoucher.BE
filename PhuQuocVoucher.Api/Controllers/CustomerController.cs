@@ -337,7 +337,7 @@ public class CustomerController : ControllerBase
     /// <returns>OrderViews</returns>
     [HttpGet("profiles")]
     [Authorize(Roles = nameof(Role.Customer))]
-    public async Task<ActionResult<IList<Profile>>> GetCurrentProfiles([FromClaim("CustomerId")]int id)
+    public async Task<ActionResult<IList<ProfileView>>> GetCurrentProfiles([FromClaim("CustomerId")]int id)
     {
         var orders = await _profileService.GetProfileOfCustomer(id);
         return Ok(orders);
@@ -351,10 +351,10 @@ public class CustomerController : ControllerBase
     /// <returns></returns>
     [Authorize(Roles = nameof(Role.Customer))]
     [HttpPost("profiles")]
-    public async Task<IActionResult> CreateProfile([FromBody] CreateProfile request, [FromClaim("CustomerId")] int customerId)
+    public async Task<ActionResult<ProfileView>> CreateProfile([FromBody] CreateProfile request, [FromClaim("CustomerId")] int customerId)
     {
         request.CustomerId = customerId;
-        return Ok(await _profileService.CreateAsync(request));
+        return Ok((await _profileService.CreateAsync(request)).Adapt<ProfileView>());
     }
 
     /// <summary>
@@ -381,7 +381,7 @@ public class CustomerController : ControllerBase
             .FirstOrDefaultAsync();
         if (profile == null)
             return NotFound($"Profile with id {id} not found");
-        return Ok(await _profileService.UpdateAsync(id, request));
+        return Ok((await _profileService.UpdateAsync(id, request)).Adapt<ProfileView>());
     }
 
     [Authorize(Roles = nameof(Role.Customer))]
@@ -392,8 +392,8 @@ public class CustomerController : ControllerBase
             .FirstOrDefaultAsync();
         if (profile == null)
             return NotFound($"Profile with id {id} not found");
-        
-        return Ok(await _profileService.DeleteAsync(id));
+
+        return Ok((await _profileService.DeleteAsync(id)).Adapt<ProfileView>());
     }
 
     [Authorize(Roles = nameof(Role.Customer))]

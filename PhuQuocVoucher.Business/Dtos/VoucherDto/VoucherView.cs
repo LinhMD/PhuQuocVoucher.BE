@@ -2,6 +2,7 @@
 using CrudApiTemplate.View;
 using Mapster;
 using PhuQuocVoucher.Business.Dtos.PriceBookDto;
+using PhuQuocVoucher.Business.Dtos.TagDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.VoucherDto;
@@ -32,7 +33,6 @@ public class VoucherView : IView<Voucher>, IDto
 
     public string? Content { get; set; }
 
-    public bool IsForKid { get; set; }
 
     
     public double? DisplayPrice { get; set; }
@@ -40,10 +40,13 @@ public class VoucherView : IView<Voucher>, IDto
     public IEnumerable<PriceBookSView> Prices { get; set; }
     
     public int SlotNumber { get; set; }
+    
+    public IEnumerable<TagView> Tags { get; set; }
 
     public void InitMapper()
     {
-        TypeAdapterConfig<Voucher, VoucherView>.NewConfig();
+        TypeAdapterConfig<Voucher, VoucherView>.NewConfig()
+            .Map(view => view.Tags, voucher => voucher.Tags.Select(tag => tag.Tag));
 
     }
 }

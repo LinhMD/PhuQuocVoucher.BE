@@ -32,4 +32,6 @@ public class CreateVoucher : CreateDto, ICreateRequest<Voucher>
 
 
     public string? BannerImg { get; set; }
+
+    public IList<int> TagIds { get; set; }
 }

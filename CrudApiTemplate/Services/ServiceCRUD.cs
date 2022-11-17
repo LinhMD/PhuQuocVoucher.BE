@@ -121,7 +121,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
 
         try
         {
-            Repository.RemoveAsync(model);
+            await Repository.RemoveAsync(model);
         }
         catch (Exception ex)
         {
@@ -193,9 +193,19 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     {
         var filter = Repository.Find(getRequest.FindRequest.ToPredicate());
         var total = filter.Count();
-        var result = filter
-            .OrderBy(getRequest.OrderRequest)
-            .Paging(getRequest.GetPaging()).ToList();
+        var result = default(IList<TModel>);
+        try
+        {
+            result = filter
+                .OrderBy(getRequest.OrderRequest)
+                .Paging(getRequest.GetPaging()).ToList();
+        }
+        catch (Exception e)
+        {
+            result = filter.Paging(getRequest.GetPaging()).ToList();
+
+        }
+        
 
         return (result, total);
     }
@@ -208,10 +218,18 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
 
         var total = await filter.CountAsync();
 
-        var result = await filter
-            .OrderBy(getRequest.OrderRequest)
-            .Paging(getRequest.GetPaging())
-            .ToListAsync();
+        var result = default(IList<TModel>);
+        try
+        {
+            result = await filter
+                .OrderBy(getRequest.OrderRequest)
+                .Paging(getRequest.GetPaging()).ToListAsync();
+        }
+        catch (Exception e)
+        {
+            result = await filter.Paging(getRequest.GetPaging()).ToListAsync();
+
+        }
 
         return (result, total);
     }
@@ -222,11 +240,23 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
 
         var total = queryable.Count();
 
-        var result = queryable
+        /*var result = queryable
             .OrderBy(getRequest.OrderRequest)
             .Paging(getRequest.GetPaging())
-            .ProjectToType<TView>().ToList();
-
+            .ProjectToType<TView>().ToList();*/
+        var result = default(IList<TView>);
+        try
+        {
+            result = queryable
+                .OrderBy(getRequest.OrderRequest)
+                .Paging(getRequest.GetPaging())
+                .ProjectToType<TView>()
+                .ToList();
+        }
+        catch (Exception e)
+        {
+            result = queryable.Paging(getRequest.GetPaging()) .ProjectToType<TView>().ToList();
+        }
         return (result, total);
     }
 
@@ -234,12 +264,19 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
     {
         var filter = Repository.Find(getRequest.FindRequest.ToPredicate());
         var total = await filter.CountAsync();
-        var result = await filter
-            .OrderBy(getRequest.OrderRequest)
-            .Paging(getRequest.GetPaging())
-            .ProjectToType<TView>()
-            .ToListAsync();
-
+        var result = default(IList<TView>);
+        try
+        {
+            result = await filter
+                .OrderBy(getRequest.OrderRequest)
+                .Paging(getRequest.GetPaging())
+                .ProjectToType<TView>()
+                .ToListAsync();
+        }
+        catch (Exception e)
+        {
+            result = await filter.Paging(getRequest.GetPaging()) .ProjectToType<TView>().ToListAsync();
+        }
         return (result, total);
     }
 

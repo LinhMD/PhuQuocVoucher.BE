@@ -16,12 +16,12 @@ public class Blog : BaseModel, IOrderAble
 
     public string Summary { get; set; }
 
-    public IEnumerable<Place> Places { get; set; }
+    public IList<BlogPlace> Places { get; set; }
 
-    public IEnumerable<Tag>? Tags { get; set; }
+    public IList<BlogTag> Tags { get; set; }
     public void ConfigOrderBy()
     {
         Expression<Func<Blog, ModelStatus>> orderByStatus = blog => blog.Status;
-        OrderByProvider<Blog>.OrderByDic.Add(nameof(Status),orderByStatus);
+        OrderByProvider<Blog>.OrderByDic.Add(nameof(Status), orderByStatus);
     }
 }

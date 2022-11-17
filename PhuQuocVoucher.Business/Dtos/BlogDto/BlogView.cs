@@ -1,4 +1,5 @@
 ﻿using CrudApiTemplate.View;
+using Mapster;
 using PhuQuocVoucher.Business.Dtos.PlaceDto;
 using PhuQuocVoucher.Business.Dtos.TagDto;
 using PhuQuocVoucher.Data.Models;
@@ -20,7 +21,13 @@ public class BlogView : IView<Blog>, IDto
 
     public IEnumerable<PlaceSView> Places { get; set; }
 
-    public IEnumerable<TagView>? Tags { get; set; }
+    public IEnumerable<TagView> Tags { get; set; }
     
     public ModelStatus? Status { get; set; }
+    public void InitMapper()
+    {
+        TypeAdapterConfig<Blog, BlogView>.NewConfig()
+            .Map(view => view.Places, blog => blog.Places.Select(p => p.Place))
+            .Map(view => view.Tags, blog => blog.Tags.Select(p => p.Tag));
+    }
 }

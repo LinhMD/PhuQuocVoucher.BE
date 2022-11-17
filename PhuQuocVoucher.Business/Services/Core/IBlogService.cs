@@ -7,4 +7,6 @@ namespace PhuQuocVoucher.Business.Services.Core;
 public interface IBlogService : IServiceCrud<Blog>
 {
     public Task<BlogView> CreateBlogAsync(CreateBlog createBlog);
+
+    public Task<BlogView> UpdateBlogAsync(UpdateBlog updateBlog, int id);
 }

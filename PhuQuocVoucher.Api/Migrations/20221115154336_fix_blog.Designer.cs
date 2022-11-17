@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhuQuocVoucher.Data.Repositories;
 
@@ -11,9 +12,10 @@ using PhuQuocVoucher.Data.Repositories;
 namespace PhuQuocVoucher.Api.Migrations
 {
     [DbContext(typeof(PhuQuocDataContext))]
-    partial class PhuQuocDataContextModelSnapshot : ModelSnapshot
+    [Migration("20221115154336_fix_blog")]
+    partial class fix_blog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -836,21 +838,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("PhuQuocVoucher.Data.Models.TagVoucher", b =>
-                {
-                    b.Property<int>("TagId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VoucherId")
-                        .HasColumnType("int");
-
-                    b.HasKey("TagId", "VoucherId");
-
-                    b.HasIndex("VoucherId");
-
-                    b.ToTable("TagVoucher");
-                });
-
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -966,9 +953,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<string>("Summary")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TagId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");
 
@@ -982,12 +966,25 @@ namespace PhuQuocVoucher.Api.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.HasIndex("TagId");
-
                     b.HasIndex("VoucherName")
                         .IsUnique();
 
                     b.ToTable("Vouchers");
+                });
+
+            modelBuilder.Entity("TagVoucher", b =>
+                {
+                    b.Property<int>("TagsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VouchersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TagsId", "VouchersId");
+
+                    b.HasIndex("VouchersId");
+
+                    b.ToTable("TagVoucher");
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Blog", b =>
@@ -1318,25 +1315,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Navigation("ParentType");
                 });
 
-            modelBuilder.Entity("PhuQuocVoucher.Data.Models.TagVoucher", b =>
-                {
-                    b.HasOne("PhuQuocVoucher.Data.Models.Tag", "Tag")
-                        .WithMany()
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PhuQuocVoucher.Data.Models.Voucher", "Voucher")
-                        .WithMany("Tags")
-                        .HasForeignKey("VoucherId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Tag");
-
-                    b.Navigation("Voucher");
-                });
-
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Voucher", b =>
                 {
                     b.HasOne("PhuQuocVoucher.Data.Models.ServiceProvider", "Provider")
@@ -1351,14 +1329,24 @@ namespace PhuQuocVoucher.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PhuQuocVoucher.Data.Models.Tag", null)
-                        .WithMany("Vouchers")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("Provider");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("TagVoucher", b =>
+                {
+                    b.HasOne("PhuQuocVoucher.Data.Models.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PhuQuocVoucher.Data.Models.Voucher", null)
+                        .WithMany()
+                        .HasForeignKey("VouchersId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Blog", b =>
@@ -1413,8 +1401,6 @@ namespace PhuQuocVoucher.Api.Migrations
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Tag", b =>
                 {
                     b.Navigation("Blogs");
-
-                    b.Navigation("Vouchers");
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Voucher", b =>
@@ -1424,8 +1410,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Navigation("QrCodeInfos");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }
