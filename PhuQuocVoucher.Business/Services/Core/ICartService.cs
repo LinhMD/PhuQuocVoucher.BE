@@ -1,6 +1,7 @@
 ﻿using CrudApiTemplate.Services;
 using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.CartItemDto;
+using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Services.Core;
@@ -16,4 +17,6 @@ public interface ICartService : IServiceCrud<Cart>
     public Task ClearCart(int cartId);
 
     public Task<CartView> UpdateCartAsync(UpdateCart updateCart, int customerId);
+
+    public  Task<List<RemainVoucherInventory>> CheckCart(int customerId);
 }

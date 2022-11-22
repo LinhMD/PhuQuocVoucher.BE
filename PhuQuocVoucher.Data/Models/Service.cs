@@ -15,9 +15,9 @@ public class Service : BaseModel, IOrderAble
 
     public string Description { get; set; }
 
-    public ServiceType Type { get; set; }
+    public ServiceType ServiceType { get; set; }
 
-    public int TypeId { get; set; }
+    public int ServiceTypeId { get; set; }
     public Place ServiceLocation { get; set; }
 
     public double CommissionRate { get; set; }

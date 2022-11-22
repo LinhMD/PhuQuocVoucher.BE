@@ -15,7 +15,7 @@ public class ServiceRepository : Repository<Service>, IServiceRepository
     {
         return Models
             .Include(s => s.Provider)
-            .Include(s => s.Type)
+            .Include(s => s.ServiceType)
             .Include(s => s.ServiceLocation);
     }
 }

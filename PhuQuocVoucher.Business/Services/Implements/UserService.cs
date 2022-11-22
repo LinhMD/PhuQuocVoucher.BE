@@ -19,7 +19,7 @@ public class UserService : ServiceCrud<User>, IUserService
         _logger = logger;
     }
 
-    public async Task<UserView> SignUpAsync(UserSignUp signUp, string hash, string salt)
+    public async Task<UserView> SignUpAsync(UserSignUp signUp, string hash, string salt, ModelStatus status = ModelStatus.Active)
     {
         var user = new User
         {
@@ -28,7 +28,7 @@ public class UserService : ServiceCrud<User>, IUserService
             Role = signUp.Role,
             Hash = hash,
             Salt = salt,
-            Status = ModelStatus.Active,
+            Status = status,
             PhoneNumber = signUp.PhoneNumber
         };
 

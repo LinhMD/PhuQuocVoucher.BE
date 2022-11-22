@@ -37,7 +37,7 @@ public class AnyAttribute : FilterAttribute
         var memberExpression = Expression.Property(innerParameter, members[0]);
         foreach (var member in members.Skip(1))
         {
-            memberExpression = Expression.Property(innerParameter, member);
+            memberExpression = Expression.Property(memberExpression, member);
         }
         //Profile.Gender == true;
         var innerBody = Filter.ToExpressionEvaluate(memberExpression, value);

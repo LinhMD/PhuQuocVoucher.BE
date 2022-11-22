@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using PhuQuocVoucher.Api.Ultility;
 using PhuQuocVoucher.Business.Dtos.MomoDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
+using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Services.Implements;
@@ -16,12 +17,14 @@ public class PaymentService
     private readonly IUnitOfWork _work;
     private readonly MomoSetting _momoSetting;
     private readonly IBackgroundJobClient _backgroundJobClient;
+    private readonly IOrderService _orderService;
 
-    public PaymentService(MomoSetting momoSetting, IUnitOfWork work, IBackgroundJobClient backgroundJobClient)
+    public PaymentService(MomoSetting momoSetting, IUnitOfWork work, IBackgroundJobClient backgroundJobClient, IOrderService orderService)
     {
         _momoSetting = momoSetting;
         _work = work;
         _backgroundJobClient = backgroundJobClient;
+        _orderService = orderService;
     }
 
     public async Task<MomoResponse> CreatePaymentRequest(int orderId, int userId, bool isMobile = false)
@@ -154,10 +157,11 @@ public class PaymentService
         qrCodeInfos.ForEach(qr => qr.Status = QRCodeStatus.Commit);
 
         order.OrderStatus = OrderStatus.Completed;
-
         await _work.CompleteAsync();
-
-       
+        if(order.SellerId != null)
+            await _orderService.SendOrderEmailToCustomer(order.Id);
+        
+        
     }
 
     public async Task PaymentFailed(int paymentId, int orderId)

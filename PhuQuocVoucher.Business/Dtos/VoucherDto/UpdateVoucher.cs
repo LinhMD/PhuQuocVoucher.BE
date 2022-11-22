@@ -1,4 +1,5 @@
-﻿using CrudApiTemplate.Request;
+﻿using System.ComponentModel.DataAnnotations;
+using CrudApiTemplate.Request;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.VoucherDto;
@@ -15,6 +16,19 @@ public class UpdateVoucher : UpdateDto, IUpdateRequest<Voucher>
     public int? LimitPerDay { get; set; }
     
     public double? DisplayPrice { get; set; }
+    
+    public string? BannerImg { get; set; }
+    
+    public string? Description { get; set; }
+
+    public string? Summary { get; set; }
+
+    
+    public string? Content { get; set; }
+    
+    [Range(1, 20)]
+    public int? SlotNumber { get; set; }
+
 
     public bool? IsRequireProfileInfo { get; set; }
 

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.CartItemDto;
+using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 
@@ -109,5 +110,40 @@ public class CartService : ServiceCrud<Cart>, ICartService
         }
         
         return cart;
+    }
+
+    public async Task<List<RemainVoucherInventory>> CheckCart(int customerId)
+    {
+        var cart = await Repository.Find(cart => cart.CustomerId == customerId).FirstOrDefaultAsync();
+        if (cart == null)
+            throw new ModelNotFoundException("Cart of customer not found");
+        var items =  cart.CartItems
+            .Select(item => (item.VoucherId, item.UseDate, item.Voucher.LimitPerDay))
+            .Where(i => i.UseDate != null)
+            .Distinct()
+            .Where(item => item.LimitPerDay != null)
+            .Select( cartItem =>  new RemainVoucherInventory() {
+                RemainInventory = (cartItem.LimitPerDay ?? 0) - ( UnitOfWork.Get<OrderItem>()
+                    .Find(item => 
+                        item.VoucherId == cartItem.VoucherId 
+                        && item.UseDate != null 
+                        && item.UseDate.Value.Date.Date == cartItem.UseDate.Value.Date.Date)
+                    .Count()), 
+                VoucherId = cartItem.VoucherId, 
+                Date = cartItem.UseDate}).ToList();
+
+        items.AddRange(cart.CartItems
+            .Select(item => (item.VoucherId, item.UseDate, item.Voucher.LimitPerDay))
+            .Where(i => i.UseDate != null)
+            .Distinct()
+            .Where(item => item.LimitPerDay == null)
+            .Select( cartItem => new RemainVoucherInventory
+            {
+                RemainInventory = UnitOfWork.Get<QrCodeInfo>().Find(info => info.VoucherId == cartItem.VoucherId)
+                    .Count(),
+                Date = cartItem.UseDate,
+                VoucherId = cartItem.VoucherId
+            }));
+        return items;
     }
 }

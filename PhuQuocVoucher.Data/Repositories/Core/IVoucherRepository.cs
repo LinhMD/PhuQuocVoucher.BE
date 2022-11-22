@@ -5,5 +5,5 @@ namespace PhuQuocVoucher.Data.Repositories.Core;
 
 public interface IVoucherRepository : IRepository<Voucher>
 {
-    
+    public Task<int> UpdateVoucherInventory();
 }

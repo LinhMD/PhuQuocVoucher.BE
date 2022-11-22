@@ -15,6 +15,7 @@ public class CartRepository : Repository<Cart>, ICartRepository
     public override IQueryable<Cart> IncludeAll()
     {
         return Models.Include(o => o.Customer)
-            .Include(o => o.CartItems);
+            .Include(o => o.CartItems)
+            .ThenInclude(item => item.Voucher);
     }
 }

@@ -42,24 +42,26 @@ public class FindVoucher : IFindRequest<Voucher>
     [LessThan(nameof(BaseModel.CreateAt))]
     public DateTime? CrateAt_endTime { get; set; }
 
-    /*[LessThan("StartDate")]
+    [LessThan("StartDate")]
     [BiggerThan("EndDate")]
-    public DateTime? Date { get; set; } = DateTime.Now;*/
+    public DateTime? Date { get; set; }
 
     public int? VoucherId { get; set; }
 
     public int? ServiceId { get; set; }
     
-    [Equal($"{nameof(Service)}.{nameof(Service.TypeId)}")]
+    public int? ProviderId { get; set; }
+    
+    [Equal($"{nameof(Service)}.{nameof(Service.ServiceType)}.{nameof(ServiceType.Id)}")]
     public int? ServiceTypeId{ get; set; }
     
-    [Contain(target:$"{nameof(Service)}.{nameof(Service.Type)}.{nameof(ServiceType.Name)}")]
+    [Contain(target:$"{nameof(Service)}.{nameof(Service.ServiceType)}.{nameof(ServiceType.Name)}")]
     public string? ServiceTypeName { get; set; }
 
     /// <summary>
     /// Voucher.Product.Tags.Any(tag => tag.Name.Contains(TagName))
     /// </summary>
-    [Any(target:$"{nameof(Voucher.Tags)}", property:nameof(Tag.Name), typeof(ContainAttribute))]
+    [Any(target:$"{nameof(Voucher.Tags)}", property:$"{nameof(TagVoucher.Tag)}.{nameof(Tag.Name)}", typeof(ContainAttribute))]
     public string? TagName { get; set; }
     
     public ModelStatus Status { get; set; }

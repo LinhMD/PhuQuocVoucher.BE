@@ -6,5 +6,5 @@ namespace PhuQuocVoucher.Business.Services.Core;
 
 public interface IUserService : IServiceCrud<User>
 {
-    public Task<UserView> SignUpAsync(UserSignUp signUp, string hash, string salt);
+    public Task<UserView> SignUpAsync(UserSignUp signUp, string hash, string salt, ModelStatus status = ModelStatus.Active);
 }

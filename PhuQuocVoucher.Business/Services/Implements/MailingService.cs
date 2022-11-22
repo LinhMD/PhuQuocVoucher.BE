@@ -42,7 +42,6 @@ public class MailingService : IMailingService
         client.Host = _mailSettings.Host;
         client.Port = _mailSettings.Port;
         client.DeliveryMethod = SmtpDeliveryMethod.Network;
-
         client.Send(email);
     }
 

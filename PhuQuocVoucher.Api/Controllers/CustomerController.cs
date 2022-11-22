@@ -15,6 +15,7 @@ using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
 using PhuQuocVoucher.Business.Dtos.ProfileDto;
+using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 
@@ -402,5 +403,12 @@ public class CustomerController : ControllerBase
     {
         return Ok(await _work.Get<OrderItem>()
             .Find(item => item.CustomerId == customerId && item.VoucherId == voucherId).AnyAsync());
+    }
+    
+    [Authorize(Roles = nameof(Role.Customer))]
+    [HttpGet("cart/check")]
+    public async Task<ActionResult<IList<RemainVoucherInventory>>> CheckCart([FromClaim("CustomerId")] int customerId)
+    {
+        return Ok(await _cartService.CheckCart(customerId));
     }
 }

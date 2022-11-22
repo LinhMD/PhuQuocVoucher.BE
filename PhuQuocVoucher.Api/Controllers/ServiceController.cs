@@ -1,7 +1,9 @@
-﻿using CrudApiTemplate.CustomException;
+﻿using CrudApiTemplate.CustomBinding;
+using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Business.Dtos.ServiceDto;
@@ -11,6 +13,7 @@ using PhuQuocVoucher.Data.Models;
 namespace PhuQuocVoucher.Api.Controllers;
 
 [ApiController]
+[Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Provider)}")]
 [Route("api/v1/[controller]s")]
 public class ServiceController : ControllerBase
 {
@@ -23,8 +26,10 @@ public class ServiceController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery]FindService request, [FromQuery]PagingRequest paging, string? orderBy)
+    [AllowAnonymous]
+    public async Task<IActionResult> Get([FromQuery]FindService request, [FromQuery]PagingRequest paging, string? orderBy, [FromClaim("ProviderId")] int? providerId)
     {
+        request.ProviderId = providerId;
         return Ok((await _providerService.GetAsync<ServiceView>(new GetRequest<Service>
         {
             FindRequest = request,
@@ -34,26 +39,34 @@ public class ServiceController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateService request)
+    public async Task<IActionResult> Create(CreateService request, [FromClaim("ProviderId")] int? providerId)
     {
+        request.ProviderId = providerId ?? request.ProviderId;
         return Ok(await _providerService.CreateAsync(request));
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> Get(int id)
+    public async Task<IActionResult> Get(int id, [FromClaim("ProviderId")] int? providerId)
     {
-        return Ok(await _repository.Find<ServiceView>(ser => ser.Id == id).FirstOrDefaultAsync() ??
+        return Ok(await _repository.Find<ServiceView>(ser => ser.Id == id && (providerId == null || ser.ProviderId == providerId)).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Service)} with id {id}"));
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update([FromBody] UpdateService request, int id)
+    public async Task<IActionResult> Update([FromBody] UpdateService request, int id, [FromClaim("ProviderId")] int? providerId)
     {
-        return Ok(await _providerService.UpdateAsync(id, request));
+        var serviceId = await _repository.Find(ser => ser.ProviderId == providerId).Select(ser => ser.Id).ToListAsync();
+        if (serviceId.Contains(id))
+            return Ok(await _providerService.UpdateAsync(id, request));
+        return Forbid("Invalid Access");
     }
+    
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, [FromClaim("ProviderId")] int? providerId)
     {
-        return Ok(await _providerService.DeleteAsync(id));
+        var serviceId = await _repository.Find(ser => ser.ProviderId == providerId).Select(ser => ser.Id).ToListAsync();
+        if (serviceId.Contains(id))
+            return Ok(await _providerService.DeleteAsync(id));
+        return Forbid("Invalid Access");
     }
 }

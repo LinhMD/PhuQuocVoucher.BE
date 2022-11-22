@@ -1,4 +1,5 @@
-﻿using CrudApiTemplate.CustomException;
+﻿using Aspose.Cells;
+using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
@@ -20,10 +21,13 @@ public class QrCodeController : ControllerBase
 
     private readonly IRepository<QrCodeInfo> _repo;
 
-    public QrCodeController(IQrCodeService qrCodeService, ILogger<QrCodeController> logger, IUnitOfWork work)
+    private readonly IVoucherService _voucherService;
+
+    public QrCodeController(IQrCodeService qrCodeService, ILogger<QrCodeController> logger, IUnitOfWork work, IVoucherService voucherService)
     {
         _qrCodeService = qrCodeService;
         _logger = logger;
+        _voucherService = voucherService;
         _repo = work.Get<QrCodeInfo>();
     }
 
@@ -61,5 +65,29 @@ public class QrCodeController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         return Ok(await _qrCodeService.DeleteAsync(id));
+    }
+
+    [HttpPost("voucher/{voucherId:int}/import")]
+    public async Task<IActionResult> UploadQrCodes(IFormFile excelFile, int voucherId)
+    {
+        var workBook = new Workbook(excelFile.OpenReadStream());
+
+        var workSheet = workBook.Worksheets[0];
+        var codes = workSheet.Cells.MaxDataRow;
+        var qrCode = new List<string>();
+        for (var i = 0; i < codes; i++)
+        {
+            qrCode.Add(workSheet.Cells[i, 0].Value.ToString() ?? string.Empty);
+        }
+
+        await _repo.AddAllAsync(qrCode.Select(qr => new QrCodeInfo()
+        {
+            Status = QRCodeStatus.Active,
+            VoucherId = voucherId, 
+            CreateAt = DateTime.Now
+        }));
+        
+        await _voucherService.UpdateInventory();
+        return Ok();
     }
 }

@@ -17,6 +17,8 @@ public class QrCodeInfo : BaseModel,  IOrderAble
     [JsonIgnore]
     public Voucher Voucher { get; set; }
     
+    public string? ImgLink { get; set; }
+    
     public int VoucherId { get; set; }
 
     public QRCodeStatus Status { get; set; } = QRCodeStatus.Active;

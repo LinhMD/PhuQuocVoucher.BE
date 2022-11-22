@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Globalization;
+using System.Runtime.InteropServices;
 using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
@@ -14,6 +15,8 @@ using PhuQuocVoucher.Business.Dtos.OrderItemDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 using PhuQuocVoucher.Data.Repositories.Core;
+using System;
+using PhuQuocVoucher.Business.Dtos.MailDto;
 
 namespace PhuQuocVoucher.Business.Services.Implements;
 
@@ -22,10 +25,14 @@ public class OrderService : ServiceCrud<Order>, IOrderService
     private ILogger<OrderService> _logger;
 
     private IOrderRepository _repository;
-
-    public OrderService(IUnitOfWork work, ILogger<OrderService> logger) : base(work.Get<Order>(), work, logger)
+    private readonly IMailingService _mailingService;
+    
+    private readonly IVoucherService _voucherService;
+    public OrderService(IUnitOfWork work, ILogger<OrderService> logger, IMailingService mailingService, IVoucherService voucherService) : base(work.Get<Order>(), work, logger)
     {
         _logger = logger;
+        _mailingService = mailingService;
+        _voucherService = voucherService;
         _repository = work.Get<Order>() as IOrderRepository;
     }
 
@@ -81,7 +88,8 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         {
             CustomerId = cusId,
             TotalPrice = 0D,
-            SellerId = sellerId
+            SellerId = sellerId,
+            CreateAt = DateTime.Now
         };
         await UnitOfWork.Get<Order>().AddAsync(order);
         
@@ -92,7 +100,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         var orderItems = new List<OrderItem>();
         var priceIds = cart.CartItems.Select(o => o.PriceId).ToList();
         var priceBooks = await UnitOfWork.Get<PriceBook>().Find(pb => priceIds.Contains(pb.Id)).ToListAsync();
-        var priceBooksDic = priceBooks.ToDictionary(book => book.Id, book => book.Price);
+        var priceBooksDic = priceBooks.ToDictionary(book => book.Id, book => (book.Price, book.PriceLevel));
         var voucherIds = priceBooks.Select(p => p.VoucherId).Distinct();
         var vouchers = await UnitOfWork.Get<Voucher>().Find(v => voucherIds.Contains(v.Id))
             .ToDictionaryAsync(v => v.Id, v => v);
@@ -135,7 +143,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 {
                     OrderId = order.Id,
                     PriceId = items.PriceId,
-                    SoldPrice = priceBooksDic[items.PriceId],
+                    SoldPrice = priceBooksDic[items.PriceId].Price,
                     ProviderId = vouchers[items.VoucherId].ProviderId,
                     CreateAt = DateTime.Now,
                     SellerId = sellerId,
@@ -143,11 +151,12 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                     QrCodeId =  qrCode.Id,
                     QrCode = qrCode,
                     VoucherId = items.VoucherId,
-                    SellerRate = sellerRate * priceBooksDic[items.PriceId],
-                    ProviderRate = serviceRates[vouchers[items.VoucherId].ProviderId] * priceBooksDic[items.PriceId],
+                    SellerRate = sellerRate * priceBooksDic[items.PriceId].Price,
+                    ProviderRate = serviceRates[vouchers[items.VoucherId].ProviderId] * priceBooksDic[items.PriceId].Price,
                     UseDate = items.UseDate,
                     ProfileId = items.ProfileId,
-                    CustomerId = order.CustomerId
+                    CustomerId = order.CustomerId,
+                    PriceLevel = priceBooksDic[items.PriceId].PriceLevel
                 };
                 orderItem.Validate();
                 qrCode.Status = QRCodeStatus.Pending;
@@ -157,13 +166,15 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         }
 
         order.TotalPrice = total;
+        
         /*await ValidateInventoryEnoughAsync(orderItems);*/
         await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
         await UnitOfWork.Get<CartItem>().RemoveAllAsync(cart.CartItems.Select(c => new CartItem {Id = c.Id}));
         order.OrderItems = orderItems;
-
+        await _voucherService.UpdateInventory();
         order.Validate();
-
+        
+        
         return order.Adapt<OrderView>();
     }
 
@@ -177,7 +188,8 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             {
                 CustomerId = createOrder.CustomerId,
                 TotalPrice = 0D,
-                SellerId = createOrder.SellerId
+                SellerId = createOrder.SellerId,
+                CreateAt = DateTime.Now
             };
             order.Validate();
             await UnitOfWork.Get<Order>().AddAsync(order);
@@ -193,7 +205,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             var priceIds = createOrder.OrderItems.Select(o => o.PriceId).ToList();
 
             var priceBooks = await UnitOfWork.Get<PriceBook>().Find(pb => priceIds.Contains(pb.Id)).ToListAsync();
-            var priceBooksDic = priceBooks.ToDictionary(book => book.Id, book => book.Price);
+            var priceBooksDic = priceBooks.ToDictionary(book => book.Id, book => (book.Price, book.PriceLevel));
             var voucherIds = priceBooks.Select(p => p.VoucherId).Distinct();
             
             var vouchers = await UnitOfWork.Get<Voucher>().Find(v => voucherIds.Contains(v.Id))
@@ -235,18 +247,19 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 {
                     OrderId = order.Id,
                     PriceId = o.PriceId,
-                    SoldPrice = priceBooksDic[o.PriceId],
+                    SoldPrice = priceBooksDic[o.PriceId].Price,
                     ProviderId = vouchers[o.VoucherId].ProviderId,
                     CreateAt = DateTime.Now,
                     SellerId = sellerId,
                     Status = ModelStatus.Active,
                     QrCode = qrCodes[o.VoucherId].Pop(),
                     VoucherId = o.VoucherId,
-                    SellerRate = sellerRate * priceBooksDic[o.PriceId],
-                    ProviderRate = serviceRates[vouchers[o.VoucherId].ProviderId] * priceBooksDic[o.PriceId],
+                    SellerRate = sellerRate * priceBooksDic[o.PriceId].Price,
+                    ProviderRate = serviceRates[vouchers[o.VoucherId].ProviderId] * priceBooksDic[o.PriceId].Price,
                     UseDate = o.UseDate,
                     ProfileId = o.ProfileId,
-                    CustomerId = order.CustomerId
+                    CustomerId = order.CustomerId,
+                    PriceLevel = priceBooksDic[o.PriceId].PriceLevel
                 }).Peek(o =>
                 {
                     o.QrCodeId = o.QrCode!.Id;
@@ -274,7 +287,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 .Select(item => item.Price.Price).SumAsync();
 
             order.OrderItems = orderItems;
-
+            await _voucherService.UpdateInventory();
             await UnitOfWork.CompleteAsync();
             return order.Adapt<OrderView>();
         }
@@ -292,7 +305,55 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         order.OrderStatus = OrderStatus.Canceled;
 
         await Repository.CommitAsync();
+        await _voucherService.UpdateInventory();
         var orderView = await Repository.Find<OrderView>(o => o.Id == id).FirstOrDefaultAsync() ?? throw new ModelNotFoundException("how did you get here?? ");
         return orderView!;
+    }
+
+    public async Task<string> RenderOrderToHtml(Order order)
+    {
+        
+        var filePath = Directory.GetCurrentDirectory() + $"\\MailTemplate\\OrderPrint.html";
+        using var str = new StreamReader(filePath);
+        var mailOrderPrint = await str.ReadToEndAsync();
+        str.Close();
+        mailOrderPrint = mailOrderPrint.Replace("[OrderId]", order.Id.ToString());
+      
+        filePath = Directory.GetCurrentDirectory() + $"\\MailTemplate\\OrderItem_QRCode.html";
+        using var orderItemStream = new StreamReader(filePath);
+        var htmlFormatOrderItem = await orderItemStream.ReadToEndAsync();
+
+        var orderItemValues = string.Join("", order.OrderItems.Select(item => new Dictionary<string, string>()
+        {
+            {"VoucherName", item.Voucher.VoucherName ?? string.Empty},
+            {"QrCodeImgLink", item.QrCode?.ImgLink ?? string.Empty},
+            {"QRCodeId", item.QrCode?.Id.ToString() ?? string.Empty},
+            {"ProviderName", item.Provider.ProviderName ?? string.Empty},
+            {"ProviderAddress", item.Provider.Address ?? string.Empty },
+            {"FromDate", item.Voucher.StartDate?.ToString("dd/MM/yyyy") ?? string.Empty},
+            {"ToDate", item.Voucher.EndDate?.ToString("dd/MM/yyyy") ?? string.Empty},
+            {"UseDate", item.UseDate?.ToString("dd/MM/yyyy") ?? string.Empty},
+            {"CustomerName", (item.Profile?.Name ?? order.Customer?.CustomerName) ?? string.Empty },
+            {"CivilInfo", item.Profile?.CivilIdentify ?? string.Empty},
+            {"PriceLevel", item.PriceLevel.ToString() ?? PriceLevel.Default.ToString()},
+            {"Price", item.SoldPrice.ToString(CultureInfo.InvariantCulture)}
+        }).Select(item => item.Aggregate(htmlFormatOrderItem, 
+                (current, dict) 
+                    => current.Replace($"[{dict.Key}]", dict.Value))));
+
+        return mailOrderPrint.Replace("[OrderItemRow]", orderItemValues);
+    }
+
+    public async Task SendOrderEmailToCustomer(int orderId)
+    {
+        var order = await Repository.Find(o => o.Id == orderId).FirstOrDefaultAsync() ??
+                    throw new ModelNotFoundException($"Order not found with Id {orderId}");
+        var mailRequest = new MailRequest()
+        {
+            Body = await RenderOrderToHtml(order),
+            ToEmail = order.Customer?.UserInfo?.Email ?? "maidinhlinh967@gmail.com",
+            Subject = "Your Order"
+        };
+        _mailingService.SendEmailAsync(mailRequest, true);
     }
 }

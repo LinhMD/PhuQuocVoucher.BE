@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
+using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Business.Services.Implements;
 
@@ -56,4 +57,18 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
         voucher.Tags = tagVouchers;
         return voucher.Adapt<VoucherView>();
     }
+
+    public async Task UpdateInventory()
+    {
+        try
+        {
+            await (Repository as IVoucherRepository)?.UpdateVoucherInventory()!;
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "Update inventory fail");
+        }
+
+    }
+
 }

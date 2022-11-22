@@ -11,6 +11,7 @@ using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.IdentityModel.Tokens;
 using NuGet.Packaging;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
@@ -20,6 +21,7 @@ using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 using PhuQuocVoucher.Data.Repositories;
+using ServiceProvider = PhuQuocVoucher.Data.Models.ServiceProvider;
 
 namespace PhuQuocVoucher.Api.Controllers;
 
@@ -85,7 +87,15 @@ public class LoginController : ControllerBase
             case Role.Admin:
                 break;
             case Role.Provider:
+            {
+                var provider = await _work.Get<ServiceProvider>().Find(p => p.UserInfoId == user.Id).FirstOrDefaultAsync();
+                
+                additionalClaims = new Dictionary<string, string?>
+                {
+                    {"ProviderId", provider?.Id.ToString()}
+                };
                 break;
+            }
             default:
                 additionalClaims = null;
                 break;
@@ -159,7 +169,7 @@ public class LoginController : ControllerBase
 
         customerSignUp.UserInfo.Role = Role.Customer;
         
-        var userView = await _userService.SignUpAsync(customerSignUp.UserInfo, hash, salt);
+        var userView = await _userService.SignUpAsync(customerSignUp.UserInfo, hash, salt, ModelStatus.Disable);
         
         var customer = new Customer()
         {
@@ -168,15 +178,40 @@ public class LoginController : ControllerBase
             CustomerName = customerSignUp.CustomerName,
             CreateAt = DateTime.Now
         };
+        
         await _work.Get<Customer>().AddAsync(customer);
 
         
         var cart = await _cartService.GetCartByCustomerAsync(customer.Id);
 
         customer.CartId = cart.Id;
+        await _mailing.SendEmailAsync(new MailTemplateRequest
+        {
+            values = new Dictionary<string, string>
+            {
+                {"userid", userView.Id.ToString() ?? "0"},
+                {"UserName", userView.UserName ??"There"}
+            },
+            MailRequest = new MailRequest
+            {
+                Subject = "Activate account",
+                ToEmail = customerSignUp.UserInfo.Email,
+            },
+            FileTemplateName = "ActivateAccount"
+        });
 
         await _work.CompleteAsync();
         return Ok();
+    }
+
+    [HttpGet("activate/{userId:int}")]
+    public async Task<RedirectResult> ActivateAccount(int userId)
+    {
+        var user = await _work.Get<User>().Find(u => u.Id == userId).FirstOrDefaultAsync();
+        if (user == null) return RedirectPermanent("https://www.google.com/maps");
+        user.Status = ModelStatus.Active;
+        await _work.CompleteAsync();
+        return RedirectPermanent("https://phuquoc-voucher.vercel.app/login");
     }
 
     [HttpPost("forgot")]
@@ -202,7 +237,7 @@ public class LoginController : ControllerBase
     public async Task<IActionResult> LoginWithPassword(LoginRequest request)
     {
         var repository = _work.Get<User>();
-        var user = await repository.Find(user => user.Email == request.Email).FirstOrDefaultAsync();
+        var user = await repository.Find(user => user.Email == request.Email && user.Status == ModelStatus.Active).FirstOrDefaultAsync();
         if (user == null)
             return NotFound("User not found with email: " + request.Email);
 

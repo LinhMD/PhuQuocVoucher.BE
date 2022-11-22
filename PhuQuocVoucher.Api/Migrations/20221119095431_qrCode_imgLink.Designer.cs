@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhuQuocVoucher.Data.Repositories;
 
@@ -11,9 +12,10 @@ using PhuQuocVoucher.Data.Repositories;
 namespace PhuQuocVoucher.Api.Migrations
 {
     [DbContext(typeof(PhuQuocDataContext))]
-    partial class PhuQuocDataContextModelSnapshot : ModelSnapshot
+    [Migration("20221119095431_qrCode_imgLink")]
+    partial class qrCode_imgLink
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -308,9 +310,6 @@ namespace PhuQuocVoucher.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("PriceId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PriceLevel")
                         .HasColumnType("int");
 
                     b.Property<int?>("ProfileId")
@@ -706,10 +705,10 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<int>("ServiceLocationId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ServiceTypeId")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("TypeId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdateAt")
@@ -721,7 +720,7 @@ namespace PhuQuocVoucher.Api.Migrations
 
                     b.HasIndex("ServiceLocationId");
 
-                    b.HasIndex("ServiceTypeId");
+                    b.HasIndex("TypeId");
 
                     b.ToTable("Services");
                 });
@@ -1283,9 +1282,9 @@ namespace PhuQuocVoucher.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PhuQuocVoucher.Data.Models.ServiceType", "ServiceType")
+                    b.HasOne("PhuQuocVoucher.Data.Models.ServiceType", "Type")
                         .WithMany()
-                        .HasForeignKey("ServiceTypeId")
+                        .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1293,7 +1292,7 @@ namespace PhuQuocVoucher.Api.Migrations
 
                     b.Navigation("ServiceLocation");
 
-                    b.Navigation("ServiceType");
+                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.ServiceProvider", b =>

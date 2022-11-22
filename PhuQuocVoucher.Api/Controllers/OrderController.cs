@@ -4,6 +4,7 @@ using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Api.Ultility;
@@ -26,7 +27,8 @@ public class OrderController : ControllerBase
     private readonly IRepository<Order> _repo;
 
     private readonly IUnitOfWork _work;
-    private IMailingService _mailingService;
+    
+    private readonly IMailingService _mailingService;
 
     public OrderController(IOrderService orderService, ILogger<OrderController> logger, IUnitOfWork work, IMailingService mailingService)
     {
@@ -131,5 +133,16 @@ public class OrderController : ControllerBase
         });
         return Ok();
     }
-
+    
+    [HttpGet("{id:int}/print")]
+    public async Task<IActionResult> PrintOrder(int id)
+    {
+        return Ok((await _orderService.RenderOrderToHtml(await _repo.Find(o => o.Id == id).FirstOrDefaultAsync() ?? throw new ModelNotFoundException($"Order not found with Id {id}"))));
+    }
+    [HttpGet("{id:int}/send-email")]
+    public async Task<IActionResult> SendEmailOrder(int id)
+    {
+        await _orderService.SendOrderEmailToCustomer(id);
+        return Ok();
+    }
 }

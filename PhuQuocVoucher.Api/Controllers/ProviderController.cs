@@ -1,17 +1,21 @@
-﻿using CrudApiTemplate.CustomException;
+﻿using CrudApiTemplate.CustomBinding;
+using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Business.Dtos.ProviderDto;
 using PhuQuocVoucher.Business.Services.Core;
+using PhuQuocVoucher.Data.Models;
 using ServiceProvider = PhuQuocVoucher.Data.Models.ServiceProvider;
 
 namespace PhuQuocVoucher.Api.Controllers;
 
 
 [ApiController]
+[Authorize(Roles = nameof(Role.Admin))]
 [Route("api/v1/[controller]s")]
 public class ProviderController : ControllerBase
 {
@@ -24,6 +28,7 @@ public class ProviderController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Get([FromQuery]FindProvider request, [FromQuery]PagingRequest paging, string? orderBy)
     {
         return Ok((await _providerService.GetAsync<ProviderView>(new GetRequest<ServiceProvider>
@@ -33,7 +38,7 @@ public class ProviderController : ControllerBase
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }
-
+    
     [HttpPost]
     public async Task<IActionResult> Create(CreateProvider request)
     {
@@ -47,10 +52,12 @@ public class ProviderController : ControllerBase
                   throw new ModelNotFoundException($"Not Found {nameof(ServiceProvider)} with id {id}"));
     }
 
+    
+    [Authorize(Roles = $"{nameof(Role.Admin)},{nameof(Role.Provider)}")]
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update([FromBody] UpdateProvider request, int id)
+    public async Task<IActionResult> Update([FromBody] UpdateProvider request, int id, [FromClaim("ProviderId")] int? providerId)
     {
-        return Ok(await _providerService.UpdateAsync(id, request));
+        return Ok(await _providerService.UpdateAsync(providerId ?? id, request));
     }
     
     [HttpDelete("{id:int}")]
