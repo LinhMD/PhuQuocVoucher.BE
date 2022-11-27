@@ -1,0 +1,9 @@
+﻿{
+	"ChildrenCustomer": 1.3,
+	"AdultCustomer": 1.5,
+	"ChildrenSeller": 1,
+	"AdultSeller": 1.2,
+	"ChildrenProvider" : 0.8,
+	"AdultProvider" : 1,
+	"Default" : 2
+}

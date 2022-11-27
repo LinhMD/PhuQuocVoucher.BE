@@ -256,7 +256,25 @@ public class LoginController : ControllerBase
         await repository.AddAllAsync(list.Select(u => (u as ICreateRequest<User>).CreateNew(_work)));
 
         var createdUsers = await repository.Find(user => list.Select(l => l.Email).Contains(user.Email)).ToListAsync();
-
+        var providers = createdUsers.Where(u => u.Role == Role.Provider).Select(u => new ServiceProvider()
+        {
+            Status = ModelStatus.Active,
+            UserInfoId = u.Id,
+            ProviderName = u.UserName
+        }).ToList();
+        
+        var sellers = createdUsers.Where(u => u.Role == Role.Seller).Select(u => new Seller()
+        {
+            Status = ModelStatus.Active,
+            UserInfoId = u.Id,
+            SellerName = u.UserName,
+            BusyLevel = BusyLevel.Free,
+            CommissionRate = 0.05F
+        }).ToList();
+        
+        await _work.Get<Seller>().AddAllAsync(sellers);
+        await _work.Get<ServiceProvider>().AddAllAsync(providers);
+        
         createdUsers.Select(u => new MailTemplateRequest
         {
             values = new Dictionary<string, string>

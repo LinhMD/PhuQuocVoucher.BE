@@ -1,4 +1,4 @@
-﻿namespace PhuQuocVoucher.Data.Repositories.Core;
+﻿namespace PhuQuocVoucher.Data.Repositories;
 
 public interface IOrderAble
 {

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhuQuocVoucher.Data.Repositories;
 
@@ -11,9 +12,10 @@ using PhuQuocVoucher.Data.Repositories;
 namespace PhuQuocVoucher.Api.Migrations
 {
     [DbContext(typeof(PhuQuocDataContext))]
-    partial class PhuQuocDataContextModelSnapshot : ModelSnapshot
+    [Migration("20221127124410_not_null_priceLevel")]
+    partial class not_null_priceLevel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -478,7 +480,7 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<DateTime?>("DeleteAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("LevelId")
+                    b.Property<int>("LevelId")
                         .HasColumnType("int");
 
                     b.Property<double>("Price")
@@ -519,9 +521,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PriceLevel")
-                        .HasColumnType("int");
 
                     b.Property<double>("Rate")
                         .HasColumnType("float");
@@ -1244,7 +1243,8 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.PriceLevelT", "Level")
                         .WithMany()
                         .HasForeignKey("LevelId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.Voucher", "Voucher")
                         .WithMany("Prices")

@@ -45,6 +45,7 @@ public class ServiceController : ControllerBase
         return Ok(await _providerService.CreateAsync(request));
     }
 
+    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id, [FromClaim("ProviderId")] int? providerId)
     {

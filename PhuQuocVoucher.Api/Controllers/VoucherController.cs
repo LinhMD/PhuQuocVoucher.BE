@@ -63,6 +63,7 @@ public class VoucherController : ControllerBase
         return Ok(await _voucherService.CreateAsync(request));
     }
 
+    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id, [FromClaim("ProviderId")] int? providerId)
     {

@@ -68,9 +68,9 @@ public class QrCodeController : ControllerBase
     }
 
     [HttpPost("voucher/{voucherId:int}/import")]
-    public async Task<IActionResult> UploadQrCodes(IFormFile excelFile, int voucherId)
+    public async Task<IActionResult> UploadQrCodes(IFormFile file, int voucherId)
     {
-        var workBook = new Workbook(excelFile.OpenReadStream());
+        var workBook = new Workbook(file.OpenReadStream());
 
         var workSheet = workBook.Worksheets[0];
         var codes = workSheet.Cells.MaxDataRow;
@@ -80,12 +80,14 @@ public class QrCodeController : ControllerBase
             qrCode.Add(workSheet.Cells[i, 0].Value.ToString() ?? string.Empty);
         }
 
-        await _repo.AddAllAsync(qrCode.Select(qr => new QrCodeInfo()
+        var qrCodeInfos = qrCode.Select(qr => new QrCodeInfo()
         {
             Status = QRCodeStatus.Active,
             VoucherId = voucherId, 
-            CreateAt = DateTime.Now
-        }));
+            CreateAt = DateTime.Now,
+            HashCode = qr
+        });
+        await _repo.AddAllAsync(qrCodeInfos);
         
         await _voucherService.UpdateInventory();
         return Ok();

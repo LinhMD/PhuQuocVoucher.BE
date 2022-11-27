@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhuQuocVoucher.Data.Repositories;
 
@@ -11,9 +12,10 @@ using PhuQuocVoucher.Data.Repositories;
 namespace PhuQuocVoucher.Api.Migrations
 {
     [DbContext(typeof(PhuQuocDataContext))]
-    partial class PhuQuocDataContextModelSnapshot : ModelSnapshot
+    [Migration("20221122165008_remove_unique_VoucherName")]
+    partial class remove_unique_VoucherName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -478,9 +480,6 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<DateTime?>("DeleteAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("LevelId")
-                        .HasColumnType("int");
-
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
@@ -498,40 +497,9 @@ namespace PhuQuocVoucher.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LevelId");
-
                     b.HasIndex("VoucherId");
 
                     b.ToTable("PriceBooks");
-                });
-
-            modelBuilder.Entity("PhuQuocVoucher.Data.Models.PriceLevelT", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<bool>("IsAdult")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PriceLevel")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Rate")
-                        .HasColumnType("float");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PriceLevels");
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Profile", b =>
@@ -973,6 +941,9 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double?>("DisplayPrice")
+                        .HasColumnType("float");
+
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -1241,18 +1212,11 @@ namespace PhuQuocVoucher.Api.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.PriceBook", b =>
                 {
-                    b.HasOne("PhuQuocVoucher.Data.Models.PriceLevelT", "Level")
-                        .WithMany()
-                        .HasForeignKey("LevelId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PhuQuocVoucher.Data.Models.Voucher", "Voucher")
                         .WithMany("Prices")
                         .HasForeignKey("VoucherId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Level");
 
                     b.Navigation("Voucher");
                 });

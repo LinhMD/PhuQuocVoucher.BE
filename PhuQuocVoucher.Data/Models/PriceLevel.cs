@@ -6,12 +6,11 @@ namespace PhuQuocVoucher.Data.Models;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum PriceLevel
 {
-   ChildrenCustomer,
+   ChildrenCustomer ,
    AdultCustomer,
    ChildrenSeller,
    AdultSeller,
    ChildrenProvider,
    AdultProvider,
-   Combo,
    Default
 }

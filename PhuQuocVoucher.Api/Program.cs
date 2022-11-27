@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using System.Text.Json;
 using CrudApiTemplate.CustomBinding;
 using CrudApiTemplate.ExceptionFilter;
 using CrudApiTemplate.Repository;
@@ -21,6 +22,8 @@ using PhuQuocVoucher.Data.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
+
+
 // Add services to the container.
 
 builder.Services.AddControllers(option =>
@@ -37,6 +40,7 @@ builder.Services.AddDbContext<PhuQuocDataContext>();
 builder.Services.AddScoped<IUnitOfWork ,PqUnitOfWork>();
 
 var firebaseService = new FirebaseService();
+
 //Services
 builder.Services.InitServices();
 builder.Services.AddLocalization(o => o.ResourcesPath = "Resources");
@@ -164,3 +168,5 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseHangfireDashboard();
 app.Run();
+
+
