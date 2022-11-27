@@ -26,9 +26,9 @@ public class MailingService : IMailingService
         email.Subject = mailRequest.Subject;
         if (mailRequest.Attachments != null)
         {
-            foreach (var file in mailRequest.Attachments.Where(file => file.Length > 0))
+            foreach (var attachment in mailRequest.Attachments)
             {
-                email.Attachments.Add(new Attachment(file.Name));
+                email.Attachments.Add(attachment);
 
             }
         }

@@ -44,7 +44,6 @@ public class VoucherView : IView<Voucher>, IDto
     
     public ServiceTypeView ServiceType { get; set; }
     
-    public double? DisplayPrice { get; set; }
     
     public IEnumerable<PriceBookSView> Prices { get; set; }
     

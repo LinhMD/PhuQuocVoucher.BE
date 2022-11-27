@@ -29,13 +29,36 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
             var voucher = (createVoucher as ICreateRequest<Voucher>).CreateNew(UnitOfWork);
             var tags = await UnitOfWork.Get<Tag>().Find(t => createVoucher.TagIds.Contains(t.Id)).ToListAsync();
 
+
+            await UnitOfWork.Get<Voucher>().AddAsync(voucher);
+            
             var tagVouchers = tags.Select(t => new TagVoucher(){TagId = t.Id, VoucherId = voucher.Id}).ToList();
             await UnitOfWork.Get<TagVoucher>().AddAllAsync(tagVouchers);
 
-            voucher.Tags = tagVouchers;
+            var levels = await UnitOfWork.Get<PriceLevelT>().Find(l => true).ToListAsync();
 
-            var voucherView = (await UnitOfWork.Get<Voucher>().AddAsync(voucher)).Adapt<VoucherView>();
-            return await UnitOfWork.Get<Voucher>().Find<VoucherView>(v => v.Id == voucherView.Id).FirstOrDefaultAsync() ?? voucherView;
+            var adultPriceBooks = levels.Where(l => l.IsAdult).Select(l => new PriceBook()
+            {
+                PriceLevel = l.PriceLevel, 
+                Price = l.Rate * createVoucher.AdultPrice, 
+                VoucherId = voucher.Id,
+                Status = ModelStatus.Active,
+                CreateAt = DateTime.Now
+            }).ToList();
+            
+            var childPriceBooks = levels.Where(l => !l.IsAdult).Select(l => new PriceBook()
+            {
+                PriceLevel = l.PriceLevel, 
+                Price = l.Rate * createVoucher.ChildrenPrice, 
+                VoucherId = voucher.Id,
+                Status = ModelStatus.Active,
+                CreateAt = DateTime.Now
+            }).ToList();
+            var priceBooks = adultPriceBooks.Union(childPriceBooks);
+            
+            await UnitOfWork.Get<PriceBook>().AddAllAsync(priceBooks);
+            voucher.Tags = tagVouchers;
+            return await UnitOfWork.Get<Voucher>().Find<VoucherView>(v => v.Id == voucher.Id).FirstOrDefaultAsync() ?? throw new ModelNotFoundException("how?");
         }
         catch (Exception e)
         {

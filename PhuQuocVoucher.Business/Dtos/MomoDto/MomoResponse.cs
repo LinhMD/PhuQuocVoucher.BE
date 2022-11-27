@@ -22,5 +22,4 @@ public class MomoResponse
 
     public string deeplinkMiniApp { get; set; }
 
-    public string? Signature { get; set; }
 }

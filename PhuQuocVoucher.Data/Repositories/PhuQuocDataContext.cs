@@ -45,6 +45,7 @@ public class PhuQuocDataContext : DbContext
         modelBuilder.Entity<BlogTag>()
             .HasKey(c => new { c.BlogId, c.TagId });
         modelBuilder.Entity<TagVoucher>()
+            
             .HasKey(c => new {TagsId = c.TagId, VouchersId = c.VoucherId });
     }
 
@@ -91,4 +92,6 @@ public class PhuQuocDataContext : DbContext
     public DbSet<QrCodeInfo> QrCodes { get; set; }
     
     public DbSet<PaymentDetail> PaymentDetails { get; set; }
+
+    public DbSet<PriceLevelT> PriceLevels { get; set; }
 }

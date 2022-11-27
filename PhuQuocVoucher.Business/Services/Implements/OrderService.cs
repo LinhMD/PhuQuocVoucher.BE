@@ -16,7 +16,11 @@ using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 using PhuQuocVoucher.Data.Repositories.Core;
 using System;
+using System.Drawing;
+using System.Net.Mail;
+using IronBarCode;
 using PhuQuocVoucher.Business.Dtos.MailDto;
+using QRCoder;
 
 namespace PhuQuocVoucher.Business.Services.Implements;
 
@@ -310,7 +314,17 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         return orderView!;
     }
 
-    public async Task<string> RenderOrderToHtml(Order order)
+    public byte[] GenerateQrCode(string hashCode)
+    {
+        QRCodeGenerator qrGenerator = new QRCodeGenerator();
+        QRCodeData qrCodeData = qrGenerator.CreateQrCode(hashCode, QRCodeGenerator.ECCLevel.Q);
+        PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+        byte[] qrCodeAsPngByteArr = qrCode.GetGraphic(20);
+        // Styling a QR code and adding annotation text
+        return qrCodeAsPngByteArr;
+    }
+    
+    public async Task<(string email, List<Attachment>? attachments)> RenderOrderToHtml(Order order)
     {
         
         var filePath = Directory.GetCurrentDirectory() + $"\\MailTemplate\\OrderPrint.html";
@@ -326,7 +340,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         var orderItemValues = string.Join("", order.OrderItems.Select(item => new Dictionary<string, string>()
         {
             {"VoucherName", item.Voucher.VoucherName ?? string.Empty},
-            {"QrCodeImgLink", item.QrCode?.ImgLink ?? string.Empty},
+            {"HashCode", item.QrCode?.HashCode?? string.Empty},
             {"QRCodeId", item.QrCode?.Id.ToString() ?? string.Empty},
             {"ProviderName", item.Provider.ProviderName ?? string.Empty},
             {"ProviderAddress", item.Provider.Address ?? string.Empty },
@@ -337,22 +351,29 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             {"CivilInfo", item.Profile?.CivilIdentify ?? string.Empty},
             {"PriceLevel", item.PriceLevel.ToString() ?? PriceLevel.Default.ToString()},
             {"Price", item.SoldPrice.ToString(CultureInfo.InvariantCulture)}
-        }).Select(item => item.Aggregate(htmlFormatOrderItem, 
+        })
+            .Select(item => item.Aggregate(htmlFormatOrderItem, 
                 (current, dict) 
                     => current.Replace($"[{dict.Key}]", dict.Value))));
-
-        return mailOrderPrint.Replace("[OrderItemRow]", orderItemValues);
+        var attachments = order.OrderItems.Select(o => 
+            new Attachment(new MemoryStream(GenerateQrCode(o.QrCode.HashCode)), o.QrCode.HashCode, "image/png")
+            {
+                ContentId = o.QrCode.HashCode
+            }).ToList();
+        return (mailOrderPrint.Replace("[OrderItemRow]", orderItemValues), attachments) ;
     }
 
     public async Task SendOrderEmailToCustomer(int orderId)
     {
         var order = await Repository.Find(o => o.Id == orderId).FirstOrDefaultAsync() ??
                     throw new ModelNotFoundException($"Order not found with Id {orderId}");
+        var (email, attachments) = await RenderOrderToHtml(order);
         var mailRequest = new MailRequest()
         {
-            Body = await RenderOrderToHtml(order),
+            Body = email,
             ToEmail = order.Customer?.UserInfo?.Email ?? "maidinhlinh967@gmail.com",
-            Subject = "Your Order"
+            Subject = "Your Order",
+            Attachments = attachments
         };
         _mailingService.SendEmailAsync(mailRequest, true);
     }

@@ -31,6 +31,7 @@ public class PqUnitOfWork : UnitOfWork
         Add(new UserRepository(dataContext));
         Add(new VoucherRepository(dataContext));
         Add(new QrCodeRepository(dataContext));
+        Add(new PriceLevelRepository(dataContext));
     }
 
     public IBlogRepository Blogs => (IBlogRepository) Get<Blog>();

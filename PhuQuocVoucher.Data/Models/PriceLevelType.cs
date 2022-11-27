@@ -1,6 +1,6 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class PriceLevelType
+public enum PriceLevelType
 {
-    
+    Customer, Seller, Provider
 }

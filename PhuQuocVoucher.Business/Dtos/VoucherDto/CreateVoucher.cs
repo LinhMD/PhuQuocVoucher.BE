@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CrudApiTemplate.Request;
+using PhuQuocVoucher.Business.Dtos.PriceBookDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.VoucherDto;
@@ -29,16 +30,19 @@ public class CreateVoucher : CreateDto, ICreateRequest<Voucher>
     public int SlotNumber { get; set; }
     
     public double? DisplayPrice { get; set; }
-
-
+    
     public string? BannerImg { get; set; }
     
     public string? Description { get; set; }
 
     public string? Summary { get; set; }
 
-    
     public string? Content { get; set; }
 
     public IList<int> TagIds { get; set; }
+
+    public double AdultPrice { get; set; }
+
+    public double ChildrenPrice { get; set; }
+    
 }

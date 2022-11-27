@@ -21,6 +21,6 @@ public class VoucherRepository : Repository<Voucher>, IVoucherRepository
     public async Task<int> UpdateVoucherInventory()
     {
         return await Context.Database.ExecuteSqlRawAsync(
-            $"UPDATE v Set v.Inventory = q.inventory from Vouchers  v LEFT JOIN (SELECT q.VoucherId, COUNT(q.Id) AS inventoryFROM Qrcodes q WHERE q.Status = GROUP BY q.VoucherId) AS q ON v.Id = q.VoucherId");
+            $"UPDATE v SET v.Inventory = q.inventory FROM Vouchers v LEFT JOIN ( SELECT q.VoucherId, COUNT(q.Id) AS inventory FROM QrCodes q WHERE q.Status = 0 GROUP BY q.VoucherId ) AS q ON v.Id = q.VoucherId ");
     }
-}
+} 

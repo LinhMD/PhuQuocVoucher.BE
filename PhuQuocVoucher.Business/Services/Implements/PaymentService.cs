@@ -127,27 +127,19 @@ public class PaymentService
         var paymentDetail = await _work.Get<PaymentDetail>().Find(p => p.RequestId.ToString() == request.RequestId)
             .FirstOrDefaultAsync();
 
-        order.OrderStatus = OrderStatus.Completed;
         
         await _work.CompleteAsync();
         if (paymentDetail == null || paymentDetail.OrderId != order.Id)
             throw new ModelValueInvalidException("");
 
         var momoResponse = await ConfirmPaymentAsync(paymentDetail);
-        var redirectUrl = paymentDetail.User.Role == Role.Seller
-            ? _momoSetting.MobileRedirect
-            : _momoSetting.WebRedirect;
         
-        var rawHash = $"accessKey={_momoSetting.AccessKey}&amount={paymentDetail.TotalAmount}&extraData=\"\"$&ipnUrl={_momoSetting.IpnCallback}&orderId={paymentDetail.Id}&orderInfo=\"\"&partnerCode={_momoSetting.PartnerCode}&redirectUrl={redirectUrl}&requestId={paymentDetail.RequestId}&requestType=captureWallet";
         
-        var signature = MoMoSecurity.SignSha256(rawHash, _momoSetting.SecretKey!);
-        Console.WriteLine("hash: " +  signature);
-        Console.WriteLine("momo:" + momoResponse.Signature);
         
         /*if (signature != momoResponse.Signature)
             throw new ModelValueInvalidException("Signature is not valid");*/
 
-        if (momoResponse.resultCode != 9000)
+        if (momoResponse.resultCode is not 9000 or 0)
             throw new ModelValueInvalidException("Failed momo payment");
 
         if (Math.Abs(momoResponse.amount - paymentDetail!.TotalAmount ?? 0) > 0.1)
@@ -190,7 +182,7 @@ public class PaymentService
     public async Task<MomoResponse> ConfirmPaymentAsync(PaymentDetail payment)
     {
         var partnerCode = _momoSetting.PartnerCode;
-        var orderId = payment.OrderId;
+        var orderId = payment.Id;
         var requestId = payment.RequestId;
         var amount = payment.TotalAmount;
         var requestType = "capture";
@@ -220,7 +212,6 @@ public class PaymentService
         if (momoResponse == null)
             throw new CodingException("Can not connect to momo");
 
-        momoResponse.Signature = signature;
         return momoResponse;
     }
 }

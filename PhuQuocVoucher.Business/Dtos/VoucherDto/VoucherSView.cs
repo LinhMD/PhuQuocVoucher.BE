@@ -22,11 +22,14 @@ public class VoucherSView : IView<Voucher>, IDto
 
     public DateTime? EndDate { get; set; }
     
-    public double? DisplayPrice { get; set; }
 
     public int ServiceId { get; set; }
     
     public int SlotNumber { get; set; }
+    
+    public string? Summary { get; set; }
+    
+    public string? BannerImg { get; set; }
 
     public void InitMapper()
     {

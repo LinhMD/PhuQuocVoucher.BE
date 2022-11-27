@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using CrudApiTemplate.OrderBy;
 using Microsoft.EntityFrameworkCore;
+using PhuQuocVoucher.Data.Repositories;
 using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Data.Models;
 
-[Index(nameof(VoucherName), IsUnique = true)]
 public class Voucher : BaseModel, IOrderAble
 {
 
@@ -39,8 +39,6 @@ public class Voucher : BaseModel, IOrderAble
     public string? Summary { get; set; }
 
     public int Inventory { get; set; }
-
-    public double? DisplayPrice { get; set; }
     public string? BannerImg { get; set; }
 
     public string? Content { get; set; }

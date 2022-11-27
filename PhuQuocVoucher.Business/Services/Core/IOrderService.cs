@@ -1,4 +1,5 @@
-﻿using CrudApiTemplate.Request;
+﻿using System.Net.Mail;
+using CrudApiTemplate.Request;
 using CrudApiTemplate.Services;
 using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
@@ -16,7 +17,7 @@ public interface IOrderService : IServiceCrud<Order>{
 
     public Task<OrderView?> CancelOrderAsync(int id);
 
-    public Task<string> RenderOrderToHtml(Order order);
+    public Task<(string email, List<Attachment>? attachments)> RenderOrderToHtml(Order order);
 
     public Task SendOrderEmailToCustomer(int orderId);
 }

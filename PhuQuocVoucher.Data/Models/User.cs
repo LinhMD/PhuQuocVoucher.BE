@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 using CrudApiTemplate.OrderBy;
 using Microsoft.EntityFrameworkCore;
+using PhuQuocVoucher.Data.Repositories;
 using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Data.Models;

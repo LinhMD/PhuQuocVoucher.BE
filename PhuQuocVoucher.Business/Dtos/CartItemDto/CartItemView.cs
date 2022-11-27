@@ -15,8 +15,9 @@ public class CartItemView : IView<CartItem>, IDto
 
     public int VoucherId { get; set; }
     public double Price { get; set; }
-    
     public int PriceId { get; set; }
+    
+    public PriceLevel PriceLevel { get; set; }
 
     public int? ProfileId { get; set; }
     
@@ -26,6 +27,7 @@ public class CartItemView : IView<CartItem>, IDto
     public void InitMapper()
     {
         TypeAdapterConfig<CartItem, CartItemView>.NewConfig()
-            .Map(view => view.Price, item => item.Price!.Price);
+            .Map(view => view.Price, item => item.Price!.Price)
+            .Map(view => view.PriceLevel, item => item.Price!.PriceLevel);
     }
 }
