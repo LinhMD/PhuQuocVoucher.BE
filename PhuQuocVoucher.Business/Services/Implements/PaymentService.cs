@@ -132,19 +132,6 @@ public class PaymentService
         if (paymentDetail == null || paymentDetail.OrderId != order.Id)
             throw new ModelValueInvalidException("");
 
-        var momoResponse = await ConfirmPaymentAsync(paymentDetail);
-        
-        
-        
-        /*if (signature != momoResponse.Signature)
-            throw new ModelValueInvalidException("Signature is not valid");*/
-
-        if (momoResponse.resultCode is not 9000 or 0)
-            throw new ModelValueInvalidException("Failed momo payment");
-
-        if (Math.Abs(momoResponse.amount - paymentDetail!.TotalAmount ?? 0) > 0.1)
-            throw new ModelValueInvalidException("Amount is not valid");
-
         paymentDetail.PaymentStatus = PaymentStatus.Success;
         qrCodeInfos.ForEach(qr => qr.Status = QRCodeStatus.Commit);
 
@@ -153,6 +140,19 @@ public class PaymentService
         if(order.SellerId != null)
             await _orderService.SendOrderEmailToCustomer(order.Id);
         
+        var momoResponse = await ConfirmPaymentAsync(paymentDetail);
+        
+        
+        
+        /*if (signature != momoResponse.Signature)
+            throw new ModelValueInvalidException("Signature is not valid");*/
+
+        /*if (momoResponse.resultCode is not 9000 or 0)
+            throw new ModelValueInvalidException("Failed momo payment");
+            */
+
+        /*if (Math.Abs(momoResponse.amount - paymentDetail!.TotalAmount ?? 0) > 0.1)
+            throw new ModelValueInvalidException("Amount is not valid");*/
         
     }
 
@@ -179,7 +179,7 @@ public class PaymentService
         
     }
 
-    public async Task<MomoResponse> ConfirmPaymentAsync(PaymentDetail payment)
+    public async Task<MomoConfirmResponse> ConfirmPaymentAsync(PaymentDetail payment)
     {
         var partnerCode = _momoSetting.PartnerCode;
         var orderId = payment.Id;
@@ -208,7 +208,7 @@ public class PaymentService
         };
 
         var response = await PaymentRequest.SendConfirmPaymentRequest(url, confirmPaymentRequest.ToString());
-        var momoResponse = JObject.Parse(response).ToObject<MomoResponse>();
+        var momoResponse = JObject.Parse(response).ToObject<MomoConfirmResponse>();
         if (momoResponse == null)
             throw new CodingException("Can not connect to momo");
 

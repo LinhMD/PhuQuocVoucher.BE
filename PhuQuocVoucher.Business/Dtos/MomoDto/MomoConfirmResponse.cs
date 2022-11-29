@@ -1,6 +1,6 @@
 ﻿namespace PhuQuocVoucher.Business.Dtos.MomoDto;
 
-public class MomoIpnResponse
+public class MomoConfirmResponse
 {
     public string partnerCode { get; set; }
 

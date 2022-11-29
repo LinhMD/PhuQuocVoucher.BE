@@ -9,7 +9,6 @@ public class QrCodeView : IView<QrCodeInfo>, IDto
     
     public int Id { get; set; }
     
-    [JsonIgnore]
     public string HashCode { get; set; }
     
     public int VoucherId { get; set; }

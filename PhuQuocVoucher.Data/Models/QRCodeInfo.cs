@@ -12,7 +12,6 @@ public class QrCodeInfo : BaseModel,  IOrderAble
 {
     public int Id { get; set; }
     
-    [JsonIgnore]
     public string HashCode { get; set; }
     
     [JsonIgnore]
@@ -21,6 +20,10 @@ public class QrCodeInfo : BaseModel,  IOrderAble
     public string? ImgLink { get; set; }
     
     public int VoucherId { get; set; }
+
+    public int? ProviderId { get; set; }
+
+    public ServiceProvider? Provider { get; set; }
 
     public QRCodeStatus Status { get; set; } = QRCodeStatus.Active;
     public void ConfigOrderBy()

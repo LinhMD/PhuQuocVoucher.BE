@@ -9,7 +9,6 @@ using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Data.Models;
 
-[Index(nameof(UserName), IsUnique = true)]
 [Index(nameof(Email), IsUnique = true)]
 public class User : BaseModel, IOrderAble
 {

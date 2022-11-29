@@ -6,7 +6,7 @@ namespace PhuQuocVoucher.Business.Dtos.ProfileDto;
 
 public class UpdateProfile : UpdateDto, IUpdateRequest<Profile>
 {
-
+    public string? CustomerName { get; set; }  
     public int? Sex { get; set; }
 
     [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Must be a phone number")]

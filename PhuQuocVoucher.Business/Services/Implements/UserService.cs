@@ -37,6 +37,52 @@ public class UserService : ServiceCrud<User>, IUserService
         try
         {
             user = await Repository.AddAsync(user);
+            switch (user.Role)
+            {
+                case Role.Customer:
+                {
+                    var customer = new Customer()
+                    {
+                        Status = ModelStatus.Active,
+                        CreateAt = DateTime.Now,
+                        CustomerName = user.UserName,
+                        UserInfoId = user.Id,
+                    };
+                    await UnitOfWork.Get<Customer>().AddAsync(customer);
+                    break;
+                }
+                case Role.Seller: 
+                {
+                    var seller = new Seller()
+                    {
+                        Status = ModelStatus.Active,
+                        CreateAt = DateTime.Now,
+                        BusyLevel = BusyLevel.Free,
+                        SellerName = user.UserName,
+                        UserInfoId = user.Id,
+                        UserInfo = user,
+                        CommissionRate = 0.02f
+                    };
+                    await UnitOfWork.Get<Seller>().AddAsync(seller);
+                    break;
+                }
+                case Role.Provider:
+                {
+                    var provider = new ServiceProvider()
+                    {
+                        Status = ModelStatus.Active,
+                        CreateAt = DateTime.Now,
+                        ProviderName = user.UserName,
+                        UserInfoId = user.Id
+                    };
+                    await UnitOfWork.Get<ServiceProvider>().AddAsync(provider);
+                    break;
+                }
+                case Role.Admin:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
         catch (DbUpdateException e)
         {

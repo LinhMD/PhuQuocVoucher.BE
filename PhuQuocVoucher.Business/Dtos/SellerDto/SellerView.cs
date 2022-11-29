@@ -11,6 +11,8 @@ public class SellerView : IView<Seller>, IDto
 {
     public int? Id { get; set; }
 
+    public DateTime? CreateAt { get; set; }
+
     public string? SellerName { get; set; }
 
     public int? UserInfoId { get; set; }

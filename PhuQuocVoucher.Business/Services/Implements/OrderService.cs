@@ -367,11 +367,14 @@ public class OrderService : ServiceCrud<Order>, IOrderService
     {
         var order = await Repository.Find(o => o.Id == orderId).FirstOrDefaultAsync() ??
                     throw new ModelNotFoundException($"Order not found with Id {orderId}");
+            
         var (email, attachments) = await RenderOrderToHtml(order);
+
+        var customerEmail = await UnitOfWork.Get<Customer>().Find(cus => cus.Id == order.CustomerId).Select(c => c.UserInfo.Email).FirstOrDefaultAsync();
         var mailRequest = new MailRequest()
         {
             Body = email,
-            ToEmail = order.Customer?.UserInfo?.Email ?? "maidinhlinh967@gmail.com",
+            ToEmail = customerEmail ?? "maidinhlinh967@gmail.com",
             Subject = "Your Order",
             Attachments = attachments
         };

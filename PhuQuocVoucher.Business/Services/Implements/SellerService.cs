@@ -115,7 +115,6 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
             .ToDictionary( g => g.Key, g => g.Count());
         
 
-        var newCustomer = customers.Count;
         
         var sellerKpi = new SellerKpiView()
         {
