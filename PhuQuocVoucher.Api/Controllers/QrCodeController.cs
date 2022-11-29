@@ -1,8 +1,10 @@
 ﻿using Aspose.Cells;
+using CrudApiTemplate.CustomBinding;
 using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Business.Dtos.QrCodeDto;
@@ -67,8 +69,9 @@ public class QrCodeController : ControllerBase
         return Ok(await _qrCodeService.DeleteAsync(id));
     }
 
+    [Authorize(Roles = nameof(Role.Provider))]
     [HttpPost("voucher/{voucherId:int}/import")]
-    public async Task<IActionResult> UploadQrCodes(IFormFile file, int voucherId)
+    public async Task<IActionResult> UploadQrCodes(IFormFile file, int voucherId, [FromClaim("ProviderId")] int? providerId)
     {
         var workBook = new Workbook(file.OpenReadStream());
 
@@ -80,13 +83,22 @@ public class QrCodeController : ControllerBase
             qrCode.Add(workSheet.Cells[i, 0].Value.ToString() ?? string.Empty);
         }
 
+        var duplicateQrCode = await _repo.Find(qr => qrCode.Contains(qr.HashCode)).ToListAsync();
+
+        if (duplicateQrCode.Count != 0)
+        {
+            return BadRequest(duplicateQrCode);
+        }
+        
         var qrCodeInfos = qrCode.Select(qr => new QrCodeInfo()
         {
             Status = QRCodeStatus.Active,
             VoucherId = voucherId, 
             CreateAt = DateTime.Now,
-            HashCode = qr
+            HashCode = qr,
+            ProviderId = providerId
         });
+        
         await _repo.AddAllAsync(qrCodeInfos);
         
         await _voucherService.UpdateInventory();

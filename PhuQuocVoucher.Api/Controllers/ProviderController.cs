@@ -21,9 +21,11 @@ public class ProviderController : ControllerBase
 {
     private readonly IProviderService _providerService;
     private readonly IRepository<ServiceProvider> _repository;
+    private IUnitOfWork _work;
     public ProviderController(IProviderService provider, IUnitOfWork work)
     {
         _providerService = provider;
+        _work = work;
         _repository = work.Get<ServiceProvider>();
     }
 
@@ -65,4 +67,29 @@ public class ProviderController : ControllerBase
     {
         return Ok(await _providerService.DeleteAsync(id));
     }
+
+    [HttpPost("scan-qr")]
+    public async Task<IActionResult> ScanQrCode(string hashCode, [FromClaim("ProviderId")] int? providerId)
+    {
+        var qrCodeId = await _work.Get<OrderItem>()
+            .Find(item => item.QrCode != null && item.QrCodeId != null && item.QrCode.HashCode == hashCode &&
+                          item.ProviderId == providerId).Select(item => item.QrCodeId).FirstOrDefaultAsync();
+        if (qrCodeId == null)
+        {
+            throw new ModelNotFoundException("Qr code Not found");
+        }
+
+        var qrCode = await _work.Get<QrCodeInfo>().Find(info => info.Id == qrCodeId).FirstOrDefaultAsync();
+        
+        if (qrCode == null){
+            throw new ModelNotFoundException("Qr code Not found");
+        }
+
+        qrCode.Status = QRCodeStatus.Used;
+        await _work.CompleteAsync();
+        return Ok();
+    }
+    
+    
+    
 }

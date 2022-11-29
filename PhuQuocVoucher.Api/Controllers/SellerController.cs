@@ -149,6 +149,7 @@ public class SellerController : ControllerBase
         request.UserInfo.Role = Role.Customer;
         return Ok(await _customerService.CreateCustomerAsync(request, sellerId));
     }
+    
     /// <summary>
     /// Get Customer List
     /// </summary>
@@ -199,6 +200,13 @@ public class SellerController : ControllerBase
             .FirstOrDefaultAsync();
         if (profile == null)
             return NotFound($"Profile with id {id} not found");
+        if (request.CustomerName != null)
+        {
+            var customer = await _work.Get<Customer>().Find(customer => customer.Id == customerId).FirstOrDefaultAsync();
+            if(customer != null) 
+                customer.CustomerName = request.CustomerName;
+            await _work.CompleteAsync();
+        }
         return Ok(await _profileService.UpdateAsync(id, request));
     }
     
@@ -353,10 +361,28 @@ public class SellerController : ControllerBase
     [HttpGet("kpi")]
     public async Task<IActionResult> KPI([FromClaim("SellerId")]int sellerId, [Range(2000, 2100)]int year)
     {
-        return Ok((await _sellerService.GetSellerKpis(sellerId, year)));
+        var sellerKpiView = await _sellerService.GetSellerKpis(sellerId, year);
+        List<dynamic> kpiPerMonth = new();
+        
+        for (int i = 1; i <= 12; i++)
+        {
+            sellerKpiView.RevenuesPerMonths.TryGetValue(i, out var revenues);
+            sellerKpiView.CloseOrderPerMonth.TryGetValue(i, out var order);
+            sellerKpiView.NoOfNewCustomerPerMonth.TryGetValue(i, out var customer);
+            
+            kpiPerMonth.Add(new
+            {
+                Month = i,
+                revenues,
+                order,
+                customer
+            });
+        }
+        
+        return Ok(kpiPerMonth);
     }
     
-    [SwaggerResponse(200, "Order View",typeof(OrderView))]
+    [SwaggerResponse(200, "KPI",typeof(OrderView))]
     [HttpGet("kpi-admin")]
     public async Task<IActionResult> KPIAdmin(int sellerId, [Range(2000, 2100)]int year)
     {

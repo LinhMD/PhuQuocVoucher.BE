@@ -74,27 +74,30 @@ public class VoucherController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromBody] UpdateVoucher request, int id, [FromClaim("ProviderId")] int? providerId)
     {
-        var voucherIds = await _repo.Find(v => v.ProviderId == providerId).Select(v => v.Id).ToListAsync();
+        
+        var voucherIds = await _repo.Find(v => providerId == null ||  v.ProviderId == providerId).Select(v => v.Id).ToListAsync();
         if (voucherIds.Contains(id))
             return Ok(await _voucherService.UpdateAsync(id, request));
         
-        return Forbid("Invalid Access");
+        return Challenge();
     }
     [HttpPut("{id:int}/tag")]
     public async Task<IActionResult> UpdateTags([FromBody] IList<int> tags, int id, [FromClaim("ProviderId")] int? providerId)
     {
-        var voucherIds = await _repo.Find(v => v.ProviderId == providerId).Select(v => v.Id).ToListAsync();
+        var voucherIds = await _repo.Find(v => providerId == null || v.ProviderId == providerId).Select(v => v.Id).ToListAsync();
         if (voucherIds.Contains(id))
             return Ok(await _voucherService.UpdateTag(tags, id));
-        return Forbid("Invalid Access");
+        
+        return Challenge();
     }
     
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id, [FromClaim("ProviderId")] int? providerId)
-    {var voucherIds = await _repo.Find(v => v.ProviderId == providerId).Select(v => v.Id).ToListAsync();
+    {
+        var voucherIds = await _repo.Find(v => providerId == null || v.ProviderId == providerId).Select(v => v.Id).ToListAsync();
         if (voucherIds.Contains(id))
-            return Ok(await _voucherService.DeleteAsync(id));;
-        return Forbid("Invalid Access");
+            return Ok(await _voucherService.DeleteAsync(id));
+        return Challenge();
     }
     
 }

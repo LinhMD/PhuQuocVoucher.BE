@@ -253,14 +253,23 @@ public class LoginController : ControllerBase
     public async Task<IActionResult> CreateMultipleUser(IList<SignUpRequest> list)
     {
         var repository = _work.Get<User>();
-        await repository.AddAllAsync(list.Select(u => (u as ICreateRequest<User>).CreateNew(_work)));
+        await repository.AddAllAsync(list.Select(u => new User()
+        {
+            Email = u.Email,
+            Role = u.Role,
+            UserName = u.Email.Split("@")[0],
+            Status = ModelStatus.Disable,
+            CreateAt = DateTime.Now,
+            
+        }));
 
         var createdUsers = await repository.Find(user => list.Select(l => l.Email).Contains(user.Email)).ToListAsync();
         var providers = createdUsers.Where(u => u.Role == Role.Provider).Select(u => new ServiceProvider()
         {
             Status = ModelStatus.Active,
             UserInfoId = u.Id,
-            ProviderName = u.UserName
+            ProviderName = u.UserName,
+            CreateAt = DateTime.Now
         }).ToList();
         
         var sellers = createdUsers.Where(u => u.Role == Role.Seller).Select(u => new Seller()
@@ -269,7 +278,8 @@ public class LoginController : ControllerBase
             UserInfoId = u.Id,
             SellerName = u.UserName,
             BusyLevel = BusyLevel.Free,
-            CommissionRate = 0.05F
+            CommissionRate = 0.05F,
+            CreateAt = DateTime.Now
         }).ToList();
         
         await _work.Get<Seller>().AddAllAsync(sellers);

@@ -56,18 +56,20 @@ public class ServiceController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromBody] UpdateService request, int id, [FromClaim("ProviderId")] int? providerId)
     {
-        var serviceId = await _repository.Find(ser => ser.ProviderId == providerId).Select(ser => ser.Id).ToListAsync();
+        var serviceId = await _repository.Find(ser => providerId == null || ser.ProviderId == providerId).Select(ser => ser.Id).ToListAsync();
+        
         if (serviceId.Contains(id))
             return Ok(await _providerService.UpdateAsync(id, request));
-        return Forbid("Invalid Access");
+        
+        return Challenge();
     }
     
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id, [FromClaim("ProviderId")] int? providerId)
     {
-        var serviceId = await _repository.Find(ser => ser.ProviderId == providerId).Select(ser => ser.Id).ToListAsync();
+        var serviceId = await _repository.Find(ser => providerId == null || ser.ProviderId == providerId).Select(ser => ser.Id).ToListAsync();
         if (serviceId.Contains(id))
             return Ok(await _providerService.DeleteAsync(id));
-        return Forbid("Invalid Access");
+        return Challenge();
     }
 }

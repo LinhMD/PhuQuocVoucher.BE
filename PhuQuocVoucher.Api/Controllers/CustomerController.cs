@@ -69,7 +69,7 @@ public class CustomerController : ControllerBase
     public async Task<IActionResult> Get([FromQuery]FindCustomer request, [FromQuery]PagingRequest paging, string? orderBy)
     {
         
-        return Ok((await _customerService.GetAsync<CustomerSView>(new GetRequest<Customer>
+        return Ok((await _customerService.GetAsync<CustomerView>(new GetRequest<Customer>
         {
             FindRequest = request,
             OrderRequest = orderBy.ToOrderRequest<Customer>(),
