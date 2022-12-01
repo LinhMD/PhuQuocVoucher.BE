@@ -36,8 +36,8 @@ public class Customer : BaseModel, IOrderAble
     
     public void ConfigOrderBy()
     {
-        Expression<Func<Customer, ModelStatus>> orderByStatus = customer => customer.Status;
-        OrderByProvider<Customer>.OrderByDic.Add(nameof(Status),orderByStatus);
+        
+        SetUpOrderBy<Customer>();
     }
 
 }

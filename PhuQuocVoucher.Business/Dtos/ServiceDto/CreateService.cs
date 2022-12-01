@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CrudApiTemplate.Request;
+using Mapster;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.ServiceDto;
@@ -22,4 +23,10 @@ public class CreateService : CreateDto, ICreateRequest<Service>
 
     [Required]
     public int ProviderId { get; set; }
+
+    public override void InitMapper()
+    {
+        TypeAdapterConfig<CreateService, Service>.NewConfig()
+            .Map(service => service.ServiceTypeId, create => create.TypeId);
+    }
 }

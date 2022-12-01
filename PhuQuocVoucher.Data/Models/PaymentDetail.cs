@@ -31,7 +31,7 @@ public class PaymentDetail  : BaseModel, IOrderAble
     public bool? IsValid { get; set; } = true;
     public void ConfigOrderBy()
     {
-        Expression<Func<PaymentDetail, PaymentStatus?>> orderByStatus = payment => payment.PaymentStatus;
-        OrderByProvider<PaymentDetail>.OrderByDic.Add(nameof(PaymentStatus),orderByStatus);
+        
+        SetUpOrderBy<PaymentDetail>();
     }
 }

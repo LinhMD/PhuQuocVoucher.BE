@@ -25,10 +25,11 @@ public class QrCodeInfo : BaseModel,  IOrderAble
 
     public ServiceProvider? Provider { get; set; }
 
-    public QRCodeStatus Status { get; set; } = QRCodeStatus.Active;
+    public QRCodeStatus QrStatus { get; set; } = QRCodeStatus.Active;
     public void ConfigOrderBy()
     {
-        Expression<Func<QrCodeInfo, QRCodeStatus>> orderByStatus = qr => qr.Status;
-        OrderByProvider<QrCodeInfo>.OrderByDic.Add(nameof(Status),orderByStatus);
+        SetUpOrderBy<QrCodeInfo>();
+        Expression<Func<QrCodeInfo, QRCodeStatus>> orderByStatus = qr => qr.QrStatus;
+        OrderByProvider<QrCodeInfo>.OrderByDic.Add(nameof(QrStatus),orderByStatus);
     }
 }

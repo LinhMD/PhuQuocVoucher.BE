@@ -113,7 +113,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         var serviceRates = await UnitOfWork.Get<Service>()
             .Find(s => serviceIds.Contains(s.Id))
             .ToDictionaryAsync(s => s.Id, s => s.CommissionRate);
-        var qrCodes = (await UnitOfWork.Get<QrCodeInfo>().Find(qr => voucherIds.Contains(qr.VoucherId) && qr.Status == QRCodeStatus.Active).ToListAsync())
+        var qrCodes = (await UnitOfWork.Get<QrCodeInfo>().Find(qr => voucherIds.Contains(qr.VoucherId) && qr.QrStatus == QRCodeStatus.Active).ToListAsync())
             .GroupBy(qr => qr.VoucherId)
             .ToDictionary(
                 qrs => qrs.Key,
@@ -163,7 +163,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                     PriceLevel = priceBooksDic[items.PriceId].PriceLevel
                 };
                 orderItem.Validate();
-                qrCode.Status = QRCodeStatus.Pending;
+                qrCode.QrStatus = QRCodeStatus.Pending;
                 orderItems.Add(orderItem);
                 total += items.Price;
             }
@@ -267,7 +267,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 }).Peek(o =>
                 {
                     o.QrCodeId = o.QrCode!.Id;
-                    o.QrCode.Status = QRCodeStatus.Pending;
+                    o.QrCode.QrStatus = QRCodeStatus.Pending;
                 }).ToList();
             
             

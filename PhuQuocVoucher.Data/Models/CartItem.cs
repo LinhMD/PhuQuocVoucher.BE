@@ -28,7 +28,6 @@ public class CartItem : BaseModel, IOrderAble
     public int CartId { get; set; }
     public void ConfigOrderBy()
     {
-        Expression<Func<CartItem, ModelStatus>> orderByStatus = cartItem => cartItem.Status;
-        OrderByProvider<CartItem>.OrderByDic.Add(nameof(Status),orderByStatus);
+        SetUpOrderBy<CartItem>();
     }
 }

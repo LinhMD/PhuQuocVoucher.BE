@@ -14,6 +14,7 @@ using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
+using PhuQuocVoucher.Business.Dtos.OrderItemDto;
 using PhuQuocVoucher.Business.Dtos.ProfileDto;
 using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Business.Services.Core;
@@ -40,11 +41,13 @@ public class CustomerController : ControllerBase
 
     private readonly IRepository<Customer> _repo;
 
+    private IOrderItemService _itemService;
+
     /// <summary>
     /// Create Controller.
     /// </summary>
     public CustomerController(ILogger<CustomerController> logger, IUnitOfWork work,
-        ICustomerService customerService, IOrderService orderService, ICartService cartService, IProfileService profileService)
+        ICustomerService customerService, IOrderService orderService, ICartService cartService, IProfileService profileService, IOrderItemService itemService)
     {
         _customerService = customerService;
         _logger = logger;
@@ -52,6 +55,7 @@ public class CustomerController : ControllerBase
         _orderService = orderService;
         _cartService = cartService;
         _profileService = profileService;
+        _itemService = itemService;
         _repo = work.Get<Customer>();
     }
 
@@ -316,6 +320,23 @@ public class CustomerController : ControllerBase
     }
     
     /// <summary>
+    /// Update profile of order item
+    /// </summary>
+    /// <returns>OrderView</returns>
+    [Authorize(Roles = nameof(Role.Customer))]
+    [HttpGet("orders/items")]
+    public async Task<ActionResult<OrderView>> GetOrderItem([FromClaim("CustomerId")]int customerId, [FromQuery]FindOrderItem orderItemRequest, [FromQuery]PagingRequest paging, string? sortBy)
+    {
+        orderItemRequest.CustomerId = customerId;
+        return Ok((await _itemService.GetAsync<OrderItemView>(new GetRequest<OrderItem>
+        {
+            FindRequest = orderItemRequest,
+            OrderRequest = sortBy.ToOrderRequest<OrderItem>(),
+            PagingRequest = paging
+        })).ToPagingResponse(paging));
+    }
+    
+    /// <summary>
     /// Get Current Login Customer
     /// </summary>
     /// <param name="id"></param>
@@ -410,5 +431,17 @@ public class CustomerController : ControllerBase
     public async Task<ActionResult<IList<RemainVoucherInventory>>> CheckCart([FromClaim("CustomerId")] int customerId)
     {
         return Ok(await _cartService.CheckCart(customerId));
+    }
+    
+    /// <summary>
+    /// update cart item quantity to login customer cart
+    /// </summary>
+    /// <returns>CartItemView</returns>
+    [Authorize(Roles = nameof(Role.Customer))]
+    [HttpPut("cart/items/check")]
+    public async Task<ActionResult<CartView>> CheckItem(
+        UpdateCart cart)
+    {
+        return Ok(await _cartService.CheckItem(cart));
     }
 }

@@ -129,7 +129,21 @@ public static class QueryableExtensions
         var para = Expression.Parameter(typeof(TModel), typeof(TModel).Name.ToLower());
         var member = Expression.Property(para, orderModel.PropertyName);
 
-        //object type
+        
+        try
+        {
+            var expression = OrderByProvider<TModel>.OrderByDic[member.Member.Name];
+            var sortModels = orderModel.IsAscending
+                ? Queryable.ThenBy(models, expression)
+                : Queryable.ThenByDescending(models, expression);
+            return sortModels;
+        }
+        catch (Exception e)
+        {
+            throw new ModelNotFoundException($"Can not sort by property {member.Member.Name}");
+        }
+        
+        /*//object type
         if (member.Type == typeof(object))
         {
             return ThenOrder<TModel, object>(models, orderModel);
@@ -183,18 +197,7 @@ public static class QueryableExtensions
         {
             return ThenOrder<TModel, char>(models, orderModel);
         }
+        */
 
-        try
-        {
-            var expression = OrderByProvider<TModel>.OrderByDic[member.Member.Name];
-            var sortModels = orderModel.IsAscending
-                ? Queryable.ThenBy(models, expression)
-                : Queryable.ThenByDescending(models, expression);
-            return sortModels;
-        }
-        catch (Exception e)
-        {
-            throw new ModelNotFoundException($"Can not sort by property {member.Member.Name}");
-        }
     }
 }

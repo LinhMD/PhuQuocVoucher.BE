@@ -21,7 +21,7 @@ public class Review : BaseModel, IOrderAble
     public Customer? Customer { get; set; }
     public void ConfigOrderBy()
     {
-        Expression<Func<Review, ModelStatus>> orderByStatus = review => review.Status;
-        OrderByProvider<Review>.OrderByDic.Add(nameof(Status),orderByStatus);
+        
+        SetUpOrderBy<Review>();
     }
 }

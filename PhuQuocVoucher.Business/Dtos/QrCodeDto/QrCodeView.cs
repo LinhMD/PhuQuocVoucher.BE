@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using CrudApiTemplate.View;
+using Mapster;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.QrCodeDto;
@@ -13,5 +14,6 @@ public class QrCodeView : IView<QrCodeInfo>, IDto
     
     public int VoucherId { get; set; }
 
-    public QRCodeStatus Status { get; set; } = QRCodeStatus.Active;
+    public QRCodeStatus QrStatus { get; set; }
+    
 }

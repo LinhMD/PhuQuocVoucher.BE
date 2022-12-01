@@ -92,7 +92,7 @@ public class QrCodeController : ControllerBase
         
         var qrCodeInfos = qrCode.Select(qr => new QrCodeInfo()
         {
-            Status = QRCodeStatus.Active,
+            QrStatus = QRCodeStatus.Active,
             VoucherId = voucherId, 
             CreateAt = DateTime.Now,
             HashCode = qr,

@@ -19,4 +19,6 @@ public interface ICartService : IServiceCrud<Cart>
     public Task<CartView> UpdateCartAsync(UpdateCart updateCart, int customerId);
 
     public  Task<List<RemainVoucherInventory>> CheckCart(int customerId);
+
+    public Task<List<RemainVoucherInventory>> CheckItem(UpdateCart cart);
 }

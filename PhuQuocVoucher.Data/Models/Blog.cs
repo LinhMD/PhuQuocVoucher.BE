@@ -22,7 +22,6 @@ public class Blog : BaseModel, IOrderAble
     public IList<BlogTag> Tags { get; set; }
     public void ConfigOrderBy()
     {
-        Expression<Func<Blog, ModelStatus>> orderByStatus = blog => blog.Status;
-        OrderByProvider<Blog>.OrderByDic.Add(nameof(Status), orderByStatus);
+        SetUpOrderBy<Blog>();
     }
 }

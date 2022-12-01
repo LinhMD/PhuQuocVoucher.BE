@@ -18,7 +18,6 @@ public class Tag : BaseModel, IOrderAble
     public IList<Voucher> Vouchers { get; set; }
     public void ConfigOrderBy()
     {
-        Expression<Func<Tag, ModelStatus>> orderByStatus = tag => tag.Status;
-        OrderByProvider<Tag>.OrderByDic.Add(nameof(Status),orderByStatus);
+        SetUpOrderBy<Tag>();
     }
 }

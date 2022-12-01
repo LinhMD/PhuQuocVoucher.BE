@@ -30,8 +30,6 @@ public class VoucherView : IView<Voucher>, IDto
 
     public int ServiceId { get; set; }
     
-    
-    
     public string? Description { get; set; }
 
     public string? Summary { get; set; }
@@ -58,7 +56,9 @@ public class VoucherView : IView<Voucher>, IDto
         TypeAdapterConfig<Voucher, VoucherView>.NewConfig()
             .Map(view => view.Tags, voucher => voucher.Tags.Select(tag => tag.Tag))
             .Map(view => view.ServiceType , v => v.Service.ServiceType)
-            .Map(view => view.Inventory, voucher => voucher.QrCodeInfos.Count(qr => qr.Status== QRCodeStatus.Active));
+            .Map(
+                view => view.Inventory, 
+                voucher => voucher.QrCodeInfos.Count(qr => qr.QrStatus == QRCodeStatus.Active));
 
     }
 }

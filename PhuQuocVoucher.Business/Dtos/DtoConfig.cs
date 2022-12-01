@@ -50,5 +50,7 @@ public static class DtoConfig
         Config<CreateCustomer>();
         Config<CreateBlog>();
         Config<SignUpRequest>();
+        
+        Config<CreateService>();
     }
 }

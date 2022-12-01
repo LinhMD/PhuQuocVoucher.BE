@@ -25,7 +25,8 @@ public class PriceBook : BaseModel, IOrderAble
     public double Price { get; set; }
     public void ConfigOrderBy()
     {
-        Expression<Func<PriceBook, ModelStatus>> orderByStatus = price => price.Status;
-        OrderByProvider<PriceBook>.OrderByDic.Add(nameof(Status),orderByStatus);
+        SetUpOrderBy<PriceBook>();
+        Expression<Func<PriceBook, PriceLevel>> priceLevel = voucher => voucher.PriceLevel;
+        OrderByProvider<PriceBook>.OrderByDic.Add(nameof(PriceLevel), priceLevel);
     }
 }

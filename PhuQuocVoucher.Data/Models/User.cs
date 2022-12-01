@@ -38,8 +38,7 @@ public class User : BaseModel, IOrderAble
     public string? PhoneNumber { get; set; }
     public void ConfigOrderBy()
     {
-        Expression<Func<User, ModelStatus>> orderByStatus = user => user.Status;
-        OrderByProvider<User>.OrderByDic.Add(nameof(Status),orderByStatus);
+        SetUpOrderBy<User>();
     }
     
     

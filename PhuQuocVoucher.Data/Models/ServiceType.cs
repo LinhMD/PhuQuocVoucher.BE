@@ -22,7 +22,6 @@ public class ServiceType : BaseModel, IOrderAble
     public double?  DefaultCommissionRate { get; set; }
     public void ConfigOrderBy()
     {
-        Expression<Func<ServiceType, ModelStatus>> orderByStatus = type => type.Status;
-        OrderByProvider<ServiceType>.OrderByDic.Add(nameof(Status),orderByStatus);
+        SetUpOrderBy<ServiceType>();
     }
 }

@@ -12,7 +12,12 @@ public class FindOrderItem : IFindRequest<OrderItem>, IDto
 
     public int? VoucherId { get; set; }
 
+    public int?  CustomerId { get; set; }
+    
     public int? ProfileId { get; set; }
+
+    [Equal("QrCode.Status")]
+    public QRCodeStatus QrCodeStatus { get; set; }
     
     [BiggerThan(nameof(BaseModel.UpdateAt))]
     public DateTime? UpdateAt_startTime { get; set; }

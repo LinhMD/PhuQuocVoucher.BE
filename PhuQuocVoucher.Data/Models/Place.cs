@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using CrudApiTemplate.OrderBy;
+using NuGet.Packaging;
 using PhuQuocVoucher.Data.Repositories;
 using PhuQuocVoucher.Data.Repositories.Core;
 
@@ -20,7 +21,6 @@ public class Place  : BaseModel, IOrderAble
     public IEnumerable<Service> Services { get; set; }
     public void ConfigOrderBy()
     {
-        Expression<Func<Place, ModelStatus>> orderByStatus = place => place.Status;
-        OrderByProvider<Place>.OrderByDic.Add(nameof(Status),orderByStatus);
+        SetUpOrderBy<Place>();
     }
 }

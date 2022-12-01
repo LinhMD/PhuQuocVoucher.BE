@@ -104,7 +104,7 @@ public class PaymentService
         
         order.OrderStatus = OrderStatus.Processing;
         await _work.CompleteAsync();
-        _backgroundJobClient.Schedule(() => PaymentFailed(payment.Id, orderId), TimeSpan.FromMinutes(15));
+        //_backgroundJobClient.Schedule(() => PaymentFailed(payment.Id, orderId), TimeSpan.FromMinutes(15));
         return momoResponse;
     }
 
@@ -133,7 +133,7 @@ public class PaymentService
             throw new ModelValueInvalidException("");
 
         paymentDetail.PaymentStatus = PaymentStatus.Success;
-        qrCodeInfos.ForEach(qr => qr.Status = QRCodeStatus.Commit);
+        qrCodeInfos.ForEach(qr => qr.QrStatus = QRCodeStatus.Commit);
 
         order.OrderStatus = OrderStatus.Completed;
         await _work.CompleteAsync();
@@ -171,7 +171,7 @@ public class PaymentService
         var orderItems = await _work.Get<OrderItem>().Find(item => item.OrderId == orderId).ToListAsync();
         orderItems.ForEach(item =>
         {
-            if (item.QrCode != null) item.QrCode.Status = QRCodeStatus.Active;
+            if (item.QrCode != null) item.QrCode.QrStatus = QRCodeStatus.Active;
         });
         var order = await _work.Get<Order>().GetAsync(orderId);
         if (order != null) order.OrderStatus = OrderStatus.Failed;

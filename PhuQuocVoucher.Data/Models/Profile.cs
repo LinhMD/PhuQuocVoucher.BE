@@ -30,7 +30,6 @@ public class Profile : BaseModel, IOrderAble
     public Customer? Customer { get; set; }
     public void ConfigOrderBy()
     {
-        Expression<Func<Profile, ModelStatus>> orderByStatus = profile => profile.Status;
-        OrderByProvider<Profile>.OrderByDic.Add(nameof(Status),orderByStatus);
+        SetUpOrderBy<Profile>();
     }
 }

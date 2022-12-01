@@ -53,9 +53,9 @@ public class PaymentController : ControllerBase
         {
             e.Message.Dump();
             e.StackTrace.Dump();
-            var paymentId = await _work.Get<PaymentDetail>().Find(p => p.RequestId.ToString() == callbackRequest.RequestId)
+            /*var paymentId = await _work.Get<PaymentDetail>().Find(p => p.RequestId.ToString() == callbackRequest.RequestId)
                 .Select(p => p.Id).FirstOrDefaultAsync();
-            await _paymentService.PaymentFailed(callbackRequest.OrderId, paymentId);
+            await _paymentService.PaymentFailed(callbackRequest.OrderId, paymentId);*/
         }
         return NoContent();
     }

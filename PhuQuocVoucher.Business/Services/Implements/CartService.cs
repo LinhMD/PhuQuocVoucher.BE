@@ -146,4 +146,39 @@ public class CartService : ServiceCrud<Cart>, ICartService
             }));
         return items;
     }
+    
+    
+    public async Task<List<RemainVoucherInventory>> CheckItem(UpdateCart cart)
+    {
+        var cartItems = cart.CartItems.Select(i => i.Adapt<CartItem>()).ToList();
+        
+        var items =  cartItems
+            .Select(item => (item.VoucherId, item.UseDate, item.Voucher.LimitPerDay))
+            .Where(i => i.UseDate != null)
+            .Distinct()
+            .Where(item => item.LimitPerDay != null)
+            .Select( cartItem =>  new RemainVoucherInventory() {
+                RemainInventory = (cartItem.LimitPerDay ?? 0) - ( UnitOfWork.Get<OrderItem>()
+                    .Find(item => 
+                        item.VoucherId == cartItem.VoucherId 
+                        && item.UseDate != null 
+                        && item.UseDate.Value.Date.Date == cartItem.UseDate.Value.Date.Date)
+                    .Count()), 
+                VoucherId = cartItem.VoucherId, 
+                Date = cartItem.UseDate}).ToList();
+
+        items.AddRange(cartItems
+            .Select(item => (item.VoucherId, item.UseDate, item.Voucher.LimitPerDay))
+            .Where(i => i.UseDate != null)
+            .Distinct()
+            .Where(item => item.LimitPerDay == null)
+            .Select( cartItem => new RemainVoucherInventory
+            {
+                RemainInventory = UnitOfWork.Get<QrCodeInfo>().Find(info => info.VoucherId == cartItem.VoucherId)
+                    .Count(),
+                Date = cartItem.UseDate,
+                VoucherId = cartItem.VoucherId
+            }));
+        return items;
+    }
 }

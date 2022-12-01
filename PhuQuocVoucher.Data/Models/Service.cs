@@ -28,9 +28,9 @@ public class Service : BaseModel, IOrderAble
     public ServiceProvider Provider { get; set; }
 
     public int ProviderId { get; set; }
+    
     public void ConfigOrderBy()
     {
-        Expression<Func<Service, ModelStatus>> orderByStatus = service => service.Status;
-        OrderByProvider<Service>.OrderByDic.Add(nameof(Status),orderByStatus);
+        SetUpOrderBy<Service>();
     }
 }

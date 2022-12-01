@@ -51,7 +51,10 @@ public class Voucher : BaseModel, IOrderAble
 
     public void ConfigOrderBy()
     {
-        Expression<Func<Voucher, ModelStatus>> orderByStatus = voucher => voucher.Status;
-        OrderByProvider<Voucher>.OrderByDic.Add(nameof(Status),orderByStatus);
+        SetUpOrderBy<Voucher>();
+        Expression<Func<Voucher, DateTime?>> startDate = voucher => voucher.StartDate;
+        OrderByProvider<Voucher>.OrderByDic.Add(nameof(StartDate), startDate);
+        Expression<Func<Voucher, DateTime?>> endDate = voucher => voucher.EndDate;
+        OrderByProvider<Voucher>.OrderByDic.Add(nameof(EndDate), endDate);
     }
 }
