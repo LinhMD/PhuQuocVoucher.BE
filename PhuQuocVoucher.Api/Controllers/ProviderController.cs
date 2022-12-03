@@ -6,7 +6,6 @@ using CrudApiTemplate.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PhuQuocVoucher.Business.Dtos.OrderItemDto;
 using PhuQuocVoucher.Business.Dtos.ProviderDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
@@ -69,7 +68,8 @@ public class ProviderController : ControllerBase
         return Ok(await _providerService.DeleteAsync(id));
     }
 
-    [Authorize(Roles = $"{nameof(Role.Provider)}")]
+    //todo:
+    /*[Authorize(Roles = $"{nameof(Role.Provider)}")]
     [HttpPost("scan-qr")]
     public async Task<IActionResult> ScanQrCode(string hashCode, [FromClaim("ProviderId")] int? providerId)
     {
@@ -172,6 +172,6 @@ public class ProviderController : ControllerBase
             Data = item,
             Message = "Vé sẵn sàng sửa dụng"
         });
-    }
+    }*/
     
 }

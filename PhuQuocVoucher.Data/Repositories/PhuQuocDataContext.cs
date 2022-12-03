@@ -67,7 +67,6 @@ public class PhuQuocDataContext : DbContext
 
     public DbSet<Order> Orders { get; set; }
 
-    public DbSet<OrderItem> OrderItems { get; set; }
 
     public DbSet<Review> Reviews { get; set; }
 
@@ -85,11 +84,8 @@ public class PhuQuocDataContext : DbContext
 
     public DbSet<Tag> Tags { get; set; }
     
-    public DbSet<PriceBook> PriceBooks { get; set; }
-    
     public DbSet<Voucher> QrCodes { get; set; }
     
     public DbSet<PaymentDetail> PaymentDetails { get; set; }
 
-    public DbSet<PriceLevelT> PriceLevels { get; set; }
 }

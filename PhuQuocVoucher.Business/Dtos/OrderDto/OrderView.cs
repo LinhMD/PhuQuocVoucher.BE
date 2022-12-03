@@ -1,6 +1,5 @@
 ﻿using CrudApiTemplate.View;
 using Mapster;
-using PhuQuocVoucher.Business.Dtos.OrderItemDto;
 using PhuQuocVoucher.Business.Dtos.PaymentDetailDto;
 using PhuQuocVoucher.Business.Dtos.SellerDto;
 using PhuQuocVoucher.Data.Models;
@@ -24,8 +23,6 @@ public class OrderView : IView<Order>, IDto
     public string? SellerName { get; set; }
 
     public PaymentDetailView? PaymentDetail { get; set; }
-
-    public IEnumerable<OrderItemView> OrderItems { get; set; }
 
     public void InitMapper() 
     {

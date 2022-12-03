@@ -35,26 +35,6 @@ public class VoucherService : ServiceCrud<VoucherCompaign>, IVoucherService
             var tagVouchers = tags.Select(t => new TagVoucher(){TagId = t.Id, VoucherId = voucher.Id}).ToList();
             await UnitOfWork.Get<TagVoucher>().AddAllAsync(tagVouchers);
 
-            var levels = await UnitOfWork.Get<PriceLevelT>().Find(l => true).ToListAsync();
-
-            var adultPriceBooks = levels.Where(l => l.IsAdult).Select(l => new PriceBook()
-            {
-                Price = l.Rate * createVoucher.AdultPrice, 
-                VoucherId = voucher.Id,
-                Status = ModelStatus.Active,
-                CreateAt = DateTime.Now
-            }).ToList();
-            
-            var childPriceBooks = levels.Where(l => !l.IsAdult).Select(l => new PriceBook()
-            {
-                Price = l.Rate * createVoucher.ChildrenPrice, 
-                VoucherId = voucher.Id,
-                Status = ModelStatus.Active,
-                CreateAt = DateTime.Now
-            }).ToList();
-            var priceBooks = adultPriceBooks.Union(childPriceBooks);
-            
-            await UnitOfWork.Get<PriceBook>().AddAllAsync(priceBooks);
             voucher.Tags = tagVouchers;
             return await UnitOfWork.Get<VoucherCompaign>().Find<VoucherView>(v => v.Id == voucher.Id).FirstOrDefaultAsync() ?? throw new ModelNotFoundException("how?");
         }

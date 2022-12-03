@@ -40,7 +40,8 @@ public class CartService : ServiceCrud<Cart>, ICartService
     public async Task<CartView> AddItemToCart(CreateCartItem item, int customerId)
     {
         var cart = await GetCartByCustomerAsync(customerId);
-        var cartItem = item.Adapt<CartItem>();
+        //todo:
+        /*var cartItem = item.Adapt<CartItem>();
         
         cartItem.CartId = cart.Id;
         var priceBook = await UnitOfWork.Get<PriceBook>().GetAsync(item.PriceId);
@@ -53,7 +54,7 @@ public class CartService : ServiceCrud<Cart>, ICartService
         cartItem.VoucherId = priceBook.VoucherId;
         
         var itemView = (await UnitOfWork.Get<CartItem>().AddAsync(cartItem)).Adapt<CartItemView>();
-        cart.CartItems.Add(itemView);
+        cart.CartItems.Add(itemView);*/
         return cart;
     }
 
@@ -98,13 +99,13 @@ public class CartService : ServiceCrud<Cart>, ICartService
             var cartItem = item.Adapt<CartItem>();
         
             cartItem.CartId = cart.Id;
-            var priceBook = await UnitOfWork.Get<PriceBook>().GetAsync(item.PriceId);
+            /*var priceBook = await UnitOfWork.Get<PriceBook>().GetAsync(item.PriceId);
         
             if (priceBook == null)
             {
                 throw new ModelNotFoundException($"Price Id {item.PriceId} not found!!");
             }
-            cartItem.VoucherId = priceBook.VoucherId;
+            cartItem.VoucherId = priceBook.VoucherId;*/
             var itemView = (await UnitOfWork.Get<CartItem>().AddAsync(cartItem)).Adapt<CartItemView>();
             cart.CartItems.Add(itemView);
         }
@@ -124,13 +125,13 @@ public class CartService : ServiceCrud<Cart>, ICartService
             .Where(item => item.LimitPerDay != null)
             .Select( cartItem =>  new RemainVoucherInventory() {
                 LimitPerDay = (cartItem.LimitPerDay ?? 0),
-                AlreadyOrder = ( UnitOfWork.Get<OrderItem>()
+                /*AlreadyOrder = ( UnitOfWork.Get<OrderItem>()
                     .Find(item => 
                         cartItem.UseDate != null
                         && item.VoucherId == cartItem.VoucherId 
                         && item.UseDate != null 
                         && item.UseDate.Value.Date.Date == cartItem.UseDate.Value.Date.Date)
-                    .Count()), 
+                    .Count()), */
                 RemainInventory = UnitOfWork.Get<Voucher>().Find(info => info.VoucherId == cartItem.VoucherId)
                     .Count(),
                 VoucherId = cartItem.VoucherId, 
@@ -156,26 +157,26 @@ public class CartService : ServiceCrud<Cart>, ICartService
     {
         var priceIds = cart.CartItems.Select(c => c.PriceId).ToList();
 
-        var priceBooks = await UnitOfWork.Get<PriceBook>()
+        /*var priceBooks = await UnitOfWork.Get<PriceBook>()
             .Find(p => priceIds.Contains(p.Id))
             .Select(p => new{p.Id, p.VoucherId})
-            .ToDictionaryAsync(price => price.Id);
+            .ToDictionaryAsync(price => price.Id);*/
         
-        var voucherIds = priceBooks.Values.Select(book => book.VoucherId).Distinct();
+        /*var voucherIds = priceBooks.Values.Select(book => book.VoucherId).Distinct();*/
         
-        var limitPerDays = await UnitOfWork.Get<VoucherCompaign>()
+        /*var limitPerDays = await UnitOfWork.Get<VoucherCompaign>()
             .Find(v => voucherIds.Contains(v.Id))
             .Select(v => new{v.Id,v.LimitPerDay})
-            .ToDictionaryAsync(v => v.Id);
+            .ToDictionaryAsync(v => v.Id);*/
         
-        var cartItems = cart.CartItems.Select(i => new
+        /*var cartItems = cart.CartItems.Select(i => new
         {
             priceBooks[i.PriceId].VoucherId,
             i.UseDate,
             limitPerDays[priceBooks[i.PriceId].VoucherId].LimitPerDay
-        }).ToList();
+        }).ToList();*/
         
-        var items =  cartItems
+        /*var items =  cartItems
             .Select(item => (item.VoucherId, item.UseDate, item.LimitPerDay))
             .Where(i => i.UseDate != null)
             .Distinct()
@@ -193,9 +194,9 @@ public class CartService : ServiceCrud<Cart>, ICartService
                     .Count(),
                 VoucherId = cartItem.VoucherId, 
                 Date = cartItem.UseDate
-            }).ToList();
+            }).ToList();*/
 
-        items.AddRange(cartItems
+        /*tems.AddRange(cartItems
             .Select(item => (item.VoucherId, item.UseDate, item.LimitPerDay))
             .Where(i => i.UseDate != null)
             .Distinct()
@@ -207,6 +208,7 @@ public class CartService : ServiceCrud<Cart>, ICartService
                 Date = cartItem.UseDate,
                 VoucherId = cartItem.VoucherId
             }));
-        return items;
+        return items;*/
+        return null;
     }
 }

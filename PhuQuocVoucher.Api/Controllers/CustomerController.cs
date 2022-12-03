@@ -14,7 +14,6 @@ using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
-using PhuQuocVoucher.Business.Dtos.OrderItemDto;
 using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
@@ -39,20 +38,18 @@ public class CustomerController : ControllerBase
 
     private readonly IRepository<Customer> _repo;
 
-    private IOrderItemService _itemService;
 
     /// <summary>
     /// Create Controller.
     /// </summary>
     public CustomerController(ILogger<CustomerController> logger, IUnitOfWork work,
-        ICustomerService customerService, IOrderService orderService, ICartService cartService, IOrderItemService itemService)
+        ICustomerService customerService, IOrderService orderService, ICartService cartService)
     {
         _customerService = customerService;
         _logger = logger;
         _work = work;
         _orderService = orderService;
         _cartService = cartService;
-        _itemService = itemService;
         _repo = work.Get<Customer>();
     }
 
@@ -297,7 +294,7 @@ public class CustomerController : ControllerBase
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }
-    /// <summary>
+    /*/// <summary>
     /// Update profile of order item
     /// </summary>
     /// <returns>OrderView</returns>
@@ -314,8 +311,9 @@ public class CustomerController : ControllerBase
         orderItems.ProfileId = profileId;
         await _work.CompleteAsync();
         return Ok(await _work.Get<Order>().GetAsync<OrderView>(orderId));
-    }
+    }*/
     
+    /*
     /// <summary>
     /// Update profile of order item
     /// </summary>
@@ -331,7 +329,7 @@ public class CustomerController : ControllerBase
             OrderRequest = sortBy.ToOrderRequest<OrderItem>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
-    }
+    }*/
     
     /// <summary>
     /// Get Current Login Customer
@@ -349,13 +347,14 @@ public class CustomerController : ControllerBase
     
 
     
+    /*
     [Authorize(Roles = nameof(Role.Customer))]
     [HttpGet("voucher/review")]
     public async Task<ActionResult<bool>> IsAllowCustomerReview(int voucherId, [FromClaim("CustomerId")] int customerId)
     {
         return Ok(await _work.Get<OrderItem>()
             .Find(item => item.CustomerId == customerId && item.VoucherId == voucherId).AnyAsync());
-    }
+    }*/
     
     [Authorize(Roles = nameof(Role.Customer))]
     [HttpGet("cart/check")]

@@ -84,12 +84,13 @@ public class OrderController : ControllerBase
     [HttpGet("notify-user")]
     public async Task<IActionResult> SendOrderInfoToCustomerEmail(int orderId)
     {
+        //todo: wat?
         var order = await _work.Get<Order>().Find<OrderView>(o => o.Id == orderId && o.OrderStatus == OrderStatus.Completed).FirstOrDefaultAsync();
         if (order == null) return NotFound($"Not found Complete payment Order with id {orderId}");
         
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
         var list = new List<dynamic>();
-        foreach (var item  in order.OrderItems)
+        /*foreach (var item  in order.OrderItems)
         {
             var hash = item.QrCode.HashCode;
             var priceName = item.Price.PriceLevelName;
@@ -107,7 +108,7 @@ public class OrderController : ControllerBase
             {
                 hash,priceName,solePrice,voucherName, qrcode
             });
-        }
+        }*/
 
         var qrcodes = list.Aggregate("", (s, o) =>
         {

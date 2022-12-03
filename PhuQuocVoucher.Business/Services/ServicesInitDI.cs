@@ -16,7 +16,6 @@ public static class ServicesInitDi
         serviceCollection.AddScoped<ICartService, CartService>();
         serviceCollection.AddScoped<ICustomerService, CustomerService>();
         serviceCollection.AddScoped<IOrderService, OrderService>();
-        serviceCollection.AddScoped<IOrderItemService, OrderItemService>();
         serviceCollection.AddScoped<IPaymentDetailService, PaymentDetailService>();
         serviceCollection.AddScoped<IPlaceService, PlaceService>();
         serviceCollection.AddScoped<IProviderService, ProviderService>();
@@ -27,11 +26,8 @@ public static class ServicesInitDi
         serviceCollection.AddScoped<ITagService, TagService>();
         serviceCollection.AddScoped<IUserService, UserService>();
         serviceCollection.AddScoped<IVoucherService, VoucherService>();
-        
         serviceCollection.AddScoped<IFirebaseServiceIntegration, FirebaseService>();
         serviceCollection.AddScoped<IMailingService, MailingService>();
-
-        serviceCollection.AddScoped<IPriceBookService, PriceBookService>();
         serviceCollection.AddScoped<IQrCodeService, QrCodeService>();
         serviceCollection.AddScoped<MomoSetting>();
         serviceCollection.AddScoped<PaymentService>();

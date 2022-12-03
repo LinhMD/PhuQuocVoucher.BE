@@ -12,10 +12,8 @@ public static class OrderByConfig
         new CartItem().ConfigOrderBy();
         new Customer().ConfigOrderBy();
         new Order().ConfigOrderBy();
-        new OrderItem().ConfigOrderBy();
         new PaymentDetail().ConfigOrderBy();
         new Place().ConfigOrderBy();
-        new PriceBook().ConfigOrderBy();
         new Voucher().ConfigOrderBy();
         new Review().ConfigOrderBy();
         new Seller().ConfigOrderBy();

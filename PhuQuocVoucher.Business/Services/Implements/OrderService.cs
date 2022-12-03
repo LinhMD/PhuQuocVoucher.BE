@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using PhuQuocVoucher.Api.Ultility;
 using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
-using PhuQuocVoucher.Business.Dtos.OrderItemDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 using PhuQuocVoucher.Data.Repositories.Core;
@@ -87,7 +86,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
 
     public async Task<OrderView> PlaceOrderAsync(CartView cart, int cusId, int? sellerId = null)
     {
-        //create order for the id
+        /*//create order for the id
         var order = new Order()
         {
             CustomerId = cusId,
@@ -166,21 +165,25 @@ public class OrderService : ServiceCrud<Order>, IOrderService
 
         order.TotalPrice = total;
         
-        /*await ValidateInventoryEnoughAsync(orderItems);*/
+        /*await ValidateInventoryEnoughAsync(orderItems);#1#
         await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
         await UnitOfWork.Get<CartItem>().RemoveAllAsync(cart.CartItems.Select(c => new CartItem {Id = c.Id}));
         order.OrderItems = orderItems;
         await _voucherService.UpdateInventory();
         order.Validate();
+        */
         
         
-        return order.Adapt<OrderView>();
+        /*
+        return order.Adapt<OrderView>();*/
+
+        return null;
     }
 
     
     public async Task<OrderView> CreateOrderAsync(CreateOrder createOrder, int? sellerId = null)
     {
-        try
+        /*try
         {
             //create order for the id
             var order = new Order()
@@ -200,7 +203,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             }
             
             /*var orderItems = createOrder.OrderItems
-                .Select(o => (o as ICreateRequest<OrderItem>).CreateNew(UnitOfWork)).ToList();*/
+                .Select(o => (o as ICreateRequest<OrderItem>).CreateNew(UnitOfWork)).ToList();#1#
             var priceIds = createOrder.OrderItems.Select(o => o.PriceId).ToList();
 
             var priceBooks = await UnitOfWork.Get<PriceBook>().Find(pb => priceIds.Contains(pb.Id)).ToListAsync();
@@ -273,7 +276,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 }
             }
 
-            /*await ValidateInventoryEnoughAsync(orderItems)*/;
+            /*await ValidateInventoryEnoughAsync(orderItems)#1#;
 
             await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
 
@@ -289,7 +292,9 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         {
             e.InnerException?.StackTrace.Dump();
             throw new DbQueryException(e.InnerException?.Message!, DbError.Create);
-        }
+        }*/
+
+        return null;
     }
 
     public async Task<OrderView?> CancelOrderAsync(int id)
@@ -316,8 +321,8 @@ public class OrderService : ServiceCrud<Order>, IOrderService
     
     public async Task<(string email, List<Attachment>? attachments)> RenderOrderToHtml(Order order)
     {
-        
-        var filePath = Directory.GetCurrentDirectory() + $"\\MailTemplate\\OrderPrint.html";
+        //todo:
+        /*var filePath = Directory.GetCurrentDirectory() + $"\\MailTemplate\\OrderPrint.html";
         using var str = new StreamReader(filePath);
         var mailOrderPrint = await str.ReadToEndAsync();
         str.Close();
@@ -346,8 +351,10 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             new Attachment(new MemoryStream(GenerateQrCode(o.QrCode.HashCode)), o.QrCode.HashCode, "image/png")
             {
                 ContentId = o.QrCode.HashCode
-            }).ToList();
-        return (mailOrderPrint.Replace("[OrderItemRow]", orderItemValues), attachments) ;
+            }).ToList();*/
+        /*
+        return (mailOrderPrint.Replace("[OrderItemRow]", orderItemValues), attachments) ;*/
+        return (null , null);
     }
 
     public async Task SendOrderEmailToCustomer(int orderId)

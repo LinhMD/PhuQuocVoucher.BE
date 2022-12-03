@@ -42,8 +42,6 @@ public class VoucherCompaign : BaseModel, IOrderAble
     public string? BannerImg { get; set; }
 
     public string? Content { get; set; }
-
-    public IEnumerable<PriceBook> Prices { get; set; }
     
     public IEnumerable<TagVoucher> Tags { get; set; }
 

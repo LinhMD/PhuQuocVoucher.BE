@@ -1,7 +1,6 @@
 ﻿
 using CrudApiTemplate.View;
 using Mapster;
-using PhuQuocVoucher.Business.Dtos.PriceBookDto;
 using PhuQuocVoucher.Business.Dtos.ServiceDto;
 using PhuQuocVoucher.Business.Dtos.ServiceTypeDto;
 using PhuQuocVoucher.Business.Dtos.TagDto;
@@ -43,7 +42,6 @@ public class VoucherView : IView<VoucherCompaign>, IDto
     public ServiceTypeView ServiceType { get; set; }
     
     
-    public IEnumerable<PriceBookSView> Prices { get; set; }
     
     public int SlotNumber { get; set; }
     

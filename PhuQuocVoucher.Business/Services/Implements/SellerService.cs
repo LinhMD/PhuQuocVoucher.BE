@@ -73,7 +73,7 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
 
     public async Task<SellerKpiView> GetSellerKpis(int sellerId, int year)
     {
-        var orderItems = (await UnitOfWork.Get<OrderItem>()
+        /*var orderItems = (await UnitOfWork.Get<OrderItem>()
             .Find(item => item.CreateAt != null && 
                           item.SellerId == sellerId && 
                           item.CreateAt.Value.Year == year && 
@@ -84,7 +84,7 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
                 item.SellerRate
             })
             .ToListAsync()).GroupBy(order => order.Month)
-            .ToDictionary( g => g.Key, g => g.ToList().Sum(arg => arg.SellerRate));
+            .ToDictionary( g => g.Key, g => g.ToList().Sum(arg => arg.SellerRate));*/
         
         
         var orders = (await UnitOfWork.Get<Order>()
@@ -120,8 +120,7 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
         {
             CloseOrderPerMonth = orders,
             SellerId = sellerId,
-            NoOfNewCustomerPerMonth = customers,
-            RevenuesPerMonths = orderItems
+            NoOfNewCustomerPerMonth = customers
         };
         return sellerKpi;
     }

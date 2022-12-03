@@ -15,10 +15,7 @@ public class PqUnitOfWork : UnitOfWork
 
         Add(new BlogRepository(dataContext));
         Add(new CartRepository(dataContext));
-        Add(new CartItemRepository(dataContext));
         Add(new CustomerRepository(dataContext));
-        Add(new OrderItemRepository(dataContext));
-        Add(new OrderRepository(dataContext));
         Add(new PaymentDetailRepository(dataContext));
         Add(new PlaceRepository(dataContext));
         Add(new ProviderRepository(dataContext));
@@ -30,7 +27,6 @@ public class PqUnitOfWork : UnitOfWork
         Add(new UserRepository(dataContext));
         Add(new VoucherRepository(dataContext));
         Add(new QrCodeRepository(dataContext));
-        Add(new PriceLevelRepository(dataContext));
     }
 
     public IBlogRepository Blogs => (IBlogRepository) Get<Blog>();
@@ -41,7 +37,6 @@ public class PqUnitOfWork : UnitOfWork
 
     //public IComboRepository Combos => (IComboRepository) Get<Combo>();
 
-    public IOrderItemRepository OrderItems => (IOrderItemRepository) Get<OrderItem>();
 
     public IOrderRepository Orders => (IOrderRepository) Get<Order>();
 

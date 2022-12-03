@@ -27,7 +27,6 @@ public class Order : BaseModel, IOrderAble
     
     public Guid? PaymentRequestId { get; set; }
 
-    public IEnumerable<OrderItem> OrderItems { get; set; }
     
     public void ConfigOrderBy()
     {

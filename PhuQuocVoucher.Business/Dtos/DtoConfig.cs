@@ -4,9 +4,7 @@ using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.LoginDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
-using PhuQuocVoucher.Business.Dtos.OrderItemDto;
 using PhuQuocVoucher.Business.Dtos.PlaceDto;
-using PhuQuocVoucher.Business.Dtos.PriceBookDto;
 using PhuQuocVoucher.Business.Dtos.ProviderDto;
 using PhuQuocVoucher.Business.Dtos.SellerDto;
 using PhuQuocVoucher.Business.Dtos.ServiceDto;
@@ -26,8 +24,6 @@ public static class DtoConfig
         Config<CartView>();
         Config<CartItemView>();
         Config<OrderView>();
-        Config<OrderItemView>();
-        Config<OrderItemSView>();
         Config<UserView>();
         Config<ProviderView>();
         Config<PlaceView>();
@@ -37,8 +33,6 @@ public static class DtoConfig
         Config<SellerSView>();
         Config<SimpleProviderView>();
         
-        Config<PriceBookView>();
-        Config<PriceBookSView>();
         Config<VoucherView>();
         Config<VoucherSView>();
         Config<CustomerSimpleView>();

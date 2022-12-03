@@ -110,17 +110,18 @@ public class PaymentService
 
     public async Task UpdateStatusWhenSuccessAsync(MomoIPNRequest request)
     {
+        
+        //todo:
         /*if (request.ResultCode != 9000 && request.ResultCode != 0 )
             throw new ModelValueInvalidException("Something went wrong when processing payment");*/
 
+        /*
         var paymentId = request.OrderId;
         var order = await _work.Get<Order>().Find(order => order.PaymentDetailId == paymentId).FirstOrDefaultAsync();
 
         if (order == null)
             throw new ModelNotFoundException($"Order not found with id {request.OrderId}");
 
-        var qrCodeIds = await _work.Get<OrderItem>().Find(item => item.OrderId == order.Id && item.QrCodeId != null)
-            .Select(item => item.QrCodeId).ToListAsync();
 
         var qrCodeInfos = await _work.Get<Voucher>().Find(qr => qrCodeIds.Contains(qr.Id)).ToListAsync();
 
@@ -141,6 +142,7 @@ public class PaymentService
             await _orderService.SendOrderEmailToCustomer(order.Id);
         
         var momoResponse = await ConfirmPaymentAsync(paymentDetail);
+        */
         
         
         
@@ -158,7 +160,7 @@ public class PaymentService
 
     public async Task PaymentFailed(int paymentId, int orderId)
     {
-        var payment = await _work.Get<PaymentDetail>().GetAsync(paymentId);
+        /*var payment = await _work.Get<PaymentDetail>().GetAsync(paymentId);
         
         if (payment is {PaymentStatus: PaymentStatus.Pending})
         {
@@ -175,7 +177,7 @@ public class PaymentService
         });
         var order = await _work.Get<Order>().GetAsync(orderId);
         if (order != null) order.OrderStatus = OrderStatus.Failed;
-        await _work.CompleteAsync();
+        await _work.CompleteAsync();*/
         
     }
 

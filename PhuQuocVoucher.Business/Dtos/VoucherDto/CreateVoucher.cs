@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CrudApiTemplate.Request;
-using PhuQuocVoucher.Business.Dtos.PriceBookDto;
 using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.VoucherDto;

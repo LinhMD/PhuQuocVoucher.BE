@@ -1,6 +1,5 @@
 ﻿using CrudApiTemplate.View;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
-using PhuQuocVoucher.Business.Dtos.OrderItemDto;
 using PhuQuocVoucher.Business.Dtos.PaymentDetailDto;
 using PhuQuocVoucher.Business.Dtos.SellerDto;
 using PhuQuocVoucher.Data.Models;
@@ -27,5 +26,4 @@ public class OrderSView : IView<Order>, IDto
     
     public PaymentDetailView? PaymentDetail { get; set; }
 
-    public IEnumerable<OrderItemSView> OrderItems { get; set; }
 }

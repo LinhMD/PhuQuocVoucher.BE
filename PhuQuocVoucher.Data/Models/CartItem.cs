@@ -14,12 +14,9 @@ public class CartItem : BaseModel, IOrderAble
     public VoucherCompaign VoucherCompaign { get; set; }
 
     public int VoucherId { get; set; }
-    
-    public PriceBook? Price { get; set; }
-    
+
     public DateTime? UseDate { get; set; }
     
-    public int PriceId { get; set; }
     
     public int CartId { get; set; }
     public void ConfigOrderBy()
