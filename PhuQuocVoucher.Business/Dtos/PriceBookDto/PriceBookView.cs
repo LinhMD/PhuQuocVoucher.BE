@@ -21,6 +21,5 @@ public class PriceBookView : IView<PriceBook>, IDto
 
     public void InitMapper()
     {
-        TypeAdapterConfig<PriceBook, PriceBookView>.NewConfig().Map(view => view.PriceLevelName, book => book.PriceLevel.ToString());
     }
 }

@@ -14,7 +14,6 @@ public class OrderItemSView : IView<OrderItem>, IDto
     
     public int PriceId { get; set; }
     
-    public PriceLevel PriceLevel { get; set; }
     
     public int? ProfileId { get; set; }
     
@@ -22,9 +21,5 @@ public class OrderItemSView : IView<OrderItem>, IDto
 
     public void InitMapper()
     {
-        TypeAdapterConfig<OrderItem, OrderItemSView>.NewConfig().Map(
-            view => view.PriceLevel,
-            item => item.Price.PriceLevel
-            );
     }
 }

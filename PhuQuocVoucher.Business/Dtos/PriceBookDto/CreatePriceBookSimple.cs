@@ -8,9 +8,6 @@ public class CreatePriceBookSimple  : CreateDto, ICreateRequest<PriceBook>
 {
     
     [Required]
-    public PriceLevel PriceLevel { get; set; }
-    
-    [Required]
     [Range(1, double.MaxValue, ErrorMessage = "Only positive number allowed")]
     public double Price { get; set; }
 }

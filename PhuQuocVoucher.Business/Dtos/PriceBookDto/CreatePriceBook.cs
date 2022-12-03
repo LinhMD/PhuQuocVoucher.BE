@@ -7,8 +7,6 @@ namespace PhuQuocVoucher.Business.Dtos.PriceBookDto;
 public class CreatePriceBook : CreateDto, ICreateRequest<PriceBook>
 {
 
-    [Required]
-    public PriceLevel PriceLevel { get; set; }
 
     [Required]
     public int VoucherId { get; set; }

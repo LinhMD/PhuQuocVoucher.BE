@@ -104,7 +104,6 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         var orderItems = new List<OrderItem>();
         var priceIds = cart.CartItems.Select(o => o.PriceId).ToList();
         var priceBooks = await UnitOfWork.Get<PriceBook>().Find(pb => priceIds.Contains(pb.Id)).ToListAsync();
-        var priceBooksDic = priceBooks.ToDictionary(book => book.Id, book => (book.Price, book.PriceLevel));
         var voucherIds = priceBooks.Select(p => p.VoucherId).Distinct();
         var vouchers = await UnitOfWork.Get<VoucherCompaign>().Find(v => voucherIds.Contains(v.Id))
             .ToDictionaryAsync(v => v.Id, v => v);
@@ -147,7 +146,6 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 {
                     OrderId = order.Id,
                     PriceId = items.PriceId,
-                    SoldPrice = priceBooksDic[items.PriceId].Price,
                     ProviderId = vouchers[items.VoucherId].ProviderId,
                     CreateAt = DateTime.Now,
                     SellerId = sellerId,
@@ -155,12 +153,9 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                     QrCodeId =  qrCode.Id,
                     QrCode = qrCode,
                     VoucherId = items.VoucherId,
-                    SellerRate = sellerRate * priceBooksDic[items.PriceId].Price,
-                    ProviderRate = serviceRates[vouchers[items.VoucherId].ProviderId] * priceBooksDic[items.PriceId].Price,
                     UseDate = items.UseDate,
                     ProfileId = items.ProfileId,
-                    CustomerId = order.CustomerId,
-                    PriceLevel = priceBooksDic[items.PriceId].PriceLevel
+                    CustomerId = order.CustomerId
                 };
                 orderItem.Validate();
                 qrCode.QrStatus = VoucherStatus.Pending;
@@ -209,7 +204,6 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             var priceIds = createOrder.OrderItems.Select(o => o.PriceId).ToList();
 
             var priceBooks = await UnitOfWork.Get<PriceBook>().Find(pb => priceIds.Contains(pb.Id)).ToListAsync();
-            var priceBooksDic = priceBooks.ToDictionary(book => book.Id, book => (book.Price, book.PriceLevel));
             var voucherIds = priceBooks.Select(p => p.VoucherId).Distinct();
             
             var vouchers = await UnitOfWork.Get<VoucherCompaign>().Find(v => voucherIds.Contains(v.Id))
@@ -251,19 +245,15 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 {
                     OrderId = order.Id,
                     PriceId = o.PriceId,
-                    SoldPrice = priceBooksDic[o.PriceId].Price,
                     ProviderId = vouchers[o.VoucherId].ProviderId,
                     CreateAt = DateTime.Now,
                     SellerId = sellerId,
                     Status = ModelStatus.Active,
                     QrCode = qrCodes[o.VoucherId].Pop(),
                     VoucherId = o.VoucherId,
-                    SellerRate = sellerRate * priceBooksDic[o.PriceId].Price,
-                    ProviderRate = serviceRates[vouchers[o.VoucherId].ProviderId] * priceBooksDic[o.PriceId].Price,
                     UseDate = o.UseDate,
                     ProfileId = o.ProfileId,
-                    CustomerId = order.CustomerId,
-                    PriceLevel = priceBooksDic[o.PriceId].PriceLevel
+                    CustomerId = order.CustomerId
                 }).Peek(o =>
                 {
                     o.QrCodeId = o.QrCode!.Id;
@@ -347,7 +337,6 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             {"FromDate", item.VoucherCompaign.StartDate?.ToString("dd/MM/yyyy") ?? string.Empty},
             {"ToDate", item.VoucherCompaign.EndDate?.ToString("dd/MM/yyyy") ?? string.Empty},
             {"UseDate", item.UseDate?.ToString("dd/MM/yyyy") ?? string.Empty},
-            {"PriceLevel", item.PriceLevel.ToString() ?? PriceLevel.Default.ToString()},
             {"Price", item.SoldPrice.ToString(CultureInfo.InvariantCulture)}
         })
             .Select(item => item.Aggregate(htmlFormatOrderItem, 

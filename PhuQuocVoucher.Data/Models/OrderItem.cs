@@ -34,7 +34,6 @@ public class OrderItem  : BaseModel, IOrderAble
      
      public int PriceId { get; set; }
      
-     public PriceLevel? PriceLevel { get; set; }
      
      public int? SellerId { get; set; }
      

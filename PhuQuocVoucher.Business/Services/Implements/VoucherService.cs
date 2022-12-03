@@ -39,7 +39,6 @@ public class VoucherService : ServiceCrud<VoucherCompaign>, IVoucherService
 
             var adultPriceBooks = levels.Where(l => l.IsAdult).Select(l => new PriceBook()
             {
-                PriceLevel = l.PriceLevel, 
                 Price = l.Rate * createVoucher.AdultPrice, 
                 VoucherId = voucher.Id,
                 Status = ModelStatus.Active,
@@ -48,7 +47,6 @@ public class VoucherService : ServiceCrud<VoucherCompaign>, IVoucherService
             
             var childPriceBooks = levels.Where(l => !l.IsAdult).Select(l => new PriceBook()
             {
-                PriceLevel = l.PriceLevel, 
                 Price = l.Rate * createVoucher.ChildrenPrice, 
                 VoucherId = voucher.Id,
                 Status = ModelStatus.Active,

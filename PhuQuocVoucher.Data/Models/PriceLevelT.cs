@@ -12,5 +12,4 @@ public class PriceLevelT
 
     public double Rate { get; set; }
 
-    public PriceLevel PriceLevel { get; set; }
 }
