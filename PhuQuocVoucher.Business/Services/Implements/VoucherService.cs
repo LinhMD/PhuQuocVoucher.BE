@@ -12,11 +12,11 @@ using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Business.Services.Implements;
 
-public class VoucherService : ServiceCrud<Voucher>, IVoucherService
+public class VoucherService : ServiceCrud<VoucherCompaign>, IVoucherService
 {
     private ILogger<VoucherService> _logger;
 
-    public VoucherService(IUnitOfWork work, ILogger<VoucherService> logger) : base(work.Get<Voucher>(), work, logger)
+    public VoucherService(IUnitOfWork work, ILogger<VoucherService> logger) : base(work.Get<VoucherCompaign>(), work, logger)
     {
         _logger = logger;
     }
@@ -26,11 +26,11 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
         try
         {
             
-            var voucher = (createVoucher as ICreateRequest<Voucher>).CreateNew(UnitOfWork);
+            var voucher = (createVoucher as ICreateRequest<VoucherCompaign>).CreateNew(UnitOfWork);
             var tags = await UnitOfWork.Get<Tag>().Find(t => createVoucher.TagIds.Contains(t.Id)).ToListAsync();
 
 
-            await UnitOfWork.Get<Voucher>().AddAsync(voucher);
+            await UnitOfWork.Get<VoucherCompaign>().AddAsync(voucher);
             
             var tagVouchers = tags.Select(t => new TagVoucher(){TagId = t.Id, VoucherId = voucher.Id}).ToList();
             await UnitOfWork.Get<TagVoucher>().AddAllAsync(tagVouchers);
@@ -58,7 +58,7 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
             
             await UnitOfWork.Get<PriceBook>().AddAllAsync(priceBooks);
             voucher.Tags = tagVouchers;
-            return await UnitOfWork.Get<Voucher>().Find<VoucherView>(v => v.Id == voucher.Id).FirstOrDefaultAsync() ?? throw new ModelNotFoundException("how?");
+            return await UnitOfWork.Get<VoucherCompaign>().Find<VoucherView>(v => v.Id == voucher.Id).FirstOrDefaultAsync() ?? throw new ModelNotFoundException("how?");
         }
         catch (Exception e)
         {

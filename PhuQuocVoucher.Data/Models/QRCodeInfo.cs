@@ -15,7 +15,7 @@ public class QrCodeInfo : BaseModel,  IOrderAble
     public string HashCode { get; set; }
     
     [JsonIgnore]
-    public Voucher Voucher { get; set; }
+    public VoucherCompaign VoucherCompaign { get; set; }
     
     public string? ImgLink { get; set; }
     

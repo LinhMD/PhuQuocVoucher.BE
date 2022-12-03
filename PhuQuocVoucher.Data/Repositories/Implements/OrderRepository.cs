@@ -23,7 +23,7 @@ public class OrderRepository : Repository<Order> , IOrderRepository
             .Include(o => o.OrderItems)
                 .ThenInclude(item => item.Profile)
             .Include(o => o.OrderItems)
-                .ThenInclude(item => item.Voucher)
+                .ThenInclude(item => item.VoucherCompaign)
             .Include(o => o.OrderItems)
                 .ThenInclude(item => item.QrCode);
     }

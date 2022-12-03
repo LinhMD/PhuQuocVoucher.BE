@@ -64,7 +64,7 @@ public class PhuQuocDataContext : DbContext
 
     public DbSet<ServiceType> ServiceTypes { get; set; }
 
-    public DbSet<Voucher>  Vouchers { get; set; }
+    public DbSet<VoucherCompaign>  Vouchers { get; set; }
 
 
     public DbSet<Order> Orders { get; set; }

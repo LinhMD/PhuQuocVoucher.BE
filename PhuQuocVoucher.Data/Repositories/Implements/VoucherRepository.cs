@@ -6,13 +6,13 @@ using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Data.Repositories.Implements;
 
-public class VoucherRepository : Repository<Voucher>, IVoucherRepository
+public class VoucherRepository : Repository<VoucherCompaign>, IVoucherRepository
 {
     public VoucherRepository(DbContext context) : base(context)
     {
     }
 
-    public override IQueryable<Voucher> IncludeAll()
+    public override IQueryable<VoucherCompaign> IncludeAll()
     {
         return Models
             .Include(v => v.Service);

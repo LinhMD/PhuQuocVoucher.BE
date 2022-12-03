@@ -5,7 +5,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.VoucherDto;
 
-public class FindVoucher : IFindRequest<Voucher>
+public class FindVoucher : IFindRequest<VoucherCompaign>
 {
     public int? Id { get; set; }
 
@@ -61,7 +61,7 @@ public class FindVoucher : IFindRequest<Voucher>
     /// <summary>
     /// Voucher.Product.Tags.Any(tag => tag.Name.Contains(TagName))
     /// </summary>
-    [Any(target:$"{nameof(Voucher.Tags)}", property:$"{nameof(TagVoucher.Tag)}.{nameof(Tag.Name)}", typeof(ContainAttribute))]
+    [Any(target:$"{nameof(VoucherCompaign.Tags)}", property:$"{nameof(TagVoucher.Tag)}.{nameof(Tag.Name)}", typeof(ContainAttribute))]
     public string? TagName { get; set; }
     
     public ModelStatus Status { get; set; }

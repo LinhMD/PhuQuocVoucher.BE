@@ -4,7 +4,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Services.Core;
 
-public interface IVoucherService : IServiceCrud<Voucher>
+public interface IVoucherService : IServiceCrud<VoucherCompaign>
 {
     public Task<VoucherView> CreateAsync(CreateVoucher createVoucher);
 

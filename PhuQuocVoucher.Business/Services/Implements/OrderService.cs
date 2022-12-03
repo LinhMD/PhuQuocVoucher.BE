@@ -106,7 +106,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         var priceBooks = await UnitOfWork.Get<PriceBook>().Find(pb => priceIds.Contains(pb.Id)).ToListAsync();
         var priceBooksDic = priceBooks.ToDictionary(book => book.Id, book => (book.Price, book.PriceLevel));
         var voucherIds = priceBooks.Select(p => p.VoucherId).Distinct();
-        var vouchers = await UnitOfWork.Get<Voucher>().Find(v => voucherIds.Contains(v.Id))
+        var vouchers = await UnitOfWork.Get<VoucherCompaign>().Find(v => voucherIds.Contains(v.Id))
             .ToDictionaryAsync(v => v.Id, v => v);
         
         var serviceIds = vouchers.Values.Select(v => v.ServiceId).ToList();
@@ -212,7 +212,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             var priceBooksDic = priceBooks.ToDictionary(book => book.Id, book => (book.Price, book.PriceLevel));
             var voucherIds = priceBooks.Select(p => p.VoucherId).Distinct();
             
-            var vouchers = await UnitOfWork.Get<Voucher>().Find(v => voucherIds.Contains(v.Id))
+            var vouchers = await UnitOfWork.Get<VoucherCompaign>().Find(v => voucherIds.Contains(v.Id))
                 .ToDictionaryAsync(v => v.Id, v => v);
             
             var serviceIds = vouchers.Values.Select(v => v.ServiceId).ToList();
@@ -339,13 +339,13 @@ public class OrderService : ServiceCrud<Order>, IOrderService
 
         var orderItemValues = string.Join("", order.OrderItems.Select(item => new Dictionary<string, string>()
         {
-            {"VoucherName", item.Voucher.VoucherName ?? string.Empty},
+            {"VoucherName", item.VoucherCompaign.VoucherName ?? string.Empty},
             {"HashCode", item.QrCode?.HashCode?? string.Empty},
             {"QRCodeId", item.QrCode?.Id.ToString() ?? string.Empty},
             {"ProviderName", item.Provider.ProviderName ?? string.Empty},
             {"ProviderAddress", item.Provider.Address ?? string.Empty },
-            {"FromDate", item.Voucher.StartDate?.ToString("dd/MM/yyyy") ?? string.Empty},
-            {"ToDate", item.Voucher.EndDate?.ToString("dd/MM/yyyy") ?? string.Empty},
+            {"FromDate", item.VoucherCompaign.StartDate?.ToString("dd/MM/yyyy") ?? string.Empty},
+            {"ToDate", item.VoucherCompaign.EndDate?.ToString("dd/MM/yyyy") ?? string.Empty},
             {"UseDate", item.UseDate?.ToString("dd/MM/yyyy") ?? string.Empty},
             {"CustomerName", (item.Profile?.Name ?? order.Customer?.CustomerName) ?? string.Empty },
             {"CivilInfo", item.Profile?.CivilIdentify ?? string.Empty},

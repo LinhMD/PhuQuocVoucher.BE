@@ -21,23 +21,23 @@ public class VoucherController : ControllerBase
 
     private readonly ILogger<VoucherController> _logger;
 
-    private readonly IRepository<Voucher> _repo;
+    private readonly IRepository<VoucherCompaign> _repo;
 
     public VoucherController(IVoucherService voucherService, ILogger<VoucherController> logger, IUnitOfWork work)
     {
         _voucherService = voucherService;
         _logger = logger;
-        _repo = work.Get<Voucher>();
+        _repo = work.Get<VoucherCompaign>();
     }
 
     [HttpGet("admin")]
     public async Task<IActionResult> Get([FromQuery] FindVoucher request, [FromQuery] PagingRequest paging, string? orderBy,[FromClaim("ProviderId")] int? providerId)
     {
         request.ProviderId = providerId ?? request.ProviderId;
-        return Ok((await _voucherService.GetAsync<VoucherView>(new GetRequest<Voucher>
+        return Ok((await _voucherService.GetAsync<VoucherView>(new GetRequest<VoucherCompaign>
         {
             FindRequest = request,
-            OrderRequest = orderBy.ToOrderRequest<Voucher>(),
+            OrderRequest = orderBy.ToOrderRequest<VoucherCompaign>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }
@@ -56,10 +56,10 @@ public class VoucherController : ControllerBase
     public async Task<IActionResult> GetDefault([FromQuery] FindVoucher request, [FromQuery] PagingRequest paging, string? orderBy, [FromClaim("ProviderId")] int? providerId)
     {
         request.ProviderId = providerId ?? request.ProviderId;
-        return Ok((await _voucherService.GetAsync<VoucherView>(new GetRequest<Voucher>
+        return Ok((await _voucherService.GetAsync<VoucherView>(new GetRequest<VoucherCompaign>
         {
             FindRequest = request,
-            OrderRequest = orderBy.ToOrderRequest<Voucher>(),
+            OrderRequest = orderBy.ToOrderRequest<VoucherCompaign>(),
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }
@@ -76,7 +76,7 @@ public class VoucherController : ControllerBase
     public async Task<IActionResult> Get(int id, [FromClaim("ProviderId")] int? providerId)
     {
         return Ok(await _repo.Find<VoucherView>(cus => cus.Id == id && (providerId == null || cus.ProviderId == providerId) ).FirstOrDefaultAsync() ??
-                  throw new ModelNotFoundException($"Not Found {nameof(Voucher)} with id {id}"));
+                  throw new ModelNotFoundException($"Not Found {nameof(VoucherCompaign)} with id {id}"));
     }
 
     [HttpPut("{id:int}")]

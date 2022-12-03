@@ -24,7 +24,7 @@ public static class OrderByConfig
         new ServiceType().ConfigOrderBy();
         new Tag().ConfigOrderBy();
         new User().ConfigOrderBy();
-        new Voucher().ConfigOrderBy();
+        new VoucherCompaign().ConfigOrderBy();
         
     }
 }

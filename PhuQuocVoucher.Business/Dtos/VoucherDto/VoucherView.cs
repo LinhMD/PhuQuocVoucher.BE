@@ -9,7 +9,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.VoucherDto;
 
-public class VoucherView : IView<Voucher>, IDto
+public class VoucherView : IView<VoucherCompaign>, IDto
 {
     public DateTime? CreateAt{ get; set; }
 
@@ -53,7 +53,7 @@ public class VoucherView : IView<Voucher>, IDto
 
     public void InitMapper()
     {
-        TypeAdapterConfig<Voucher, VoucherView>.NewConfig()
+        TypeAdapterConfig<VoucherCompaign, VoucherView>.NewConfig()
             .Map(view => view.Tags, voucher => voucher.Tags.Select(tag => tag.Tag))
             .Map(view => view.ServiceType , v => v.Service.ServiceType)
             .Map(

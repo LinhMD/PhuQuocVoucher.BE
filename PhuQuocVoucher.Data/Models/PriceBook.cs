@@ -18,7 +18,7 @@ public class PriceBook : BaseModel, IOrderAble
     public int? LevelId { get; set; }
 
     [JsonIgnore]
-    public Voucher Voucher { get; set; }
+    public VoucherCompaign VoucherCompaign { get; set; }
 
     public int VoucherId { get; set; }
     

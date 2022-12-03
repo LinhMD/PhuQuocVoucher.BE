@@ -4,7 +4,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.VoucherDto;
 
-public class UpdateVoucher : UpdateDto, IUpdateRequest<Voucher>
+public class UpdateVoucher : UpdateDto, IUpdateRequest<VoucherCompaign>
 {
 
     public string? VoucherName { get; set; }

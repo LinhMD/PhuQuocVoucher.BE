@@ -13,7 +13,7 @@ public class OrderItem  : BaseModel, IOrderAble
  
      public Order Order { get; set; }
 
-     public Voucher Voucher { get; set; }
+     public VoucherCompaign VoucherCompaign { get; set; }
 
      public int VoucherId { get; set; }
      

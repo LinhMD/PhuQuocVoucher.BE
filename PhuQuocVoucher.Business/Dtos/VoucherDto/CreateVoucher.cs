@@ -5,7 +5,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.VoucherDto;
 
-public class CreateVoucher : CreateDto, ICreateRequest<Voucher>
+public class CreateVoucher : CreateDto, ICreateRequest<VoucherCompaign>
 {
     [Required]
     public string VoucherName { get; set; }

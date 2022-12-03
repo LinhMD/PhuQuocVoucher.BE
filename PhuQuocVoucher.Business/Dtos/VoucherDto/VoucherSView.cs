@@ -4,7 +4,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.VoucherDto;
 
-public class VoucherSView : IView<Voucher>, IDto
+public class VoucherSView : IView<VoucherCompaign>, IDto
 {
     public int Id { get; set; }
 
@@ -33,7 +33,7 @@ public class VoucherSView : IView<Voucher>, IDto
 
     public void InitMapper()
     {
-        TypeAdapterConfig<Voucher, VoucherSView>.NewConfig();
+        TypeAdapterConfig<VoucherCompaign, VoucherSView>.NewConfig();
 
     }
 }

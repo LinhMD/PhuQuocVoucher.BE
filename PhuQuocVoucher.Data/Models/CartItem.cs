@@ -11,7 +11,7 @@ public class CartItem : BaseModel, IOrderAble
 
     public int Quantity { get; set; }
 
-    public Voucher Voucher { get; set; }
+    public VoucherCompaign VoucherCompaign { get; set; }
 
     public int VoucherId { get; set; }
     

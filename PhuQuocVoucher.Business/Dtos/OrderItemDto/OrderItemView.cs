@@ -37,7 +37,7 @@ public class OrderItemView : IView<OrderItem>, IDto
     public void InitMapper()
     {
         TypeAdapterConfig<OrderItem, OrderItemView>.NewConfig()
-            .Map(view => view.Image, item=> item.Voucher.BannerImg)
-            .Map(view => view.VoucherName, item=> item.Voucher.VoucherName);
+            .Map(view => view.Image, item=> item.VoucherCompaign.BannerImg)
+            .Map(view => view.VoucherName, item=> item.VoucherCompaign.VoucherName);
     }
 }

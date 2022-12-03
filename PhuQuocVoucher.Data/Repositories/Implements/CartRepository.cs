@@ -16,6 +16,6 @@ public class CartRepository : Repository<Cart>, ICartRepository
     {
         return Models.Include(o => o.Customer)
             .Include(o => o.CartItems)
-            .ThenInclude(item => item.Voucher);
+            .ThenInclude(item => item.VoucherCompaign);
     }
 }

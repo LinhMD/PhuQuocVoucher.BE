@@ -118,7 +118,7 @@ public class CartService : ServiceCrud<Cart>, ICartService
         if (cart == null)
             throw new ModelNotFoundException("Cart of customer not found");
         var items =  cart.CartItems
-            .Select(item => (item.VoucherId, item.UseDate, item.Voucher.LimitPerDay))
+            .Select(item => (item.VoucherId, item.UseDate, item.VoucherCompaign.LimitPerDay))
             .Where(i => i.UseDate != null)
             .Distinct()
             .Where(item => item.LimitPerDay != null)
@@ -137,7 +137,7 @@ public class CartService : ServiceCrud<Cart>, ICartService
                 Date = cartItem.UseDate}).ToList();
 
         items.AddRange(cart.CartItems
-            .Select(item => (item.VoucherId, item.UseDate, item.Voucher.LimitPerDay))
+            .Select(item => (item.VoucherId, item.UseDate, item.VoucherCompaign.LimitPerDay))
             .Where(i => i.UseDate != null)
             .Distinct()
             .Where(item => item.LimitPerDay == null)
@@ -163,7 +163,7 @@ public class CartService : ServiceCrud<Cart>, ICartService
         
         var voucherIds = priceBooks.Values.Select(book => book.VoucherId).Distinct();
         
-        var limitPerDays = await UnitOfWork.Get<Voucher>()
+        var limitPerDays = await UnitOfWork.Get<VoucherCompaign>()
             .Find(v => voucherIds.Contains(v.Id))
             .Select(v => new{v.Id,v.LimitPerDay})
             .ToDictionaryAsync(v => v.Id);

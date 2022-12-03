@@ -22,7 +22,7 @@ public class ProviderController : ControllerBase
 {
     private readonly IProviderService _providerService;
     private readonly IRepository<ServiceProvider> _repository;
-    private IUnitOfWork _work;
+    private readonly IUnitOfWork _work;
     public ProviderController(IProviderService provider, IUnitOfWork work)
     {
         _providerService = provider;
@@ -105,12 +105,12 @@ public class ProviderController : ControllerBase
         qrCode.QrStatus = QRCodeStatus.Used;
         await _work.CompleteAsync();
         
-        return Ok( new
+        return Ok(new
         {
-            Message = "Đã sửa dụng Qr code",
             Data = await _work.Get<OrderItem>()
                 .Find<OrderItemView>(item => item.QrCode != null && item.QrCodeId != null && item.QrCode.HashCode == hashCode &&
-                                             item.ProviderId == providerId).FirstOrDefaultAsync()
+                                             item.ProviderId == providerId).FirstOrDefaultAsync(),
+            Message = "Đã sửa dụng Qr code"
         });
 
     }

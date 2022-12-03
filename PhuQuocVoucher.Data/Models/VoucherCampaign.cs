@@ -8,7 +8,7 @@ using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Data.Models;
 
-public class Voucher : BaseModel, IOrderAble
+public class VoucherCompaign : BaseModel, IOrderAble
 {
 
     public int Id { get; set; }
@@ -51,10 +51,10 @@ public class Voucher : BaseModel, IOrderAble
 
     public void ConfigOrderBy()
     {
-        SetUpOrderBy<Voucher>();
-        Expression<Func<Voucher, DateTime?>> startDate = voucher => voucher.StartDate;
-        OrderByProvider<Voucher>.OrderByDic.Add(nameof(StartDate), startDate);
-        Expression<Func<Voucher, DateTime?>> endDate = voucher => voucher.EndDate;
-        OrderByProvider<Voucher>.OrderByDic.Add(nameof(EndDate), endDate);
+        SetUpOrderBy<VoucherCompaign>();
+        Expression<Func<VoucherCompaign, DateTime?>> startDate = voucher => voucher.StartDate;
+        OrderByProvider<VoucherCompaign>.OrderByDic.Add(nameof(StartDate), startDate);
+        Expression<Func<VoucherCompaign, DateTime?>> endDate = voucher => voucher.EndDate;
+        OrderByProvider<VoucherCompaign>.OrderByDic.Add(nameof(EndDate), endDate);
     }
 }

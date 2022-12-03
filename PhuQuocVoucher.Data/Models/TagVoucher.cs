@@ -8,5 +8,5 @@ public class TagVoucher
     
     public int VoucherId { get; set; }
 
-    public Voucher Voucher { get; set; }
+    public VoucherCompaign Compaign { get; set; }
 }
