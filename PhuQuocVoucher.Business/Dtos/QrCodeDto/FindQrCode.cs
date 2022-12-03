@@ -4,7 +4,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.QrCodeDto;
 
-public class FindQrCode : IFindRequest<QrCodeInfo>
+public class FindQrCode : IFindRequest<Voucher>
 {
     
     public int? Id { get; set; }

@@ -131,7 +131,7 @@ public class CartService : ServiceCrud<Cart>, ICartService
                         && item.UseDate != null 
                         && item.UseDate.Value.Date.Date == cartItem.UseDate.Value.Date.Date)
                     .Count()), 
-                RemainInventory = UnitOfWork.Get<QrCodeInfo>().Find(info => info.VoucherId == cartItem.VoucherId)
+                RemainInventory = UnitOfWork.Get<Voucher>().Find(info => info.VoucherId == cartItem.VoucherId)
                     .Count(),
                 VoucherId = cartItem.VoucherId, 
                 Date = cartItem.UseDate}).ToList();
@@ -143,7 +143,7 @@ public class CartService : ServiceCrud<Cart>, ICartService
             .Where(item => item.LimitPerDay == null)
             .Select( cartItem => new RemainVoucherInventory
             {
-                RemainInventory = UnitOfWork.Get<QrCodeInfo>().Find(info => info.VoucherId == cartItem.VoucherId)
+                RemainInventory = UnitOfWork.Get<Voucher>().Find(info => info.VoucherId == cartItem.VoucherId)
                     .Count(),
                 Date = cartItem.UseDate,
                 VoucherId = cartItem.VoucherId
@@ -189,7 +189,7 @@ public class CartService : ServiceCrud<Cart>, ICartService
                         && item.UseDate != null 
                         && item.UseDate.Value.Date.Date == cartItem.UseDate.Value.Date.Date)
                     .Count()), 
-                RemainInventory = UnitOfWork.Get<QrCodeInfo>().Find(info => info.VoucherId == cartItem.VoucherId)
+                RemainInventory = UnitOfWork.Get<Voucher>().Find(info => info.VoucherId == cartItem.VoucherId)
                     .Count(),
                 VoucherId = cartItem.VoucherId, 
                 Date = cartItem.UseDate
@@ -202,7 +202,7 @@ public class CartService : ServiceCrud<Cart>, ICartService
             .Where(item => item.LimitPerDay == null)
             .Select( cartItem => new RemainVoucherInventory
             {
-                RemainInventory = UnitOfWork.Get<QrCodeInfo>().Find(info => info.VoucherId == cartItem.VoucherId)
+                RemainInventory = UnitOfWork.Get<Voucher>().Find(info => info.VoucherId == cartItem.VoucherId)
                     .Count(),
                 Date = cartItem.UseDate,
                 VoucherId = cartItem.VoucherId

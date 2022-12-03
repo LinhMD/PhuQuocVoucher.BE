@@ -8,14 +8,14 @@ using PhuQuocVoucher.Data.Repositories.Core;
 namespace PhuQuocVoucher.Data.Models;
 
 [Index(nameof(HashCode), IsUnique = true)]
-public class QrCodeInfo : BaseModel,  IOrderAble
+public class Voucher : BaseModel,  IOrderAble
 {
     public int Id { get; set; }
     
     public string HashCode { get; set; }
     
     [JsonIgnore]
-    public VoucherCompaign VoucherCompaign { get; set; }
+    public VoucherCompaign Compaign { get; set; }
     
     public string? ImgLink { get; set; }
     
@@ -28,8 +28,8 @@ public class QrCodeInfo : BaseModel,  IOrderAble
     public QRCodeStatus QrStatus { get; set; } = QRCodeStatus.Active;
     public void ConfigOrderBy()
     {
-        SetUpOrderBy<QrCodeInfo>();
-        Expression<Func<QrCodeInfo, QRCodeStatus>> orderByStatus = qr => qr.QrStatus;
-        OrderByProvider<QrCodeInfo>.OrderByDic.Add(nameof(QrStatus),orderByStatus);
+        SetUpOrderBy<Voucher>();
+        Expression<Func<Voucher, QRCodeStatus>> orderByStatus = qr => qr.QrStatus;
+        OrderByProvider<Voucher>.OrderByDic.Add(nameof(QrStatus),orderByStatus);
     }
 }

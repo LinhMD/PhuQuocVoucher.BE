@@ -113,11 +113,11 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         var serviceRates = await UnitOfWork.Get<Service>()
             .Find(s => serviceIds.Contains(s.Id))
             .ToDictionaryAsync(s => s.Id, s => s.CommissionRate);
-        var qrCodes = (await UnitOfWork.Get<QrCodeInfo>().Find(qr => voucherIds.Contains(qr.VoucherId) && qr.QrStatus == QRCodeStatus.Active).ToListAsync())
+        var qrCodes = (await UnitOfWork.Get<Voucher>().Find(qr => voucherIds.Contains(qr.VoucherId) && qr.QrStatus == QRCodeStatus.Active).ToListAsync())
             .GroupBy(qr => qr.VoucherId)
             .ToDictionary(
                 qrs => qrs.Key,
-                qrs => new Stack<QrCodeInfo>(qrs.ToList()));
+                qrs => new Stack<Voucher>(qrs.ToList()));
         var voucherQuantities = cart.CartItems
             .GroupBy(i => i.VoucherId)
             .ToDictionary(
@@ -222,11 +222,11 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             
 
 
-            var qrCodes = (await UnitOfWork.Get<QrCodeInfo>().Find(qr => voucherIds.Contains(qr.VoucherId)).ToListAsync())
+            var qrCodes = (await UnitOfWork.Get<Voucher>().Find(qr => voucherIds.Contains(qr.VoucherId)).ToListAsync())
                 .GroupBy(qr => qr.VoucherId)
                 .ToDictionary(
                     qrs => qrs.Key,
-                    qrs => new Stack<QrCodeInfo>(qrs.ToList()));
+                    qrs => new Stack<Voucher>(qrs.ToList()));
             var voucherQuantities = createOrder.OrderItems
                 .GroupBy(i => i.VoucherId)
                 .ToDictionary(

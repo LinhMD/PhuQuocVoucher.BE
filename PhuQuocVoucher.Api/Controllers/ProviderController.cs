@@ -85,7 +85,7 @@ public class ProviderController : ControllerBase
             });
         }
 
-        var qrCode = await _work.Get<QrCodeInfo>().Find(info => info.Id == qrCodeId).FirstOrDefaultAsync();
+        var qrCode = await _work.Get<Voucher>().Find(info => info.Id == qrCodeId).FirstOrDefaultAsync();
         
         if (qrCode == null){
             return BadRequest(new

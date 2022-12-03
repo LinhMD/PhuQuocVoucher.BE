@@ -17,7 +17,7 @@ public static class OrderByConfig
         new Place().ConfigOrderBy();
         new PriceBook().ConfigOrderBy();
         new Profile().ConfigOrderBy();
-        new QrCodeInfo().ConfigOrderBy();
+        new Voucher().ConfigOrderBy();
         new Review().ConfigOrderBy();
         new Seller().ConfigOrderBy();
         new Service().ConfigOrderBy();

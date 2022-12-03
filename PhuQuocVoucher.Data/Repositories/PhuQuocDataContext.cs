@@ -89,7 +89,7 @@ public class PhuQuocDataContext : DbContext
     
     public DbSet<PriceBook> PriceBooks { get; set; }
     
-    public DbSet<QrCodeInfo> QrCodes { get; set; }
+    public DbSet<Voucher> QrCodes { get; set; }
     
     public DbSet<PaymentDetail> PaymentDetails { get; set; }
 

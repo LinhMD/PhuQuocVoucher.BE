@@ -26,7 +26,7 @@ public class VoucherCompaign : BaseModel, IOrderAble
 
     public int ServiceId { get; set; }
 
-    public IList<QrCodeInfo> QrCodeInfos { get; set; }
+    public IList<Voucher> QrCodeInfos { get; set; }
     
     public int SlotNumber { get; set; }
 

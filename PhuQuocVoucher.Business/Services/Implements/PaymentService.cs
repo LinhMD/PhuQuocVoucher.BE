@@ -122,7 +122,7 @@ public class PaymentService
         var qrCodeIds = await _work.Get<OrderItem>().Find(item => item.OrderId == order.Id && item.QrCodeId != null)
             .Select(item => item.QrCodeId).ToListAsync();
 
-        var qrCodeInfos = await _work.Get<QrCodeInfo>().Find(qr => qrCodeIds.Contains(qr.Id)).ToListAsync();
+        var qrCodeInfos = await _work.Get<Voucher>().Find(qr => qrCodeIds.Contains(qr.Id)).ToListAsync();
 
         var paymentDetail = await _work.Get<PaymentDetail>().Find(p => p.RequestId.ToString() == request.RequestId)
             .FirstOrDefaultAsync();

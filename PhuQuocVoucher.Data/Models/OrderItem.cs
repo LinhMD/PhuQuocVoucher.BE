@@ -29,7 +29,7 @@ public class OrderItem  : BaseModel, IOrderAble
 
      public double SoldPrice { get; set; }
      
-     public QrCodeInfo? QrCode { get; set; }
+     public Voucher? QrCode { get; set; }
      
      public int? QrCodeId { get; set; }
      

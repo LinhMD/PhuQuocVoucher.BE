@@ -3,7 +3,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Data.Repositories.Core;
 
-public interface IQrCodeRepository : IRepository<QrCodeInfo>
+public interface IQrCodeRepository : IRepository<Voucher>
 {
     
 }

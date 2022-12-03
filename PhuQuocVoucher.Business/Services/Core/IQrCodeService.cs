@@ -3,7 +3,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Services.Core;
 
-public interface IQrCodeService : IServiceCrud<QrCodeInfo>
+public interface IQrCodeService : IServiceCrud<Voucher>
 {
     
 }

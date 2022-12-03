@@ -5,7 +5,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.QrCodeDto;
 
-public class QrCodeView : IView<QrCodeInfo>, IDto
+public class QrCodeView : IView<Voucher>, IDto
 {
     
     public int Id { get; set; }
