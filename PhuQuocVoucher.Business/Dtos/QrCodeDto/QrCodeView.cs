@@ -14,6 +14,6 @@ public class QrCodeView : IView<Voucher>, IDto
     
     public int VoucherId { get; set; }
 
-    public QRCodeStatus QrStatus { get; set; }
+    public VoucherStatus QrStatus { get; set; }
     
 }

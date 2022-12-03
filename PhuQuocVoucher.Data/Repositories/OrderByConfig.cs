@@ -16,7 +16,6 @@ public static class OrderByConfig
         new PaymentDetail().ConfigOrderBy();
         new Place().ConfigOrderBy();
         new PriceBook().ConfigOrderBy();
-        new Profile().ConfigOrderBy();
         new Voucher().ConfigOrderBy();
         new Review().ConfigOrderBy();
         new Seller().ConfigOrderBy();

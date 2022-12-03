@@ -21,7 +21,6 @@ public class PqUnitOfWork : UnitOfWork
         Add(new OrderRepository(dataContext));
         Add(new PaymentDetailRepository(dataContext));
         Add(new PlaceRepository(dataContext));
-        Add(new ProfileRepository(dataContext));
         Add(new ProviderRepository(dataContext));
         Add(new ReviewRepository(dataContext));
         Add(new SellerRepository(dataContext));
@@ -49,10 +48,6 @@ public class PqUnitOfWork : UnitOfWork
     public IPaymentDetailRepository PaymentDetails => (IPaymentDetailRepository) Get<PaymentDetail>();
 
     public IPlaceRepository Places => (IPlaceRepository) Get<Place>();
-
-    /*public IProductRepository Products => (IProductRepository) Get<Product>();*/
-
-    public IProfileRepository Profiles => (IProfileRepository) Get<Profile>();
 
     public IProviderRepository Providers => (IProviderRepository) Get<ServiceProvider>();
 

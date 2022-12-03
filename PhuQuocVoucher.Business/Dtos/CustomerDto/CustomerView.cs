@@ -1,6 +1,5 @@
 ﻿using CrudApiTemplate.View;
 using Mapster;
-using PhuQuocVoucher.Business.Dtos.ProfileDto;
 using PhuQuocVoucher.Business.Dtos.SellerDto;
 using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Data.Models;
@@ -21,7 +20,6 @@ public class CustomerView : IView<Customer>, IDto
     
     public SellerSView AssignSeller { get; set; }
     
-    public IList<ProfileView> Profiles { get; set; }
 
     public int? CartId { get; set; }
 

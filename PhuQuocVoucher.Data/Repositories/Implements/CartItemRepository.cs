@@ -15,7 +15,6 @@ public class CartItemRepository : Repository<CartItem>, ICartItemRepository
     {
         return Models.AsQueryable()
             .Include(item => item.VoucherCompaign)
-            .Include(item => item.Price)
-            .Include(item => item.Profile);
+            .Include(item => item.Price);
     }
 }

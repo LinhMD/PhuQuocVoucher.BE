@@ -58,7 +58,7 @@ public class VoucherView : IView<VoucherCompaign>, IDto
             .Map(view => view.ServiceType , v => v.Service.ServiceType)
             .Map(
                 view => view.Inventory, 
-                voucher => voucher.QrCodeInfos.Count(qr => qr.QrStatus == QRCodeStatus.Active));
+                voucher => voucher.QrCodeInfos.Count(qr => qr.QrStatus == VoucherStatus.Active));
 
     }
 }

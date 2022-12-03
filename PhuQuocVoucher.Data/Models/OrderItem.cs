@@ -17,7 +17,6 @@ public class OrderItem  : BaseModel, IOrderAble
 
      public int VoucherId { get; set; }
      
-     public Profile? Profile { get; set; }
  
      public int? ProfileId { get; set; }
      

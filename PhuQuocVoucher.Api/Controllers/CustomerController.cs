@@ -15,7 +15,6 @@ using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
 using PhuQuocVoucher.Business.Dtos.OrderItemDto;
-using PhuQuocVoucher.Business.Dtos.ProfileDto;
 using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
@@ -33,7 +32,6 @@ public class CustomerController : ControllerBase
 
     private readonly IOrderService _orderService;
 
-    private readonly IProfileService _profileService;
 
     private readonly IUnitOfWork _work;
 
@@ -47,14 +45,13 @@ public class CustomerController : ControllerBase
     /// Create Controller.
     /// </summary>
     public CustomerController(ILogger<CustomerController> logger, IUnitOfWork work,
-        ICustomerService customerService, IOrderService orderService, ICartService cartService, IProfileService profileService, IOrderItemService itemService)
+        ICustomerService customerService, IOrderService orderService, ICartService cartService, IOrderItemService itemService)
     {
         _customerService = customerService;
         _logger = logger;
         _work = work;
         _orderService = orderService;
         _cartService = cartService;
-        _profileService = profileService;
         _itemService = itemService;
         _repo = work.Get<Customer>();
     }
@@ -148,7 +145,7 @@ public class CustomerController : ControllerBase
         return Ok(orders.ToPagingResponse(paging));
     }
     
-    /// <summary>
+    /*/// <summary>
     /// Get customer Profiles
     /// </summary>
     /// <param name="id"></param>
@@ -161,7 +158,7 @@ public class CustomerController : ControllerBase
     {
         var orders = await _profileService.GetProfileOfCustomer(id);
         return Ok(orders);
-    }
+    }*/
     
     /// <summary>
     /// 
@@ -350,74 +347,8 @@ public class CustomerController : ControllerBase
                   throw new ModelNotFoundException($"Not Found {nameof(Customer)} with id {id}"));
     }
     
-    /// <summary>
-    /// Get login customer Profiles
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="paging"></param>
-    /// <param name="orderBy"></param>
-    /// <returns>OrderViews</returns>
-    [HttpGet("profiles")]
-    [Authorize(Roles = nameof(Role.Customer))]
-    public async Task<ActionResult<IList<ProfileView>>> GetCurrentProfiles([FromClaim("CustomerId")]int id)
-    {
-        var orders = await _profileService.GetProfileOfCustomer(id);
-        return Ok(orders);
-    }
-    
-    /// <summary>
-    /// create a profile
-    /// </summary>
-    /// <param name="request"></param>
-    /// <param name="customerId"></param>
-    /// <returns></returns>
-    [Authorize(Roles = nameof(Role.Customer))]
-    [HttpPost("profiles")]
-    public async Task<ActionResult<ProfileView>> CreateProfile([FromBody] CreateProfile request, [FromClaim("CustomerId")] int customerId)
-    {
-        request.CustomerId = customerId;
-        return Ok((await _profileService.CreateAsync(request)).Adapt<ProfileView>());
-    }
-
-    /// <summary>
-    /// get a profile with {id} of login customer
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="customerId"></param>
-    /// <returns></returns>
-    /// <exception cref="ModelNotFoundException"></exception>
-    [Authorize(Roles = nameof(Role.Customer))]
-    [HttpGet("profiles/{id:int}")]
-    public async Task<IActionResult> GetProfile(int id, [FromClaim("CustomerId")] int customerId)
-    {
-        return Ok(await _work.Get<Profile>().Find(profile => profile.Id == id && profile.CustomerId == customerId).FirstOrDefaultAsync() ??
-                  throw new ModelNotFoundException($"Not Found {nameof(Profile)} with id {id}"));
-    }
 
     
-    [Authorize(Roles = nameof(Role.Customer))]
-    [HttpPut("profiles/{id:int}")]
-    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfile request, int id, [FromClaim("CustomerId")] int customerId)
-    {
-        var profile = await _work.Get<Profile>().Find(profile => profile.Id == id && profile.CustomerId == customerId)
-            .FirstOrDefaultAsync();
-        if (profile == null)
-            return NotFound($"Profile with id {id} not found");
-        return Ok((await _profileService.UpdateAsync(id, request)).Adapt<ProfileView>());
-    }
-
-    [Authorize(Roles = nameof(Role.Customer))]
-    [HttpDelete("profiles/{id:int}")]
-    public async Task<IActionResult> DeleteProfile(int id,  [FromClaim("CustomerId")] int customerId)
-    {
-        var profile = await _work.Get<Profile>().Find(profile => profile.Id == id && profile.CustomerId == customerId)
-            .FirstOrDefaultAsync();
-        if (profile == null)
-            return NotFound($"Profile with id {id} not found");
-
-        return Ok((await _profileService.DeleteAsync(id)).Adapt<ProfileView>());
-    }
-
     [Authorize(Roles = nameof(Role.Customer))]
     [HttpGet("voucher/review")]
     public async Task<ActionResult<bool>> IsAllowCustomerReview(int voucherId, [FromClaim("CustomerId")] int customerId)

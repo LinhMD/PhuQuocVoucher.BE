@@ -95,14 +95,14 @@ public class ProviderController : ControllerBase
             });
         }
 
-        if (qrCode.QrStatus != QRCodeStatus.Commit)  
+        if (qrCode.QrStatus != VoucherStatus.Commit)  
             return BadRequest(new
             {
                 Data = default(OrderItemView),
                 Message = "Qr code không đủ điều kiện sửa dụng"
             });
         
-        qrCode.QrStatus = QRCodeStatus.Used;
+        qrCode.QrStatus = VoucherStatus.Used;
         await _work.CompleteAsync();
         
         return Ok(new
@@ -131,7 +131,7 @@ public class ProviderController : ControllerBase
             });
         }
         
-        if (item.QrCode.QrStatus != QRCodeStatus.Commit)  
+        if (item.QrCode.QrStatus != VoucherStatus.Commit)  
             return BadRequest(new
             {
                 Data = default(OrderItemView),
@@ -160,7 +160,7 @@ public class ProviderController : ControllerBase
             });
         }
         
-        if (item.QrCode.QrStatus != QRCodeStatus.Commit)  
+        if (item.QrCode.QrStatus != VoucherStatus.Commit)  
             return BadRequest(new
             {
                 Data = default(OrderItemView),

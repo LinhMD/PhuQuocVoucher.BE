@@ -54,8 +54,6 @@ public class PhuQuocDataContext : DbContext
 
     public DbSet<Customer> Customers { get; set; }
 
-    public DbSet<Profile> Profiles { get; set; }
-
     public DbSet<Seller> Sellers { get; set; }
 
     public DbSet<ServiceProvider> Providers { get; set; }

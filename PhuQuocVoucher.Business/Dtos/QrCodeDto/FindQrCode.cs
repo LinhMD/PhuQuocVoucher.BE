@@ -11,7 +11,7 @@ public class FindQrCode : IFindRequest<Voucher>
     
     public int? VoucherId { get; set; }
 
-    public QRCodeStatus? Status { get; set; }
+    public VoucherStatus? Status { get; set; }
     
     [BiggerThan(nameof(BaseModel.UpdateAt))]
     public DateTime? UpdateAt_startTime { get; set; }

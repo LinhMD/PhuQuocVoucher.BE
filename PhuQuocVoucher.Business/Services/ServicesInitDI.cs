@@ -19,7 +19,6 @@ public static class ServicesInitDi
         serviceCollection.AddScoped<IOrderItemService, OrderItemService>();
         serviceCollection.AddScoped<IPaymentDetailService, PaymentDetailService>();
         serviceCollection.AddScoped<IPlaceService, PlaceService>();
-        serviceCollection.AddScoped<IProfileService, ProfileService>();
         serviceCollection.AddScoped<IProviderService, ProviderService>();
         serviceCollection.AddScoped<IReviewService, ReviewService>();
         serviceCollection.AddScoped<ISellerService, SellerService>();

@@ -9,6 +9,6 @@ public class CreateQrCode: CreateDto, ICreateRequest<Voucher>
         
     public int VoucherId { get; set; }
 
-    public QRCodeStatus Status { get; set; } = QRCodeStatus.Active;
+    public VoucherStatus Status { get; set; } = VoucherStatus.Active;
     
 }

@@ -21,10 +21,6 @@ public class CartItem : BaseModel, IOrderAble
     
     public int PriceId { get; set; }
     
-    public int? ProfileId { get; set; }
-
-    public Profile Profile { get; set; }
-    
     public int CartId { get; set; }
     public void ConfigOrderBy()
     {

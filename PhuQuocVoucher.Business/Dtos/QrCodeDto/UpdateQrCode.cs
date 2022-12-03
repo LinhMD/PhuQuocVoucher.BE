@@ -5,6 +5,6 @@ namespace PhuQuocVoucher.Business.Dtos.QrCodeDto;
 
 public class UpdateQrCode : UpdateDto, IUpdateRequest<Voucher>
 {
-    public QRCodeStatus Status { get; set; } = QRCodeStatus.Active;
+    public VoucherStatus Status { get; set; } = VoucherStatus.Active;
     
 }

@@ -2,7 +2,6 @@
 using Mapster;
 using Newtonsoft.Json;
 using PhuQuocVoucher.Business.Dtos.PriceBookDto;
-using PhuQuocVoucher.Business.Dtos.ProfileDto;
 using PhuQuocVoucher.Business.Dtos.QrCodeDto;
 using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Data.Models;
@@ -20,9 +19,7 @@ public class OrderItemView : IView<OrderItem>, IDto
     public string VoucherName { get; set; }
 
     public int? ProfileId { get; set; }
-    
-    public ProfileView? Profile { get; set; }
-    
+
     public DateTime? UseDate { get; set; }
     
     public double? SoldPrice { get; set; }

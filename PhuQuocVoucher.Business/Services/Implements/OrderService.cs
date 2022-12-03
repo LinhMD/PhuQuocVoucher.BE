@@ -113,7 +113,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         var serviceRates = await UnitOfWork.Get<Service>()
             .Find(s => serviceIds.Contains(s.Id))
             .ToDictionaryAsync(s => s.Id, s => s.CommissionRate);
-        var qrCodes = (await UnitOfWork.Get<Voucher>().Find(qr => voucherIds.Contains(qr.VoucherId) && qr.QrStatus == QRCodeStatus.Active).ToListAsync())
+        var qrCodes = (await UnitOfWork.Get<Voucher>().Find(qr => voucherIds.Contains(qr.VoucherId) && qr.QrStatus == VoucherStatus.Active).ToListAsync())
             .GroupBy(qr => qr.VoucherId)
             .ToDictionary(
                 qrs => qrs.Key,
@@ -163,7 +163,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                     PriceLevel = priceBooksDic[items.PriceId].PriceLevel
                 };
                 orderItem.Validate();
-                qrCode.QrStatus = QRCodeStatus.Pending;
+                qrCode.QrStatus = VoucherStatus.Pending;
                 orderItems.Add(orderItem);
                 total += items.Price;
             }
@@ -267,7 +267,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 }).Peek(o =>
                 {
                     o.QrCodeId = o.QrCode!.Id;
-                    o.QrCode.QrStatus = QRCodeStatus.Pending;
+                    o.QrCode.QrStatus = VoucherStatus.Pending;
                 }).ToList();
             
             
@@ -347,8 +347,6 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             {"FromDate", item.VoucherCompaign.StartDate?.ToString("dd/MM/yyyy") ?? string.Empty},
             {"ToDate", item.VoucherCompaign.EndDate?.ToString("dd/MM/yyyy") ?? string.Empty},
             {"UseDate", item.UseDate?.ToString("dd/MM/yyyy") ?? string.Empty},
-            {"CustomerName", (item.Profile?.Name ?? order.Customer?.CustomerName) ?? string.Empty },
-            {"CivilInfo", item.Profile?.CivilIdentify ?? string.Empty},
             {"PriceLevel", item.PriceLevel.ToString() ?? PriceLevel.Default.ToString()},
             {"Price", item.SoldPrice.ToString(CultureInfo.InvariantCulture)}
         })

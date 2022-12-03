@@ -28,7 +28,6 @@ public class Customer : BaseModel, IOrderAble
     
     public int? AssignSellerId { get; set; }
 
-    public IEnumerable<Profile> Profiles { get; set; }
 
     public IEnumerable<Order> Orders { get; set; }
 

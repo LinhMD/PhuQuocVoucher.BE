@@ -25,11 +25,11 @@ public class Voucher : BaseModel,  IOrderAble
 
     public ServiceProvider? Provider { get; set; }
 
-    public QRCodeStatus QrStatus { get; set; } = QRCodeStatus.Active;
+    public VoucherStatus QrStatus { get; set; } = VoucherStatus.Active;
     public void ConfigOrderBy()
     {
         SetUpOrderBy<Voucher>();
-        Expression<Func<Voucher, QRCodeStatus>> orderByStatus = qr => qr.QrStatus;
+        Expression<Func<Voucher, VoucherStatus>> orderByStatus = qr => qr.QrStatus;
         OrderByProvider<Voucher>.OrderByDic.Add(nameof(QrStatus),orderByStatus);
     }
 }
