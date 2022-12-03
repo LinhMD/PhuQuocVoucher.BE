@@ -137,7 +137,7 @@ public class PaymentService
 
         order.OrderStatus = OrderStatus.Completed;
         await _work.CompleteAsync();
-        if(order.SellerId != null)
+        if(order.SellerId == null)
             await _orderService.SendOrderEmailToCustomer(order.Id);
         
         var momoResponse = await ConfirmPaymentAsync(paymentDetail);

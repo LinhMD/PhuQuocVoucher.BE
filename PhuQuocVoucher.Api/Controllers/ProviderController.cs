@@ -130,11 +130,12 @@ public class ProviderController : ControllerBase
                 Message = "Không tìm thấy Qr code"
             });
         }
+        
         if (item.QrCode.QrStatus != QRCodeStatus.Commit)  
             return BadRequest(new
             {
                 Data = default(OrderItemView),
-                Message = "Qr code không đủ điều kiện sửa dụng"
+                Message = "Vé không đủ điều kiện sửa dụng"
             });
 
         return Ok(new
@@ -155,7 +156,7 @@ public class ProviderController : ControllerBase
             return BadRequest(new
             {
                 Data = default(OrderItemView),
-                Message = "Không tìm thấy Qr code"
+                Message = "Không tìm thấy vé"
             });
         }
         
@@ -163,12 +164,13 @@ public class ProviderController : ControllerBase
             return BadRequest(new
             {
                 Data = default(OrderItemView),
-                Message = "Qr code không đủ điều kiện sửa dụng"
+                Message = "Vé không đủ điều kiện sửa dụng"
             });
+        
         return Ok(new
         {
             Data = item,
-            Message = "Sẵn sàng sửa dụng"
+            Message = "Vé sẵn sàng sửa dụng"
         });
     }
     

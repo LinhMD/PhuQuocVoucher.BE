@@ -123,12 +123,16 @@ public class CartService : ServiceCrud<Cart>, ICartService
             .Distinct()
             .Where(item => item.LimitPerDay != null)
             .Select( cartItem =>  new RemainVoucherInventory() {
-                RemainInventory = (cartItem.LimitPerDay ?? 0) - ( UnitOfWork.Get<OrderItem>()
+                LimitPerDay = (cartItem.LimitPerDay ?? 0),
+                AlreadyOrder = ( UnitOfWork.Get<OrderItem>()
                     .Find(item => 
-                        item.VoucherId == cartItem.VoucherId 
+                        cartItem.UseDate != null
+                        && item.VoucherId == cartItem.VoucherId 
                         && item.UseDate != null 
                         && item.UseDate.Value.Date.Date == cartItem.UseDate.Value.Date.Date)
                     .Count()), 
+                RemainInventory = UnitOfWork.Get<QrCodeInfo>().Find(info => info.VoucherId == cartItem.VoucherId)
+                    .Count(),
                 VoucherId = cartItem.VoucherId, 
                 Date = cartItem.UseDate}).ToList();
 
@@ -150,25 +154,49 @@ public class CartService : ServiceCrud<Cart>, ICartService
     
     public async Task<List<RemainVoucherInventory>> CheckItem(UpdateCart cart)
     {
-        var cartItems = cart.CartItems.Select(i => i.Adapt<CartItem>()).ToList();
+        var priceIds = cart.CartItems.Select(c => c.PriceId).ToList();
+
+        var priceBooks = await UnitOfWork.Get<PriceBook>()
+            .Find(p => priceIds.Contains(p.Id))
+            .Select(p => new{p.Id, p.VoucherId})
+            .ToDictionaryAsync(price => price.Id);
+        
+        var voucherIds = priceBooks.Values.Select(book => book.VoucherId).Distinct();
+        
+        var limitPerDays = await UnitOfWork.Get<Voucher>()
+            .Find(v => voucherIds.Contains(v.Id))
+            .Select(v => new{v.Id,v.LimitPerDay})
+            .ToDictionaryAsync(v => v.Id);
+        
+        var cartItems = cart.CartItems.Select(i => new
+        {
+            priceBooks[i.PriceId].VoucherId,
+            i.UseDate,
+            limitPerDays[priceBooks[i.PriceId].VoucherId].LimitPerDay
+        }).ToList();
         
         var items =  cartItems
-            .Select(item => (item.VoucherId, item.UseDate, item.Voucher.LimitPerDay))
+            .Select(item => (item.VoucherId, item.UseDate, item.LimitPerDay))
             .Where(i => i.UseDate != null)
             .Distinct()
             .Where(item => item.LimitPerDay != null)
             .Select( cartItem =>  new RemainVoucherInventory() {
-                RemainInventory = (cartItem.LimitPerDay ?? 0) - ( UnitOfWork.Get<OrderItem>()
+                LimitPerDay = (cartItem.LimitPerDay ?? 0),
+                AlreadyOrder = ( UnitOfWork.Get<OrderItem>()
                     .Find(item => 
-                        item.VoucherId == cartItem.VoucherId 
+                        cartItem.UseDate != null
+                        && item.VoucherId == cartItem.VoucherId 
                         && item.UseDate != null 
                         && item.UseDate.Value.Date.Date == cartItem.UseDate.Value.Date.Date)
                     .Count()), 
+                RemainInventory = UnitOfWork.Get<QrCodeInfo>().Find(info => info.VoucherId == cartItem.VoucherId)
+                    .Count(),
                 VoucherId = cartItem.VoucherId, 
-                Date = cartItem.UseDate}).ToList();
+                Date = cartItem.UseDate
+            }).ToList();
 
         items.AddRange(cartItems
-            .Select(item => (item.VoucherId, item.UseDate, item.Voucher.LimitPerDay))
+            .Select(item => (item.VoucherId, item.UseDate, item.LimitPerDay))
             .Where(i => i.UseDate != null)
             .Distinct()
             .Where(item => item.LimitPerDay == null)

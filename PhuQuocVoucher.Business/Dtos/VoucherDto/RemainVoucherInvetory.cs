@@ -7,4 +7,8 @@ public class RemainVoucherInventory
     public DateTime? Date { get; set; }
 
     public int VoucherId { get; set; }
+
+    public int  LimitPerDay { get; set; }
+
+    public int AlreadyOrder { get; set; }
 }

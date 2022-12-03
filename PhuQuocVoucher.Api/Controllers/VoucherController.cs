@@ -41,8 +41,16 @@ public class VoucherController : ControllerBase
             PagingRequest = paging
         })).ToPagingResponse(paging));
     }
-    
-    
+
+    [AllowAnonymous]
+    [HttpGet("voucher/{voucherId:int}-{sellerId:int}/ ")]
+    public async Task<RedirectResult> GetVoucher(int voucherId, int sellerId)
+    {
+        //todo: add voucher M:M seller
+        return Redirect($"https://phuquoc-voucher.vercel.app/voucher-detail/{voucherId}");
+    }
+
+
     [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> GetDefault([FromQuery] FindVoucher request, [FromQuery] PagingRequest paging, string? orderBy, [FromClaim("ProviderId")] int? providerId)
