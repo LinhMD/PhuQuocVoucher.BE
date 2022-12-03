@@ -25,7 +25,6 @@ public class SellerView : IView<Seller>, IDto
 
     public IEnumerable<OrderView> Orders { get; set; }
 
-    public BusyLevel BusyLevel { get; set; } = BusyLevel.Free;
 
     public ModelStatus? Status { get; set; }
     public void InitMapper()

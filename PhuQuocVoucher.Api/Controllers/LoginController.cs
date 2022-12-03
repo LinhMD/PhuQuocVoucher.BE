@@ -277,7 +277,6 @@ public class LoginController : ControllerBase
             Status = ModelStatus.Active,
             UserInfoId = u.Id,
             SellerName = u.UserName,
-            BusyLevel = BusyLevel.Free,
             CommissionRate = 0.05F,
             CreateAt = DateTime.Now
         }).ToList();

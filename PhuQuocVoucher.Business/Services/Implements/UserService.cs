@@ -57,7 +57,6 @@ public class UserService : ServiceCrud<User>, IUserService
                     {
                         Status = ModelStatus.Active,
                         CreateAt = DateTime.Now,
-                        BusyLevel = BusyLevel.Free,
                         SellerName = user.UserName,
                         UserInfoId = user.Id,
                         UserInfo = user,

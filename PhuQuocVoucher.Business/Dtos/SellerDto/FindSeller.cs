@@ -35,7 +35,6 @@ public class FindSeller : IFindRequest<Seller>
     [Contain(target:"UserInfo.UserName")]
     public string? UserName { get; set; }
 
-    public BusyLevel? BusyLevel { get; set; }
     
     [BiggerThan(nameof(BaseModel.UpdateAt))]
     public DateTime? UpdateAt_startTime { get; set; }

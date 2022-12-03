@@ -54,7 +54,6 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
             Profit = s.HandleOrders
                 .Where(o => (o.CompleteDate >= completeDateLowBound))
                 .Select(o => o.TotalPrice).Sum(),
-            BusyLevel = s.BusyLevel,
             CommissionRate = s.CommissionRate,
             SellerName = s.SellerName,
             UserInfo = s.UserInfo.Adapt<UserView>(),

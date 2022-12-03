@@ -16,7 +16,6 @@ public class SellerSView :  IView<Seller>, IDto
 
     public double? Profit { get; set; }
 
-    public BusyLevel BusyLevel { get; set; } = BusyLevel.Free;
 
     public ModelStatus? Status { get; set; }
     

@@ -10,7 +10,6 @@ public class UpdateSeller : UpdateDto, IUpdateRequest<Seller>
     public string? SellerName { get; set; }
 
     public float? CommissionRate { get; set; }
-
-    public BusyLevel? BusyLevel { get; set; }
+    
     public ModelStatus? Status { get; set; }
 }

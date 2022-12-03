@@ -24,8 +24,6 @@ public class Seller : BaseModel, IOrderAble
 
     public float CommissionRate { get; set; }
 
-    public BusyLevel BusyLevel { get; set; } = BusyLevel.Free;
-
     public IEnumerable<Order> HandleOrders { get; set; }
 
     public IEnumerable<Customer> Customers { get; set; }
@@ -33,7 +31,5 @@ public class Seller : BaseModel, IOrderAble
     {
         
         SetUpOrderBy<Seller>();
-        Expression<Func<Seller, BusyLevel>> orderByBusyLevel = seller => seller.BusyLevel;
-        OrderByProvider<Seller>.OrderByDic.Add(nameof(BusyLevel), orderByBusyLevel);
     }
 }
