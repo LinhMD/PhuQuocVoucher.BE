@@ -50,12 +50,6 @@ public class OrderController : ControllerBase
         })).ToPagingResponse(paging));
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateOrder request)
-    {
-        return Ok(await _orderService.CreateOrderAsync(request));
-    }
-
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
@@ -81,65 +75,13 @@ public class OrderController : ControllerBase
         return Ok((await _orderService.CancelOrderAsync(id)));
     }
 
-    [HttpGet("notify-user")]
-    public async Task<IActionResult> SendOrderInfoToCustomerEmail(int orderId)
-    {
-        //todo: wat?
-        var order = await _work.Get<Order>().Find<OrderView>(o => o.Id == orderId && o.OrderStatus == OrderStatus.Completed).FirstOrDefaultAsync();
-        if (order == null) return NotFound($"Not found Complete payment Order with id {orderId}");
-        
-        QRCodeGenerator qrGenerator = new QRCodeGenerator();
-        var list = new List<dynamic>();
-        /*foreach (var item  in order.OrderItems)
-        {
-            var hash = item.QrCode.HashCode;
-            var priceName = item.Price.PriceLevelName;
-            var solePrice = item.SoldPrice;
-            var voucherName = item.VoucherName;
-            
-            QRCodeData qrCodeData =
-                qrGenerator.CreateQrCode("The text which should be encoded.", QRCodeGenerator.ECCLevel.Q);
-            BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
-            var qrCodeBitMapByte = qrCode.GetGraphic(20);
-            using var qrCodeSteam = new MemoryStream(qrCodeBitMapByte);
-            string base64String = Convert.ToBase64String(qrCodeSteam.ToArray());
-            var qrcode = base64String;
-            list.Add(new
-            {
-                hash,priceName,solePrice,voucherName, qrcode
-            });
-        }*/
-
-        var qrcodes = list.Aggregate("", (s, o) =>
-        {
-            return s +=$"<tr><table><tbody><tr><img src='data:image/png;base64,{o.qrcode}' width='180' height='280' class='CToWUd' data-bit='iit'></tr><tr>{o.voucherName}</tr><tr>{o.priceName}</tr><tr>{o.solePrice}</tr></tbody></table></tr>";
-        });
-        var paymentDetailId = order.PaymentDetail!.Id;
-
-        var userId = ((await _work.Get<PaymentDetail>().GetAsync(paymentDetailId))!).UserId;
-        var customerName = ((await _work.Get<User>().GetAsync(userId ?? 0))!).UserName;
-        await _mailingService.SendEmailAsync(new MailTemplateRequest()
-        {
-            values = new Dictionary<string, string>()
-            {
-                {"username", customerName},
-                {"QrCodes", qrcodes}
-            },
-            MailRequest = new MailRequest()
-            {
-                Subject = "test mail",
-                ToEmail = "linhmaidinh1@gmail.com"
-            },
-            FileTemplateName = "QRCodeResponse"
-        });
-        return Ok();
-    }
     
     [HttpGet("{id:int}/print")]
     public async Task<IActionResult> PrintOrder(int id)
     {
         return Ok((await _orderService.RenderOrderToHtml(await _repo.Find(o => o.Id == id).FirstOrDefaultAsync() ?? throw new ModelNotFoundException($"Order not found with Id {id}"))));
     }
+    
     [HttpGet("{id:int}/send-email")]
     public async Task<IActionResult> SendEmailOrder(int id)
     {

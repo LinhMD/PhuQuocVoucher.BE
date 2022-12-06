@@ -18,6 +18,8 @@ public class UserView : BaseModel, IView<User>, IDto
 
     public string? PhoneNumber { get; set; }
 
+    public int ProviderId { get; set; }
+
     public void InitMapper()
     {
         TypeAdapterConfig<User, UserView>.NewConfig();

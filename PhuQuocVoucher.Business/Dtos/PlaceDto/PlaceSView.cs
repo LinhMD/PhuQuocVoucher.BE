@@ -1,6 +1,8 @@
-﻿namespace PhuQuocVoucher.Business.Dtos.PlaceDto;
+﻿using PhuQuocVoucher.Data.Models;
 
-public class PlaceSView
+namespace PhuQuocVoucher.Business.Dtos.PlaceDto;
+
+public class PlaceSView : BaseModel
 {
     public int Id { get; set; }
 

@@ -5,7 +5,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.CartItemDto;
 
-public class CartItemView : IView<CartItem>, IDto
+public class CartItemView : BaseModel, IView<CartItem>, IDto
 {
     public int Id { get; set; }
 
@@ -14,12 +14,10 @@ public class CartItemView : IView<CartItem>, IDto
     public VoucherSView Voucher { get; set; }
 
     public int VoucherId { get; set; }
-    
-    public double Price { get; set; }
-    
-    public DateTime? UseDate { get; set; }
-    
-    
+
+    public bool IsCombo { get; set; }
+
+
     public void InitMapper()
     {
         TypeAdapterConfig<CartItem, CartItemView>.NewConfig();

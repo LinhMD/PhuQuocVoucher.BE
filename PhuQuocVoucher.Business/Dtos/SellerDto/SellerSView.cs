@@ -4,7 +4,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.SellerDto;
 
-public class SellerSView :  IView<Seller>, IDto
+public class SellerSView : BaseModel,IView<Seller>, IDto
 {
     public int? Id { get; set; }
 
@@ -16,9 +16,6 @@ public class SellerSView :  IView<Seller>, IDto
 
     public double? Profit { get; set; }
 
-
-    public ModelStatus? Status { get; set; }
-    
     public void InitMapper()
     {
         TypeAdapterConfig<Seller, SellerSView>.NewConfig().Map(

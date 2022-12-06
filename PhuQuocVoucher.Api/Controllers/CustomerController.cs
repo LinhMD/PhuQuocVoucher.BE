@@ -10,6 +10,7 @@ using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PhuQuocVoucher.Api.Ultility;
 using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
@@ -199,7 +200,9 @@ public class CustomerController : ControllerBase
     [Authorize(Roles = nameof(Role.Customer))]
     public async Task<ActionResult<CartView>> AddCartItem(CreateCartItem item, [FromClaim("CustomerId")]int cusId)
     {
-        return Ok(await _cartService.AddItemToCart(item, cusId));
+        var cart = await _cartService.AddItemToCart(item, cusId);
+        "hello".Dump();
+        return Ok(cart);
     }
 
     /// <summary>

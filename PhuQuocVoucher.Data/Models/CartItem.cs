@@ -11,14 +11,14 @@ public class CartItem : BaseModel, IOrderAble
 
     public int Quantity { get; set; }
 
-    public VoucherCompaign VoucherCompaign { get; set; }
+    public Voucher Voucher { get; set; }
 
-    public int VoucherId { get; set; }
-
-    public DateTime? UseDate { get; set; }
-    
+    public int voucherId { get; set; }
     
     public int CartId { get; set; }
+
+    public bool IsCombo { get; set; }
+
     public void ConfigOrderBy()
     {
         SetUpOrderBy<CartItem>();

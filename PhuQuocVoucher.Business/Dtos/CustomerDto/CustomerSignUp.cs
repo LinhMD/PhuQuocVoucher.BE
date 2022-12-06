@@ -7,12 +7,8 @@ namespace PhuQuocVoucher.Business.Dtos.CustomerDto;
 
 public class CustomerSignUp : CreateDto, ICreateRequest<Customer>
 {
-    
-    [Required]
-    [MaxLength(255)]
-    public string CustomerName { get; set; }
-    
+    [Required] [MaxLength(255)] public string CustomerName { get; set; }
 
-    [Required]
-    public UserSignUp UserInfo { get; set; }
+
+    [Required] public UserSignUp UserInfo { get; set; }
 }

@@ -27,11 +27,10 @@ public class PaymentDetail  : BaseModel, IOrderAble
 
     public PaymentStatus? PaymentStatus { get; set; }
 
-    
     public bool? IsValid { get; set; } = true;
+    
     public void ConfigOrderBy()
     {
-        
         SetUpOrderBy<PaymentDetail>();
     }
 }

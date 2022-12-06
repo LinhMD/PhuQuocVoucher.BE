@@ -12,11 +12,11 @@ public class UpdateBlog : UpdateDto, IUpdateRequest<Blog>
     public string? Title { get; set; }
 
     public string? Summary { get; set; }
-    
+
     public List<int>? PlaceIds { get; set; }
 
     public List<int>? TagIds { get; set; }
-    
+
 
     public ModelStatus? Status { get; set; }
 }

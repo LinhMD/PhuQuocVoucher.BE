@@ -6,10 +6,7 @@ namespace PhuQuocVoucher.Business.Dtos.ServiceDto;
 
 public class SellerSignUp : CreateDto, ICreateRequest<SellerSignUp>
 {
-    [Required]
-    [MaxLength(255)]
-    public string SellerName { get; set; }
+    [Required] [MaxLength(255)] public string SellerName { get; set; }
 
-    [Required]
-    public UserSignUp UserInfo { get; set; }
+    [Required] public UserSignUp UserInfo { get; set; }
 }

@@ -58,5 +58,5 @@ public class PqUnitOfWork : UnitOfWork
 
     public IUserRepository Users => (IUserRepository) Get<User>();
 
-    public IVoucherRepository Vouchers => (IVoucherRepository) Get<VoucherCompaign>();
+    public IVoucherRepository Vouchers => (IVoucherRepository) Get<Voucher>();
 }

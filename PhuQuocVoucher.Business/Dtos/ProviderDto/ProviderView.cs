@@ -11,8 +11,7 @@ public class ProviderView : IView<ServiceProvider>, IDto
 {
     public int Id { get; set; }
 
-    [Required]
-    public string? ProviderName { get; set; }
+    [Required] public string? ProviderName { get; set; }
 
     public string? Address { get; set; }
 
@@ -20,10 +19,6 @@ public class ProviderView : IView<ServiceProvider>, IDto
 
     public UserView? UserInfo { get; set; }
 
-    public SellerView? AssignedSeller { get; set; }
-
-    public int AssignedSellerId { get; set; }
-    
     public ModelStatus Status { get; set; }
 
     public void InitMapper()

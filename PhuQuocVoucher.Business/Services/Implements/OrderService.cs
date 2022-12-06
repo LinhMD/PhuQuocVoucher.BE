@@ -15,6 +15,7 @@ using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 using PhuQuocVoucher.Data.Repositories.Core;
 using System;
+using System.Collections;
 using System.Drawing;
 using System.Net.Mail;
 using IronBarCode;
@@ -31,12 +32,15 @@ public class OrderService : ServiceCrud<Order>, IOrderService
     private readonly IMailingService _mailingService;
     
     private readonly IVoucherService _voucherService;
+
+    private IVoucherRepository _voucherRepository;
     public OrderService(IUnitOfWork work, ILogger<OrderService> logger, IMailingService mailingService, IVoucherService voucherService) : base(work.Get<Order>(), work, logger)
     {
         _logger = logger;
         _mailingService = mailingService;
         _voucherService = voucherService;
-        _repository = work.Get<Order>() as IOrderRepository;
+        _voucherRepository = (work.Get<Voucher>() as IVoucherRepository)!;
+        _repository = (work.Get<Order>() as IOrderRepository)!;
     }
 
     public async Task<(IList<OrderView>, int)> GetOrdersByCustomerId(int cusId, PagingRequest request,
@@ -63,30 +67,11 @@ public class OrderService : ServiceCrud<Order>, IOrderService
 
         return (result, total);
     }
-
-
-    /*private async Task ValidateInventoryEnoughAsync(IEnumerable<OrderItem> orderItems)
-    {
-        var itemCount = orderItems.GroupBy(o => o.OrderProductId);
-        //check inventory
-        foreach (var items in itemCount)
-        {
-            var product = await UnitOfWork.Get<Product>()
-                .Find(product => product.Id == items.Key && product.Inventory >= items.Count()).FirstOrDefaultAsync();
-
-            if (product == null)
-            {
-                throw new ModelValueInvalidException(
-                    $"Voucher with product id {items.ToList().First().OrderProductId} do not have enough inventory");
-            }
-            product.Inventory -= items.Count();
-        }
-        await UnitOfWork.CompleteAsync();
-    }*/
+    
 
     public async Task<OrderView> PlaceOrderAsync(CartView cart, int cusId, int? sellerId = null)
     {
-        /*//create order for the id
+        //create order for the id
         var order = new Order()
         {
             CustomerId = cusId,
@@ -96,219 +81,129 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         };
         await UnitOfWork.Get<Order>().AddAsync(order);
         
-        double total = 0;
+        var total = 0L;
+        if (cart == null)
+            throw new ModelNotFoundException("Cart of customer not found");
         
-        var sellerRate = await UnitOfWork.Get<Seller>().Find(seller => seller.Id == sellerId).Select(s => s.CommissionRate).FirstOrDefaultAsync();
-        //create order item
-        var orderItems = new List<OrderItem>();
-        var priceIds = cart.CartItems.Select(o => o.PriceId).ToList();
-        var priceBooks = await UnitOfWork.Get<PriceBook>().Find(pb => priceIds.Contains(pb.Id)).ToListAsync();
-        var voucherIds = priceBooks.Select(p => p.VoucherId).Distinct();
-        var vouchers = await UnitOfWork.Get<VoucherCompaign>().Find(v => voucherIds.Contains(v.Id))
-            .ToDictionaryAsync(v => v.Id, v => v);
+
+        var comboIds = cart.CartItems.Where(v => v.IsCombo).Select(c => c.VoucherId).ToList();
         
-        var serviceIds = vouchers.Values.Select(v => v.ServiceId).ToList();
-        var serviceRates = await UnitOfWork.Get<Service>()
-            .Find(s => serviceIds.Contains(s.Id))
-            .ToDictionaryAsync(s => s.Id, s => s.CommissionRate);
-        var qrCodes = (await UnitOfWork.Get<Voucher>().Find(qr => voucherIds.Contains(qr.VoucherId) && qr.QrStatus == VoucherStatus.Active).ToListAsync())
-            .GroupBy(qr => qr.VoucherId)
-            .ToDictionary(
-                qrs => qrs.Key,
-                qrs => new Stack<Voucher>(qrs.ToList()));
-        var voucherQuantities = cart.CartItems
-            .GroupBy(i => i.VoucherId)
-            .ToDictionary(
-                group => group.Key, 
-                group => group.ToList().Select(item => item.Quantity).Sum());
-        var idsOutOfQrCode = voucherQuantities.Keys.Except(qrCodes.Keys).ToList();
-        
-        if (idsOutOfQrCode.Any())
+        var comboDic = await UnitOfWork.Get<Voucher>().Find(cam => comboIds.Contains(cam.Id))
+            .Select(c => new {
+                c.Id, voucherInventorys =  
+                c.Vouchers.Select(cam => cam.VoucherId).ToList()
+            }).ToDictionaryAsync(c => c.Id, c => c.voucherInventorys);
+        var combos = await UnitOfWork.Get<Voucher>().Find(cam => comboIds.Contains(cam.Id))
+            .ToDictionaryAsync(c => c.Id, c => c);
+        var vouchersIds = cart.CartItems.Where(v => !v.IsCombo).Select(c => c.VoucherId).ToList();
+
+        vouchersIds.AddRange(comboDic.Values.Aggregate(new List<int>(), (vouch, comb) =>
         {
-            throw new ModelValueInvalidException($"Voucher ids out of QrCode : {string.Join(",", idsOutOfQrCode)}");
+            vouch.AddRange(comb);
+            return vouch;
+        }));
+        
+        var uniqueVouchers = vouchersIds.Distinct().ToList();
+
+        var qrcodeDic = (await UnitOfWork.Get<QrCode>()
+            .Find(v => uniqueVouchers.Contains(v.VoucherId) && v.QrCodeStatus == QrCodeStatus.Active)
+            .ToListAsync())
+            .GroupBy(v => v.VoucherId)
+            .ToDictionary(
+                g => g.Key, 
+                g => new Stack<QrCode>(g.ToList()));
+
+        var orderDic = new Dictionary<int, List<QrCode>>();
+
+        foreach (var item in cart.CartItems)
+        {
+            var vouchers = new List<QrCode>();
+            if (item.IsCombo)
+            {
+                var combo = combos[item.VoucherId];
+                --combo.Inventory;
+                var voucherIds = comboDic[item.VoucherId];
+                foreach (var voucherId in voucherIds)
+                {
+                    var voucherStack = qrcodeDic[voucherId];
+
+                    for (var i = 0; i < item.Quantity; i++)
+                    {
+                        vouchers.Add(voucherStack.Pop());
+                    }
+                }
+            }
+            else
+            {
+                var voucherStack = qrcodeDic[item.VoucherId];
+                for (var i = 0; i < item.Quantity; i++)
+                {
+                    vouchers.Add(voucherStack.Pop());
+                }
+            }
+            orderDic.TryGetValue(item.VoucherId, out var values);
+            if (values == null)
+            {
+                orderDic[item.VoucherId] = vouchers;
+            }
+            else
+            {
+                values.AddRange(vouchers);
+                orderDic[item.VoucherId] = values;
+            }
         }
 
-        var voucherIdsNotHaveEnoughQrCode = qrCodes.Keys.Intersect(voucherQuantities.Keys).Where(voucherId => voucherQuantities[voucherId] > qrCodes[voucherId].Count).ToList();
-        if (voucherIdsNotHaveEnoughQrCode.Any())
+        var orderVouchers = orderDic.Values.Aggregate(new List<QrCode>(), (list, vouchers) =>
         {
-            var vouchersNotHaveEnough = voucherIdsNotHaveEnoughQrCode
-                .Select(id => $"{id} - quantity: {voucherQuantities[id]}").ToList();
-            throw new ModelValueInvalidException($"Voucher ids out of QrCode : {string.Join(",", vouchersNotHaveEnough)}");
-        }
+            list.AddRange(vouchers);
+            return list;
+        });
+
+        order.QrCodes = orderVouchers;
+
+        var vouchersId = order.QrCodes.Select(qr => qr.VoucherId).Distinct().ToList();
+
+        var voucherPrice = await UnitOfWork
+            .Get<Voucher>()
+            .Find(v => vouchersId.Contains(v.Id))
+            .Select(v => new {v.Id, v.SoldPrice})
+            .ToDictionaryAsync(v => v.Id, v => v.SoldPrice);
         
-        foreach (var items in cart!.CartItems)
+
+        foreach (var orderVoucher in order.QrCodes)
         {
-            for (var i = 0; i < items.Quantity; i++)
-            {
-                var qrCode = qrCodes[items.VoucherId].Pop();
-                var orderItem = new OrderItem
-                {
-                    OrderId = order.Id,
-                    PriceId = items.PriceId,
-                    ProviderId = vouchers[items.VoucherId].ProviderId,
-                    CreateAt = DateTime.Now,
-                    SellerId = sellerId,
-                    Status = ModelStatus.Active,
-                    QrCodeId =  qrCode.Id,
-                    QrCode = qrCode,
-                    VoucherId = items.VoucherId,
-                    UseDate = items.UseDate,
-                    ProfileId = items.ProfileId,
-                    CustomerId = order.CustomerId
-                };
-                orderItem.Validate();
-                qrCode.QrStatus = VoucherStatus.Pending;
-                orderItems.Add(orderItem);
-                total += items.Price;
-            }
+            orderVoucher.SoldPrice = voucherPrice[orderVoucher.VoucherId];
+            orderVoucher.QrCodeStatus = QrCodeStatus.Pending;
+            total += orderVoucher.SoldPrice;
         }
 
         order.TotalPrice = total;
-        
-        /*await ValidateInventoryEnoughAsync(orderItems);#1#
-        await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
-        await UnitOfWork.Get<CartItem>().RemoveAllAsync(cart.CartItems.Select(c => new CartItem {Id = c.Id}));
-        order.OrderItems = orderItems;
-        await _voucherService.UpdateInventory();
-        order.Validate();
-        */
-        
-        
-        /*
-        return order.Adapt<OrderView>();*/
-
-        return null;
+        await UnitOfWork.CompleteAsync();
+        await _voucherService.UpdateVoucherInventoryList(vouchersId);
+        return order.Adapt<OrderView>();
     }
 
     
-    public async Task<OrderView> CreateOrderAsync(CreateOrder createOrder, int? sellerId = null)
-    {
-        //todo:
-        /*try
-        {
-            //create order for the id
-            var order = new Order()
-            {
-                CustomerId = createOrder.CustomerId,
-                TotalPrice = 0D,
-                SellerId = createOrder.SellerId,
-                CreateAt = DateTime.Now
-            };
-            order.Validate();
-            await UnitOfWork.Get<Order>().AddAsync(order);
-            var sellerRate = await UnitOfWork.Get<Seller>().Find(seller => seller.Id == sellerId).Select(s => s.CommissionRate).FirstOrDefaultAsync();
-            
-            foreach (var item in createOrder.OrderItems)
-            {
-                item.OrderId = order.Id;
-            }
-            
-            /*var orderItems = createOrder.OrderItems
-                .Select(o => (o as ICreateRequest<OrderItem>).CreateNew(UnitOfWork)).ToList();#1#
-            var priceIds = createOrder.OrderItems.Select(o => o.PriceId).ToList();
-
-            var priceBooks = await UnitOfWork.Get<PriceBook>().Find(pb => priceIds.Contains(pb.Id)).ToListAsync();
-            var voucherIds = priceBooks.Select(p => p.VoucherId).Distinct();
-            
-            var vouchers = await UnitOfWork.Get<VoucherCompaign>().Find(v => voucherIds.Contains(v.Id))
-                .ToDictionaryAsync(v => v.Id, v => v);
-            
-            var serviceIds = vouchers.Values.Select(v => v.ServiceId).ToList();
-            var serviceRates = await UnitOfWork.Get<Service>()
-                .Find(s => serviceIds.Contains(s.Id))
-                .ToDictionaryAsync(s => s.Id, s => s.CommissionRate);
-            
-
-
-            var qrCodes = (await UnitOfWork.Get<Voucher>().Find(qr => voucherIds.Contains(qr.VoucherId)).ToListAsync())
-                .GroupBy(qr => qr.VoucherId)
-                .ToDictionary(
-                    qrs => qrs.Key,
-                    qrs => new Stack<Voucher>(qrs.ToList()));
-            var voucherQuantities = createOrder.OrderItems
-                .GroupBy(i => i.VoucherId)
-                .ToDictionary(
-                    group => group.Key, 
-                    group => group.ToList().Count);
-            
-            var idsOutOfQrCode = voucherQuantities.Keys.Except(qrCodes.Keys).ToList();
-            if (idsOutOfQrCode.Any())
-            {
-                throw new ModelValueInvalidException($"Voucher ids out of QrCode : {string.Join(",", idsOutOfQrCode)}");
-            }
-
-            var voucherIdsNotHaveEnoughQrCode = qrCodes.Keys.Intersect(voucherQuantities.Keys)
-                .Where(voucherId => voucherQuantities[voucherId] > qrCodes[voucherId].Count).ToList();
-            if (voucherIdsNotHaveEnoughQrCode.Any())
-            {
-                throw new ModelValueInvalidException($"Voucher ids out of QrCode : {string.Join(",", voucherIdsNotHaveEnoughQrCode)}");
-            }
-            
-            var orderItems = createOrder.OrderItems
-                .Select(o => new OrderItem
-                {
-                    OrderId = order.Id,
-                    PriceId = o.PriceId,
-                    ProviderId = vouchers[o.VoucherId].ProviderId,
-                    CreateAt = DateTime.Now,
-                    SellerId = sellerId,
-                    Status = ModelStatus.Active,
-                    QrCode = qrCodes[o.VoucherId].Pop(),
-                    VoucherId = o.VoucherId,
-                    UseDate = o.UseDate,
-                    ProfileId = o.ProfileId,
-                    CustomerId = order.CustomerId
-                }).Peek(o =>
-                {
-                    o.QrCodeId = o.QrCode!.Id;
-                    o.QrCode.QrStatus = VoucherStatus.Pending;
-                }).ToList();
-            
-            
-            foreach (var item in orderItems)
-            {
-                try
-                {
-                    item.Validate();
-                }
-                catch (Exception e)
-                {
-                    e.StackTrace.Dump();
-                }
-            }
-
-            /*await ValidateInventoryEnoughAsync(orderItems)#1#;
-
-            await UnitOfWork.Get<OrderItem>().AddAllAsync(orderItems);
-
-            order.TotalPrice = await UnitOfWork.Get<OrderItem>().Find(item => item.OrderId == order.Id)
-                .Select(item => item.Price.Price).SumAsync();
-
-            order.OrderItems = orderItems;
-            await _voucherService.UpdateInventory();
-            await UnitOfWork.CompleteAsync();
-            return order.Adapt<OrderView>();
-        }
-        catch (DbUpdateException e)
-        {
-            e.InnerException?.StackTrace.Dump();
-            throw new DbQueryException(e.InnerException?.Message!, DbError.Create);
-        }*/
-
-        return null;
-    }
-
     public async Task<OrderView?> CancelOrderAsync(int id)
     {
         var order = await Repository.GetAsync(id);
         if (order == null) throw new ModelNotFoundException("Order Not Found With " + id);
         order.OrderStatus = OrderStatus.Canceled;
-
+        var voucherIds = order.QrCodes.Select(qr => qr.VoucherId).Distinct().ToList();
+        foreach (var qrCode in order.QrCodes)
+        {
+            qrCode.QrCodeStatus = QrCodeStatus.Active;
+            qrCode.SoldPrice = 0;
+            qrCode.Order = null;
+            qrCode.OrderId = null;
+        }
+        order.QrCodes = new List<QrCode>();
         await Repository.CommitAsync();
-        await _voucherService.UpdateInventory();
+        await _voucherService.UpdateVoucherInventoryList(voucherIds);
         var orderView = await Repository.Find<OrderView>(o => o.Id == id).FirstOrDefaultAsync() ?? throw new ModelNotFoundException("how did you get here?? ");
         return orderView!;
     }
+    
 
     public byte[] GenerateQrCode(string hashCode)
     {
@@ -322,8 +217,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
     
     public async Task<(string email, List<Attachment>? attachments)> RenderOrderToHtml(Order order)
     {
-        //todo:
-        /*var filePath = Directory.GetCurrentDirectory() + $"\\MailTemplate\\OrderPrint.html";
+        var filePath = Directory.GetCurrentDirectory() + $"\\MailTemplate\\OrderPrint.html";
         using var str = new StreamReader(filePath);
         var mailOrderPrint = await str.ReadToEndAsync();
         str.Close();
@@ -333,29 +227,27 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         using var orderItemStream = new StreamReader(filePath);
         var htmlFormatOrderItem = await orderItemStream.ReadToEndAsync();
 
-        var orderItemValues = string.Join("", order.OrderItems.Select(item => new Dictionary<string, string>()
+        var orderItemValues = string.Join("", order.QrCodes.Select(item => new Dictionary<string, string>()
         {
-            {"VoucherName", item.VoucherCompaign.VoucherName ?? string.Empty},
-            {"HashCode", item.QrCode?.HashCode?? string.Empty},
-            {"QRCodeId", item.QrCode?.Id.ToString() ?? string.Empty},
-            {"ProviderName", item.Provider.ProviderName ?? string.Empty},
-            {"ProviderAddress", item.Provider.Address ?? string.Empty },
-            {"FromDate", item.VoucherCompaign.StartDate?.ToString("dd/MM/yyyy") ?? string.Empty},
-            {"ToDate", item.VoucherCompaign.EndDate?.ToString("dd/MM/yyyy") ?? string.Empty},
+            {"ServiceName", item.Service.Name},
+            {"HashCode", item.HashCode},
+            {"VoucherId", item.Id.ToString()},
+            {"ProviderName", item.Provider?.ProviderName ?? string.Empty},
+            {"ProviderAddress", item.Provider?.Address ?? string.Empty },
+            {"FromDate", item.Voucher.StartDate?.ToString("dd/MM/yyyy") ?? string.Empty},
+            {"ToDate", item.Voucher.EndDate?.ToString("dd/MM/yyyy") ?? string.Empty},
             {"UseDate", item.UseDate?.ToString("dd/MM/yyyy") ?? string.Empty},
-            {"Price", item.SoldPrice.ToString(CultureInfo.InvariantCulture)}
+            {"Price", item.Voucher.SoldPrice.ToString(CultureInfo.InvariantCulture)}
         })
             .Select(item => item.Aggregate(htmlFormatOrderItem, 
                 (current, dict) 
                     => current.Replace($"[{dict.Key}]", dict.Value))));
-        var attachments = order.OrderItems.Select(o => 
-            new Attachment(new MemoryStream(GenerateQrCode(o.QrCode.HashCode)), o.QrCode.HashCode, "image/png")
+        var attachments = order.QrCodes.Select(o => 
+            new Attachment(new MemoryStream(GenerateQrCode(o.HashCode)), o.HashCode, "image/png")
             {
-                ContentId = o.QrCode.HashCode
-            }).ToList();*/
-        /*
-        return (mailOrderPrint.Replace("[OrderItemRow]", orderItemValues), attachments) ;*/
-        return (null , null);
+                ContentId = o.HashCode
+            }).ToList();
+        return (mailOrderPrint.Replace("[OrderItemRow]", orderItemValues), attachments) ;
     }
 
     public async Task SendOrderEmailToCustomer(int orderId)

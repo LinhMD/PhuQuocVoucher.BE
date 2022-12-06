@@ -4,7 +4,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.ProviderDto;
 
-public class SimpleProviderView :  IView<ServiceProvider>, IDto
+public class SimpleProviderView : BaseModel,IView<ServiceProvider>, IDto
 {
     public int Id { get; set; }
 
@@ -14,7 +14,6 @@ public class SimpleProviderView :  IView<ServiceProvider>, IDto
 
     public string? TaxCode { get; set; }
 
-    public int AssignedSellerId { get; set; }
 
     public void InitMapper()
     {

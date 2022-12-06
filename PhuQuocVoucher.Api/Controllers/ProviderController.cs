@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuQuocVoucher.Business.Dtos.ProviderDto;
+using PhuQuocVoucher.Business.Dtos.QrCodeDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 using ServiceProvider = PhuQuocVoucher.Data.Models.ServiceProvider;
@@ -69,48 +70,48 @@ public class ProviderController : ControllerBase
     }
 
     //todo:
-    /*[Authorize(Roles = $"{nameof(Role.Provider)}")]
+    [Authorize(Roles = $"{nameof(Role.Provider)}")]
     [HttpPost("scan-qr")]
     public async Task<IActionResult> ScanQrCode(string hashCode, [FromClaim("ProviderId")] int? providerId)
     {
-        var qrCodeId = await _work.Get<OrderItem>()
-            .Find(item => item.QrCode != null && item.QrCodeId != null && item.QrCode.HashCode == hashCode &&
-                          item.ProviderId == providerId).Select(item => item.QrCodeId).FirstOrDefaultAsync();
-        if (qrCodeId == null)
+        var qrCodeId = await _work.Get<QrCode>()
+            .Find(item =>  item.HashCode == hashCode &&
+                          item.ProviderId == providerId).Select(item => item.Id).FirstOrDefaultAsync();
+        if (qrCodeId == 0)
         {
             return BadRequest(new
             {
-                Data = default(OrderItemView),
-                Message = "Không tìm thấy Qr code"
+                Data = default(QrCodeView),
+                Message = "Không tìm thấy Voucher"
             });
         }
 
-        var qrCode = await _work.Get<Voucher>().Find(info => info.Id == qrCodeId).FirstOrDefaultAsync();
+        var qrCode = await _work.Get<QrCode>().Find(info => info.Id == qrCodeId).FirstOrDefaultAsync();
         
         if (qrCode == null){
             return BadRequest(new
             {
-                Data = default(OrderItemView),
-                Message = "Không tìm thấy Qr code"
+                Data = default(QrCodeView),
+                Message = "Không tìm thấy Voucher"
             });
         }
 
-        if (qrCode.QrStatus != VoucherStatus.Commit)  
+        if (qrCode.QrCodeStatus != QrCodeStatus.Commit)  
             return BadRequest(new
             {
-                Data = default(OrderItemView),
-                Message = "Qr code không đủ điều kiện sửa dụng"
+                Data = default(QrCodeView),
+                Message = "Voucher chưa đủ điều kiện sửa dụng"
             });
         
-        qrCode.QrStatus = VoucherStatus.Used;
+        qrCode.QrCodeStatus = QrCodeStatus.Used;
         await _work.CompleteAsync();
         
         return Ok(new
         {
-            Data = await _work.Get<OrderItem>()
-                .Find<OrderItemView>(item => item.QrCode != null && item.QrCodeId != null && item.QrCode.HashCode == hashCode &&
-                                             item.ProviderId == providerId).FirstOrDefaultAsync(),
-            Message = "Đã sửa dụng Qr code"
+            Data = await _work.Get<QrCode>()
+                .Find<QrCodeView>(item =>  item.HashCode == hashCode &&
+                                          item.ProviderId == providerId).FirstOrDefaultAsync(),
+            Message = "Voucher đã sử dụng"
         });
 
     }
@@ -119,8 +120,8 @@ public class ProviderController : ControllerBase
     [HttpPost("qr-item")]
     public async Task<IActionResult> GetOrderItem(string hashCode, [FromClaim("ProviderId")] int? providerId)
     {
-        var item = await _work.Get<OrderItem>()
-            .Find<OrderItemView>(item => item.QrCode != null && item.QrCodeId != null && item.QrCode.HashCode == hashCode &&
+        var item = await _work.Get<QrCode>()
+            .Find<QrCodeView>(item =>  item.HashCode == hashCode &&
                           item.ProviderId == providerId).FirstOrDefaultAsync();
         if (item == null)
         {
@@ -131,17 +132,22 @@ public class ProviderController : ControllerBase
             });
         }
         
-        if (item.QrCode.QrStatus != VoucherStatus.Commit)  
+        if (item.QrCodeStatus == QrCodeStatus.Commit)  
             return BadRequest(new
             {
-                Data = default(OrderItemView),
-                Message = "Vé không đủ điều kiện sửa dụng"
+                Data = item,
+                Message = "Vé đủ điều kiện sửa dụng"
             });
-
-        return Ok(new
+        if(item.QrCodeStatus == QrCodeStatus.Used)
+            return Ok(new
         {
             Data = item,
-            Message = "Sẵn sàng sửa dụng"
+            Message = "Voucher đã sử dụng"
+        });
+        return BadRequest(new
+        {
+            Data = default(QrCodeView),
+            Message = "Voucher chưa đủ điều kiện sửa dụng"
         });
     }
     
@@ -149,29 +155,34 @@ public class ProviderController : ControllerBase
     [HttpPost("order-item")]
     public async Task<IActionResult> GetOrderItem(int orderItemId, [FromClaim("ProviderId")] int? providerId)
     {
-        var item = await _work.Get<OrderItem>()
-            .Find<OrderItemView>(item => item.Id == orderItemId && item.ProviderId == providerId).FirstOrDefaultAsync();
+        var item = await _work.Get<QrCode>()
+            .Find<QrCodeView>(item => item.Id == orderItemId && item.ProviderId == providerId).FirstOrDefaultAsync();
         if (item == null)
         {
             return BadRequest(new
             {
-                Data = default(OrderItemView),
-                Message = "Không tìm thấy vé"
+                Data = item,
+                Message = "Không tìm thấy Qr code"
             });
         }
         
-        if (item.QrCode.QrStatus != VoucherStatus.Commit)  
+        if (item.QrCodeStatus == QrCodeStatus.Commit)  
             return BadRequest(new
             {
-                Data = default(OrderItemView),
-                Message = "Vé không đủ điều kiện sửa dụng"
+                Data = item,
+                Message = "Vé đủ điều kiện sửa dụng"
             });
-        
-        return Ok(new
+        if(item.QrCodeStatus == QrCodeStatus.Used)
+            return Ok(new
+            {
+                Data = item,
+                Message = "Voucher đã sử dụng"
+            });
+        return BadRequest(new
         {
-            Data = item,
-            Message = "Vé sẵn sàng sửa dụng"
+            Data = default(QrCodeView),
+            Message = "Voucher chưa đủ điều kiện sửa dụng"
         });
-    }*/
+    }
     
 }

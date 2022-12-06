@@ -14,8 +14,7 @@ public class ProviderRepository : Repository<ServiceProvider>, IProviderReposito
     public override IQueryable<ServiceProvider> IncludeAll()
     {
         return Models
-            .Include(s => s.UserInfo)
-            .Include(s => s.AssignedSeller);
+            .Include(s => s.UserInfo);
 
     }
 }

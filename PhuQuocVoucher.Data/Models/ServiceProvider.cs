@@ -22,13 +22,11 @@ public class ServiceProvider : BaseModel, IOrderAble
 
     public User UserInfo { get; set; }
     public int UserInfoId { get; set; }
-
-    public Seller? AssignedSeller { get; set; }
-
-    public int? AssignedSellerId { get; set; }
-
-    public IEnumerable<Service> Services { get; set; }
     
+    public IEnumerable<Service> Services { get; set; }
+
+    public IList<Voucher> vouchers { get; set; }
+
     public void ConfigOrderBy()
     {
         SetUpOrderBy<ServiceProvider>();

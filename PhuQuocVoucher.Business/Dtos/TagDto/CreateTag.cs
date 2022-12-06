@@ -6,6 +6,5 @@ namespace PhuQuocVoucher.Business.Dtos.TagDto;
 
 public class CreateTag : CreateDto, ICreateRequest<Tag>
 {
-    [Required]
-    public string Name { get; set; }
+    [Required] public string Name { get; set; }
 }

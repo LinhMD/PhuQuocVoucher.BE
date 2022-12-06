@@ -1,6 +1,7 @@
 ﻿using PhuQuocVoucher.Business.Dtos.BlogDto;
 using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.CartItemDto;
+using PhuQuocVoucher.Business.Dtos.ComboDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.LoginDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
@@ -11,7 +12,6 @@ using PhuQuocVoucher.Business.Dtos.ServiceDto;
 using PhuQuocVoucher.Business.Dtos.TagDto;
 using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Business.Dtos.VoucherDto;
-using PhuQuocVoucher.Data.Models;
 using static PhuQuocVoucher.Business.Dtos.IDto;
 
 namespace PhuQuocVoucher.Business.Dtos;
@@ -32,7 +32,9 @@ public static class DtoConfig
         Config<SellerView>();
         Config<SellerSView>();
         Config<SimpleProviderView>();
-        
+        Config<ComboView>();
+        Config<ComboSView>();
+
         Config<VoucherView>();
         Config<VoucherSView>();
         Config<CustomerSimpleView>();
@@ -40,11 +42,11 @@ public static class DtoConfig
         Config<TagView>();
 
         Config<CreateUser>();
-        Config<CreateProvider>();   
+        Config<CreateProvider>();
         Config<CreateCustomer>();
         Config<CreateBlog>();
         Config<SignUpRequest>();
-        
+
         Config<CreateService>();
     }
 }

@@ -5,6 +5,7 @@ using CrudApiTemplate.Utilities;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
@@ -29,7 +30,8 @@ public class UserService : ServiceCrud<User>, IUserService
             Hash = hash,
             Salt = salt,
             Status = status,
-            PhoneNumber = signUp.PhoneNumber
+            PhoneNumber = signUp.PhoneNumber,
+            AvatarLink = signUp.AvatarLink
         };
 
         user.Validate();
@@ -49,6 +51,14 @@ public class UserService : ServiceCrud<User>, IUserService
                         UserInfoId = user.Id,
                     };
                     await UnitOfWork.Get<Customer>().AddAsync(customer);
+                    var cart = (await UnitOfWork.Get<Cart>().AddAsync(new Cart
+                               {
+                                   Status = ModelStatus.Active,
+                                   CreateAt = DateTime.Now,
+                                   CustomerId = customer.Id
+                               })).Adapt<CartView>();
+                    customer.CartId = cart.Id;
+                    await UnitOfWork.CompleteAsync();
                     break;
                 }
                 case Role.Seller: 
@@ -101,5 +111,58 @@ public class UserService : ServiceCrud<User>, IUserService
         var view = user.Adapt<UserView>();
 
         return view;
+    }
+
+    
+    public async Task<User> UpdateUserAdmin(AdminUpdate update, int userId)
+    {
+        var user = await UnitOfWork.Get<User>().Find(u => u.Id == userId).FirstOrDefaultAsync();
+
+        var provider = await UnitOfWork.Get<ServiceProvider>().Find((p => p.UserInfoId == userId)).FirstOrDefaultAsync();
+        
+        if (user == null)
+        {
+            throw new ModelNotFoundException($"Not found User with id {userId}");
+        }
+
+        if (update.UserName != null)
+        {
+            user.UserName = update.UserName;
+        }
+        
+        if (update.Email != null)
+        {
+            user.Email = update.Email;
+        }
+        if (update.AvatarLink != null)
+        {
+            user.AvatarLink = update.AvatarLink;
+        }
+        if (update.PhoneNumber != null)
+        {
+            user.PhoneNumber = update.PhoneNumber;
+        }
+
+        if (provider == null)
+        {
+            await UnitOfWork.CompleteAsync();
+            return user;
+        }
+        
+        if (update.TaxCode != null)
+        {
+            provider.TaxCode = update.TaxCode;
+        }
+        if (update.Address != null)
+        {
+            provider.Address = update.Address;
+        }
+        if (update.ProviderName != null)
+        {
+            provider.ProviderName = update.ProviderName;
+        }
+        await UnitOfWork.CompleteAsync();
+
+        return user;
     }
 }

@@ -19,15 +19,15 @@ public class Service : BaseModel, IOrderAble
     public ServiceType ServiceType { get; set; }
 
     public int ServiceTypeId { get; set; }
-    public Place ServiceLocation { get; set; }
-
-    public double CommissionRate { get; set; }
     
-    public int ServiceLocationId { get; set; }
+    public Place? ServiceLocation { get; set; }
 
-    public ServiceProvider Provider { get; set; }
+    
+    public int? ServiceLocationId { get; set; }
 
-    public int ProviderId { get; set; }
+    public ServiceProvider? Provider { get; set; }
+
+    public int? ProviderId { get; set; }
     
     public void ConfigOrderBy()
     {

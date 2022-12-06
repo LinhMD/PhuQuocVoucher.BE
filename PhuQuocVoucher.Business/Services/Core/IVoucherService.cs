@@ -4,7 +4,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Services.Core;
 
-public interface IVoucherService : IServiceCrud<VoucherCompaign>
+public interface IVoucherService : IServiceCrud<Voucher>
 {
     public Task<VoucherView> CreateAsync(CreateVoucher createVoucher);
 
@@ -12,4 +12,5 @@ public interface IVoucherService : IServiceCrud<VoucherCompaign>
 
     public Task UpdateInventory();
 
+    public Task UpdateVoucherInventoryList(IList<int> voucherIds);
 }

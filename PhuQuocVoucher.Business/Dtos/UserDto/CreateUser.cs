@@ -7,16 +7,11 @@ namespace PhuQuocVoucher.Business.Dtos.UserDto;
 
 public class CreateUser : CreateDto, ICreateRequest<User>
 {
-
-    [Required]
-    [EmailAddress]
-    public string Email { get; set; }
+    [Required] [EmailAddress] public string Email { get; set; }
 
     public string? AvatarLink { get; set; }
 
-    [Required]
-    [MaxLength(255)]
-    public string UserName { get; set; }
+    [Required] [MaxLength(255)] public string UserName { get; set; }
 
     [Required] public Role Role { get; set; } = Role.Customer;
 

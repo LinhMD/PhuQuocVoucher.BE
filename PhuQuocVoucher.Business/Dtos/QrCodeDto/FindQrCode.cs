@@ -4,25 +4,21 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.QrCodeDto;
 
-public class FindQrCode : IFindRequest<Voucher>
+public class FindQrCode : IFindRequest<QrCode>
 {
-    
     public int? Id { get; set; }
-    
+
     public int? VoucherId { get; set; }
 
-    public VoucherStatus? Status { get; set; }
-    
+    public QrCodeStatus? QrCodeStatus { get; set; }
+
     [BiggerThan(nameof(BaseModel.UpdateAt))]
     public DateTime? UpdateAt_startTime { get; set; }
-    
-    [LessThan(nameof(BaseModel.UpdateAt))]
-    public DateTime? UpdateAt_endTime { get; set; }
+
+    [LessThan(nameof(BaseModel.UpdateAt))] public DateTime? UpdateAt_endTime { get; set; }
 
     [BiggerThan(nameof(BaseModel.CreateAt))]
     public DateTime? CreateAt_startTime { get; set; }
-    
-    [LessThan(nameof(BaseModel.CreateAt))]
-    public DateTime? CrateAt_endTime { get; set; }
 
+    [LessThan(nameof(BaseModel.CreateAt))] public DateTime? CrateAt_endTime { get; set; }
 }

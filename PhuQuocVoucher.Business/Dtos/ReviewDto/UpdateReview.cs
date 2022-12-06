@@ -3,7 +3,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.ReviewDto;
 
-public class UpdateReview: UpdateDto, IUpdateRequest<Review>
+public class UpdateReview : UpdateDto, IUpdateRequest<Review>
 {
     public byte? Rating { get; set; }
 

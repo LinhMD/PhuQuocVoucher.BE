@@ -62,12 +62,13 @@ public class PaymentService
             UserId = userId,
             PaymentDate = DateTime.Now,
             PaymentStatus = PaymentStatus.Pending,
-            RequestId = requestId
+            RequestId = requestId,
+            Order = order,
         };
 
         await _work.Get<PaymentDetail>().AddAsync(payment);
 
-        var rawHash = $"accessKey={_momoSetting.AccessKey}&amount={order.TotalPrice}&extraData={extraData}&ipnUrl={_momoSetting.IpnCallback}&orderId={payment.Id}&orderInfo={orderInfo}&partnerCode={_momoSetting.PartnerCode}&redirectUrl={redirectUrl}&requestId={requestId}&requestType={requestType}";
+        var rawHash = $"accessKey={_momoSetting.AccessKey}&amount={order.TotalPrice}&extraData={extraData}&ipnUrl={_momoSetting.IpnCallback}&orderId={payment.Id + "_l"}&orderInfo={orderInfo}&partnerCode={_momoSetting.PartnerCode}&redirectUrl={redirectUrl}&requestId={requestId}&requestType={requestType}";
 
         var signature = MoMoSecurity.SignSha256(rawHash, secretKey!);
         
@@ -80,7 +81,7 @@ public class PaymentService
             {"storeId", "Phu QuocVoucher"},
             {"requestId", requestId},
             {"amount", order.TotalPrice},
-            {"orderId", payment.Id},
+            {"orderId", payment.Id + "_l"}, //cheating
             {"orderInfo", orderInfo},
             {"redirectUrl", redirectUrl},
             {"ipnUrl", ipnUrl},
@@ -111,38 +112,35 @@ public class PaymentService
     public async Task UpdateStatusWhenSuccessAsync(MomoIPNRequest request)
     {
         
-        //todo:
-        /*if (request.ResultCode != 9000 && request.ResultCode != 0 )
-            throw new ModelValueInvalidException("Something went wrong when processing payment");*/
+        if (request.ResultCode != 9000 && request.ResultCode != 0 )
+            throw new ModelValueInvalidException("Something went wrong when processing payment");
 
-        /*
-        var paymentId = request.OrderId;
-        var order = await _work.Get<Order>().Find(order => order.PaymentDetailId == paymentId).FirstOrDefaultAsync();
+        
+        var paymentId = int.Parse(request.OrderId.Split("_")[0]);
+        var order = await _work.Get<Order>().IncludeAll().Where(order => order.PaymentDetailId == paymentId).FirstOrDefaultAsync();
 
         if (order == null)
             throw new ModelNotFoundException($"Order not found with id {request.OrderId}");
-
-
-        var qrCodeInfos = await _work.Get<Voucher>().Find(qr => qrCodeIds.Contains(qr.Id)).ToListAsync();
-
+        
         var paymentDetail = await _work.Get<PaymentDetail>().Find(p => p.RequestId.ToString() == request.RequestId)
             .FirstOrDefaultAsync();
-
         
-        await _work.CompleteAsync();
         if (paymentDetail == null || paymentDetail.OrderId != order.Id)
             throw new ModelValueInvalidException("");
 
         paymentDetail.PaymentStatus = PaymentStatus.Success;
-        qrCodeInfos.ForEach(qr => qr.QrStatus = VoucherStatus.Commit);
 
+        var qrCodes = await _work.Get<QrCode>().Find(qr => qr.OrderId == order.Id).ToListAsync();
+        foreach (var orderQrCode in qrCodes)
+        {
+            orderQrCode.QrCodeStatus = QrCodeStatus.Commit;
+        }
         order.OrderStatus = OrderStatus.Completed;
         await _work.CompleteAsync();
         if(order.SellerId == null)
             await _orderService.SendOrderEmailToCustomer(order.Id);
         
         var momoResponse = await ConfirmPaymentAsync(paymentDetail);
-        */
         
         
         
@@ -160,7 +158,7 @@ public class PaymentService
 
     public async Task PaymentFailed(int paymentId, int orderId)
     {
-        /*var payment = await _work.Get<PaymentDetail>().GetAsync(paymentId);
+        var payment = await _work.Get<PaymentDetail>().GetAsync(paymentId);
         
         if (payment is {PaymentStatus: PaymentStatus.Pending})
         {
@@ -169,22 +167,30 @@ public class PaymentService
             payment.IsValid = false;
             payment.PaymentStatus = PaymentStatus.Failed;
         }
+        var order = await _work.Get<Order>().Find(order => order.PaymentDetailId == paymentId).FirstOrDefaultAsync();
 
-        var orderItems = await _work.Get<OrderItem>().Find(item => item.OrderId == orderId).ToListAsync();
-        orderItems.ForEach(item =>
+        if (order == null)
+            throw new ModelNotFoundException($"Order not found with id {orderId}");
+
+        var qrCodes = await _work.Get<QrCode>().Find(qr => qr.OrderId == order.Id).ToListAsync();
+        foreach (var qrCode in qrCodes)
         {
-            if (item.QrCode != null) item.QrCode.QrStatus = VoucherStatus.Active;
-        });
-        var order = await _work.Get<Order>().GetAsync(orderId);
-        if (order != null) order.OrderStatus = OrderStatus.Failed;
-        await _work.CompleteAsync();*/
+            qrCode.QrCodeStatus = QrCodeStatus.Active;
+            qrCode.SoldPrice = 0;
+            qrCode.Order = null;
+            qrCode.OrderId = null;
+        }
+
+        order.QrCodes = new List<QrCode>();
+        order.OrderStatus = OrderStatus.Failed;
+        await _work.CompleteAsync();
         
     }
 
     public async Task<MomoConfirmResponse> ConfirmPaymentAsync(PaymentDetail payment)
     {
         var partnerCode = _momoSetting.PartnerCode;
-        var orderId = payment.Id;
+        var orderId = payment.Id + "_l";
         var requestId = payment.RequestId;
         var amount = payment.TotalAmount;
         var requestType = "capture";

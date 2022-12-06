@@ -6,12 +6,9 @@ namespace PhuQuocVoucher.Business.Dtos.ServiceTypeDto;
 
 public class CreateServiceType : CreateDto, ICreateRequest<ServiceType>
 {
-    [Required]
-    [MaxLength(255)]
-    public string Name { get; set; }
+    [Required] [MaxLength(255)] public string Name { get; set; }
 
-    public int?  ParentTypeId { get; set; }
-    
-    [Required]
-    public double?  DefaultCommissionRate { get; set; }
+    public int? ParentTypeId { get; set; }
+
+    [Required] public double? DefaultCommissionRate { get; set; }
 }

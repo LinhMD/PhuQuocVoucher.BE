@@ -6,12 +6,9 @@ namespace PhuQuocVoucher.Business.Dtos.PlaceDto;
 
 public class CreatePlace : CreateDto, ICreateRequest<Place>
 {
-    [Required]
-    public string Name { get; set; }
+    [Required] public string Name { get; set; }
 
-    [Required]
-    public string MapLocation { get; set; }
+    [Required] public string MapLocation { get; set; }
 
-    [Required]
-    public string Image { get; set; }
+    [Required] public string Image { get; set; }
 }

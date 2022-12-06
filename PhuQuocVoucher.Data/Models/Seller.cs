@@ -27,9 +27,15 @@ public class Seller : BaseModel, IOrderAble
     public IEnumerable<Order> HandleOrders { get; set; }
 
     public IEnumerable<Customer> Customers { get; set; }
+
+    public IList<SellerActivity> Activities { get; set; }
+    
+    public SellerRank Rank { get; set; }
+
+    public int RankId { get; set; }
+    
     public void ConfigOrderBy()
     {
-        
         SetUpOrderBy<Seller>();
     }
 }

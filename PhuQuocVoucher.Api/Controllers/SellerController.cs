@@ -116,21 +116,6 @@ public class SellerController : ControllerBase
         return Ok(await _sellerService.DeleteAsync(id));
     }
 
-    /// <summary>
-    /// Create an order for customer,
-    /// required seller authorization
-    /// </summary>
-    /// <param name="createOrder">Order being create</param>
-    /// <param name="sellerId">nah this field get from jwt, better be authenticated :v</param>
-    /// <returns>Order have been successfully created</returns>
-    [Authorize(Roles = nameof(Role.Seller))]
-    [SwaggerResponse(200,"Order view", typeof(OrderView))]
-    [HttpPost("order")]
-    public async Task<ActionResult<OrderView>> CreateOrder(CreateOrder createOrder, [FromClaim("SellerId")] int sellerId)
-    {
-        createOrder.SellerId = sellerId;
-        return Ok(await _orderService.CreateOrderAsync(createOrder));
-    }
     
     /// <summary>
     /// Create a customer

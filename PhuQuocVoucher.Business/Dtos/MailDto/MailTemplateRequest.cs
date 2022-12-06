@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace PhuQuocVoucher.Business.Dtos.MailDto;
+﻿namespace PhuQuocVoucher.Business.Dtos.MailDto;
 
 public class MailTemplateRequest
 {

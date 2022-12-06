@@ -4,7 +4,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.TagDto;
 
-public class TagView : IView<Tag>, IDto
+public class TagView : BaseModel, IView<Tag>, IDto
 {
     public int Id { get; set; }
 
@@ -13,6 +13,5 @@ public class TagView : IView<Tag>, IDto
     public void InitMapper()
     {
         TypeAdapterConfig<Tag, TagView>.NewConfig();
-
     }
 }

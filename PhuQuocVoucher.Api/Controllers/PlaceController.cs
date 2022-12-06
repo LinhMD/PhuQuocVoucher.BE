@@ -19,11 +19,11 @@ public class PlaceController : ControllerBase
 
     private IUnitOfWork _work;
 
-    private readonly ILogger<CustomerController> _logger;
+    private readonly ILogger<PlaceController> _logger;
 
     private readonly IRepository<Place> _repo;
 
-    public PlaceController(IPlaceService placeService, ILogger<CustomerController> logger, IUnitOfWork work)
+    public PlaceController(IPlaceService placeService, ILogger<PlaceController> logger, IUnitOfWork work)
     {
         _placeService = placeService;
         _logger = logger;

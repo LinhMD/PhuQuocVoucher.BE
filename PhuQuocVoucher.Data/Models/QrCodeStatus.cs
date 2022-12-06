@@ -4,7 +4,7 @@ namespace PhuQuocVoucher.Data.Models;
 
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum VoucherStatus
+public enum QrCodeStatus
 {
     Active, //sitting there doing nothing
     Pending,

@@ -39,5 +39,6 @@ public class BaseModel
 public enum ModelStatus
 {
     Active,
-    Disable
+    Disable,
+    New
 }

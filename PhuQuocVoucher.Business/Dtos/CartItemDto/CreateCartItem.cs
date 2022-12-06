@@ -7,10 +7,6 @@ public class CreateCartItem : CreateDto, ICreateRequest<CartItem>
 {
     public int Quantity { get; set; }
 
-    public int PriceId { get; set; }
-    
-    public int? ProfileId { get; set; }
-    
-    public DateTime? UseDate { get; set; }
-    
+    public int voucherId { get; set; }
+
 }

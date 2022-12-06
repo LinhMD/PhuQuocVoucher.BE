@@ -68,9 +68,10 @@ public class LoginController : ControllerBase
             case Role.Customer:
             {
                 var customer = await _work.Get<Customer>().Find(c => c.UserInfoId == user.Id).FirstOrDefaultAsync();
+                var cartId = await _work.Get<Cart>().Find(c => c.CustomerId == customer.Id).Select(c => c.Id).FirstOrDefaultAsync();
                 additionalClaims = new Dictionary<string, string?>
                 {
-                    {"CartId", customer?.CartId.ToString()},
+                    {"CartId", cartId.ToString()},
                     {"CustomerId", customer?.Id.ToString()}
                 };
                 break;

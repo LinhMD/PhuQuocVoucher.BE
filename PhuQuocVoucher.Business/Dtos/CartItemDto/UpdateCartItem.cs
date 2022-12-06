@@ -7,6 +7,4 @@ public class UpdateCartItem : UpdateDto, IUpdateRequest<CartItem>
 {
     public int Quantity { get; set; }
     public int CartItemId { get; set; }
-    
-    
 }

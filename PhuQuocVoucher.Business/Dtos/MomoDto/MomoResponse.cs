@@ -5,8 +5,8 @@ public class MomoResponse
     public string partnerCode { get; set; }
 
     public string requestId { get; set; }
-    
-    public int orderId { get; set; }
+
+    public string orderId { get; set; }
 
     public long amount { get; set; }
 

@@ -5,5 +5,4 @@ namespace PhuQuocVoucher.Business.Dtos.OrderDto;
 
 public class UpdateOrder : UpdateDto, IUpdateRequest<Order>
 {
-    
 }

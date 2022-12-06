@@ -7,22 +7,16 @@ namespace PhuQuocVoucher.Business.Dtos.ServiceDto;
 
 public class CreateService : CreateDto, ICreateRequest<Service>
 {
+    [Required] [MaxLength(2048)] public string Name { get; set; }
 
-    [Required]
-    [MaxLength(2048)]
-    public string Name { get; set; }
+    [Required] public string Description { get; set; }
 
-    [Required]
-    public string Description { get; set; }
+    [Required] public int TypeId { get; set; }
 
-    [Required]
-    public int TypeId { get; set; }
-
-    [Required]
-    public int ServiceLocationId { get; set; }
-
-    [Required]
-    public int ProviderId { get; set; }
+    [Required] public int ServiceLocationId { get; set; }
+    
+    [Required] public double CommissionRate { get; set; }
+    [Required] public int ProviderId { get; set; }
 
     public override void InitMapper()
     {

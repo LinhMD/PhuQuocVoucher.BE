@@ -28,6 +28,7 @@ public static class ServicesInitDi
         serviceCollection.AddScoped<IVoucherService, VoucherService>();
         serviceCollection.AddScoped<IFirebaseServiceIntegration, FirebaseService>();
         serviceCollection.AddScoped<IMailingService, MailingService>();
+        serviceCollection.AddScoped<IComboService, ComboService>();
         serviceCollection.AddScoped<IQrCodeService, QrCodeService>();
         serviceCollection.AddScoped<MomoSetting>();
         serviceCollection.AddScoped<PaymentService>();

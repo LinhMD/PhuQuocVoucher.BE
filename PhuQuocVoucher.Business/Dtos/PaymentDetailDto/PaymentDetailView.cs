@@ -20,5 +20,4 @@ public class PaymentDetailView : IView<PaymentDetail>, IDto
     {
         TypeAdapterConfig<PaymentDetail, PaymentDetailView>.NewConfig();
     }
-
 }

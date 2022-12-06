@@ -14,14 +14,14 @@ public static class OrderByConfig
         new Order().ConfigOrderBy();
         new PaymentDetail().ConfigOrderBy();
         new Place().ConfigOrderBy();
-        new Voucher().ConfigOrderBy();
+        new QrCode().ConfigOrderBy();
         new Review().ConfigOrderBy();
         new Seller().ConfigOrderBy();
         new Service().ConfigOrderBy();
         new ServiceType().ConfigOrderBy();
         new Tag().ConfigOrderBy();
         new User().ConfigOrderBy();
-        new VoucherCompaign().ConfigOrderBy();
+        new Voucher().ConfigOrderBy();
         
     }
 }

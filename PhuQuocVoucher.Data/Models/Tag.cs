@@ -15,7 +15,7 @@ public class Tag : BaseModel, IOrderAble
     
     public IList<Blog> Blogs { get; set; }
     
-    public IList<VoucherCompaign> Compaign { get; set; }
+    public IList<Voucher> Compaign { get; set; }
     public void ConfigOrderBy()
     {
         SetUpOrderBy<Tag>();

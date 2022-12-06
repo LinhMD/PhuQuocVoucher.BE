@@ -14,6 +14,7 @@ public class Order : BaseModel, IOrderAble
     public DateTime? CompleteDate { get; set; }
 
     public OrderStatus OrderStatus { get; set; } = OrderStatus.Processing;
+    
     public Customer? Customer { get; set; }
 
     public int? CustomerId { get; set; }
@@ -27,10 +28,12 @@ public class Order : BaseModel, IOrderAble
     
     public Guid? PaymentRequestId { get; set; }
 
+    public IList<QrCode> QrCodes { get; set; }
+
+    public IList<Voucher> Vouchers { get; set; }
     
     public void ConfigOrderBy()
     {
-        
         SetUpOrderBy<Order>();
     }
 

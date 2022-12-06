@@ -6,13 +6,11 @@ namespace PhuQuocVoucher.Business.Dtos.UserDto;
 
 public class UpdateUser : UpdateDto, IUpdateRequest<User>
 {
-    [EmailAddress]
-    public string? Email { get; set; }
+    [EmailAddress] public string? Email { get; set; }
 
     public string? AvatarLink { get; set; }
 
-    [MaxLength(255)]
-    public string? UserName { get; set; }
+    [MaxLength(255)] public string? UserName { get; set; }
 
     public Role? Role { get; set; }
 
@@ -21,6 +19,4 @@ public class UpdateUser : UpdateDto, IUpdateRequest<User>
     public string? PhoneNumber { get; set; }
 
     public ModelStatus? Status { get; set; }
-
-
 }

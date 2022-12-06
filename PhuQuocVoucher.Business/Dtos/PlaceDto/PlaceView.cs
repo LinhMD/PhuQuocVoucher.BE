@@ -5,7 +5,7 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.PlaceDto;
 
-public class PlaceView : IView<Place>, IDto
+public class PlaceView : BaseModel,IView<Place>, IDto
 {
     public int Id { get; set; }
 

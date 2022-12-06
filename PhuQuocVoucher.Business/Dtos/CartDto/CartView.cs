@@ -5,9 +5,8 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.CartDto;
 
-public class CartView : IView<Cart>, IDto
+public class CartView : BaseModel, IView<Cart>, IDto
 {
-    
     public int Id { get; set; }
 
     public int CustomerId { get; set; }

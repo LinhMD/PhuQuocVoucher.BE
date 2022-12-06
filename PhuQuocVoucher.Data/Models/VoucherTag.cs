@@ -1,6 +1,6 @@
 ﻿namespace PhuQuocVoucher.Data.Models;
 
-public class TagVoucher
+public class VoucherTag
 {
     public int TagId { get; set; }
 
@@ -8,5 +8,5 @@ public class TagVoucher
     
     public int VoucherId { get; set; }
 
-    public VoucherCompaign Compaign { get; set; }
+    public Voucher voucher { get; set; }
 }

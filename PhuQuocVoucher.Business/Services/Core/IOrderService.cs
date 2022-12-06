@@ -11,7 +11,6 @@ public interface IOrderService : IServiceCrud<Order>{
 
     public Task<(IList<OrderView>, int)> GetOrdersByCustomerId(int cusId, PagingRequest request, OrderRequest<Order> sortBy);
 
-    public Task<OrderView> CreateOrderAsync(CreateOrder createOrder, int? sellerId = null);
 
     public Task<OrderView> PlaceOrderAsync(CartView cart, int cusId, int? sellerId = null);
 

@@ -5,7 +5,7 @@ using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Data.Repositories.Implements;
 
-public class QrCodeRepository : Repository<Voucher>, IQrCodeRepository
+public class QrCodeRepository : Repository<QrCode>, IQrCodeRepository
 {
     public QrCodeRepository(DbContext context) : base(context)
     {
