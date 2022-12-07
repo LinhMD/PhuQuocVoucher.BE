@@ -96,15 +96,15 @@ public class CartService : ServiceCrud<Cart>, ICartService
         await ClearCart(cart.Id);
         cart.CartItems.Clear();
 
-        var dict = cart.CartItems.Aggregate(new Dictionary<int, int>(), (dic, item) =>
+        var dict = updateCart.CartItems.Aggregate(new Dictionary<int, int>(), (dic, item) =>
         {
-            dic.TryGetValue(item.VoucherId, out var quantity);
-            dic[item.VoucherId] = item.Quantity + quantity;
+            dic.TryGetValue(item.voucherId, out var quantity);
+            dic[item.voucherId] = item.Quantity + quantity;
             return dic;
         });
 
         var inventory = await UnitOfWork.Get<Voucher>()
-            .Find(c => dict.ContainsKey(c.Id) && c.EndDate >= DateTime.Now && c.Status == ModelStatus.Active && c.Inventory > 0)
+            .Find(c => dict.Keys.Contains(c.Id) && c.EndDate >= DateTime.Now && c.Status == ModelStatus.Active && c.Inventory > 0)
             .ToDictionaryAsync(voucher => voucher.Id, voucher => voucher);
 
         var notFoundVoucher = dict.Keys.Except(inventory.Keys).ToList();
@@ -129,11 +129,11 @@ public class CartService : ServiceCrud<Cart>, ICartService
                 IsCombo = inventory[item.voucherId].IsCombo
             };
             cartItem.CartId = cart.Id;
-            var itemView = (await UnitOfWork.Get<CartItem>().AddAsync(cartItem)).Adapt<CartItemView>();
-            cart.CartItems.Add(itemView);
+            await UnitOfWork.Get<CartItem>().AddAsync(cartItem);
+            
         }
 
-        return cart;
+        return await GetCartByCustomerAsync(customerId);
     }
 
     public async Task<List<RemainVoucherInventory>> CheckCart(int customerId)
@@ -163,25 +163,27 @@ public class CartService : ServiceCrud<Cart>, ICartService
     {
         var dict = cart.CartItems.Aggregate(new Dictionary<int, int>(), (dic, item) =>
         {
-            dic[item.voucherId] += item.Quantity;
+            dic.TryGetValue(item.voucherId, out int value);
+            dic[item.voucherId] = item.Quantity + value;
             return dic;
         });
 
         var inventory = await UnitOfWork.Get<Voucher>()
-            .Find(c => dict.ContainsKey(c.Id))
+            .Find(c => dict.Keys.Contains(c.Id))
             .Select(c => new {c.Id, c.Inventory}).Select(value => new RemainVoucherInventory
             {
                 RemainInventory = value.Inventory,
                 VoucherId = value.Id
             }).ToListAsync();
         var notFoundVoucher = dict.Keys.Except(inventory.Select(i => i.VoucherId)).ToList();
+        /*
         if (notFoundVoucher.Any())
             throw new ModelNotFoundException($"vouchers not found : {notFoundVoucher.Aggregate("", (s, i) => s += ", " + i)}");
         
         if (dict.Keys.Any(id => (dict[id] > inventory[id].RemainInventory))) 
         {
             throw new ModelValueInvalidException("Insufficient inventory");
-        }
+        }*/
         return inventory;
     }
 }

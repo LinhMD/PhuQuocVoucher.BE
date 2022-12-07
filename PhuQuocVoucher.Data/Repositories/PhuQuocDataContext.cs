@@ -17,7 +17,7 @@ public class PhuQuocDataContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer(
-            _config["ConnectionStrings:PhuQuocDB_devops"],
+            _config["ConnectionStrings:local"],
             b => b.MigrationsAssembly("PhuQuocVoucher.Api")
                 .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
     }
@@ -83,6 +83,8 @@ public class PhuQuocDataContext : DbContext
     public DbSet<Voucher>  Vouchers { get; set; }
 
     public DbSet<Order> Orders { get; set; }
+
+    public DbSet<OrderItem> OrderItems { get; set; }
 
     public DbSet<Review> Reviews { get; set; }
 

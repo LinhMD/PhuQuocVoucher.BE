@@ -42,6 +42,6 @@ public class VoucherSView : BaseModel, IView<Voucher>, IDto
     {
         TypeAdapterConfig<Voucher, VoucherSView>.NewConfig().Map(
             view => view.Inventory,
-            voucher => voucher.QrCodes.Count(qr => qr.QrCodeStatus == QrCodeStatus.Active));;
+            voucher => voucher.QrCodes.Count(qr => qr.QrCodeStatus == QrCodeStatus.Active));
     }
 }

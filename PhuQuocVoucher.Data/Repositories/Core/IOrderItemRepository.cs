@@ -1,6 +1,9 @@
-﻿namespace PhuQuocVoucher.Data.Repositories.Core;
+﻿using CrudApiTemplate.Repository;
+using PhuQuocVoucher.Data.Models;
 
-public class IOrderItem
+namespace PhuQuocVoucher.Data.Repositories.Core;
+
+public interface IOrderItemRepository : IRepository<OrderItem>
 {
     
 }

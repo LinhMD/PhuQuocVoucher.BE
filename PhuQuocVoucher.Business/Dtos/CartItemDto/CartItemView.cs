@@ -11,7 +11,7 @@ public class CartItemView : BaseModel, IView<CartItem>, IDto
 
     public int Quantity { get; set; }
 
-    public VoucherSView Voucher { get; set; }
+    public VoucherSView? Voucher { get; set; }
 
     public int VoucherId { get; set; }
 
@@ -20,6 +20,6 @@ public class CartItemView : BaseModel, IView<CartItem>, IDto
 
     public void InitMapper()
     {
-        TypeAdapterConfig<CartItem, CartItemView>.NewConfig();
+        TypeAdapterConfig<CartItem, CartItemView>.NewConfig().Map(view => view.Voucher , cart => cart.Voucher);
     }
 }

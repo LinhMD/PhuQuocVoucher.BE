@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using CrudApiTemplate.OrderBy;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PhuQuocVoucher.Data.Repositories;
 using PhuQuocVoucher.Data.Repositories.Core;
 
@@ -30,11 +31,18 @@ public class Order : BaseModel, IOrderAble
 
     public IList<QrCode> QrCodes { get; set; }
 
-    public IList<Voucher> Vouchers { get; set; }
+    public IList<OrderItem> OrderItems { get; set; }
+    
     
     public void ConfigOrderBy()
     {
         SetUpOrderBy<Order>();
+        
+        Expression<Func<Order, OrderStatus>> orderByStatus = voucher => voucher.OrderStatus;
+        
+        
+        OrderByProvider<Order>.OrderByDic.Add(nameof(OrderStatus), orderByStatus);
+        
     }
 
 } 

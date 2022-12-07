@@ -114,14 +114,14 @@ public class VoucherController : ControllerBase
     }
     
     [HttpPost("autogenerate")]
-    public async Task<IActionResult> GenerateQr(IList<int> voucherIds, int inventory)
+    public async Task<IActionResult> GenerateQr(GenerateQrcode voucherGen)
     {
-        var vouchers = await _repo.Find(v => voucherIds.Contains(v.Id) && v.Status == ModelStatus.Active && !v.IsCombo).ToListAsync();
+        var vouchers = await _repo.Find(v => voucherGen.voucherIds.Contains(v.Id) && v.Status == ModelStatus.Active && !v.IsCombo).ToListAsync();
 
         var qrCodes = new List<QrCode>();
         foreach (var voucher in vouchers)
         {
-            qrCodes.AddRange(Enumerable.Range(0, voucher.Inventory).Select(qr => new QrCode()
+            qrCodes.AddRange(Enumerable.Range(0, voucherGen.inventory).Select(qr => new QrCode()
             {
                 QrCodeStatus = QrCodeStatus.Active,
                 CreateAt = DateTime.Now,
@@ -136,20 +136,32 @@ public class VoucherController : ControllerBase
         }
 
         await _work.Get<QrCode>().AddAllAsync(qrCodes);
-        await _voucherService.UpdateVoucherInventoryList(voucherIds);
+        await _voucherService.UpdateVoucherInventoryList(voucherGen.voucherIds);
         return Ok();
     }
     [HttpPut("status")]
-    public async Task<IActionResult> UpdateStatus(IList<int> voucherIds, ModelStatus status)
+    public async Task<IActionResult> UpdateStatus(UpdateVoucherStatus update)
     {
-        var vouchers = await _repo.Find(v => voucherIds.Contains(v.Id) && v.Status == ModelStatus.Active && !v.IsCombo).ToListAsync();
+        var vouchers = await _repo.Find(v => update.voucherIds.Contains(v.Id) && v.Status == ModelStatus.Active && !v.IsCombo).ToListAsync();
 
         foreach (var voucher in vouchers)
         {
-            voucher.Status = status;
+            voucher.Status = update.status;
         }
 
         await _work.CompleteAsync();
         return Ok();
+    }
+    
+    public class UpdateVoucherStatus
+    {
+        public IList<int> voucherIds { get; set; }
+        public ModelStatus status { get; set; }
+    }
+    
+    public class GenerateQrcode
+    {
+        public IList<int> voucherIds { get; set; }
+        public int inventory { get; set; }
     }
 }
