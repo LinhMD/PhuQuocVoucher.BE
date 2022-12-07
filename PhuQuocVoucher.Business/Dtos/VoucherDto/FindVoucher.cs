@@ -62,5 +62,5 @@ public class FindVoucher : IFindRequest<Voucher>
 
     public ModelStatus? Status { get; set; }
 
-    public bool IsCombo => false;
+    public bool? IsCombo { get; set; } 
 }

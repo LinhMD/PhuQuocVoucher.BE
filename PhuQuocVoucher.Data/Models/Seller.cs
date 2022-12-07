@@ -28,12 +28,8 @@ public class Seller : BaseModel, IOrderAble
 
     public IEnumerable<Customer> Customers { get; set; }
 
-    public IList<SellerActivity> Activities { get; set; }
-    
-    public SellerRank Rank { get; set; }
+    public IList<SellerActivity> Activities { get; set; }   
 
-    public int RankId { get; set; }
-    
     public void ConfigOrderBy()
     {
         SetUpOrderBy<Seller>();
