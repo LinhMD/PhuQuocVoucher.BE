@@ -60,6 +60,8 @@ public class Voucher : BaseModel, IOrderAble
 
     public IList<ComboVoucher> Vouchers { get; set; }
 
+    public IList<OrderItem> OrderItems { get; set; }
+
     public void ConfigOrderBy()
     {
         SetUpOrderBy<Voucher>();

@@ -86,6 +86,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             throw new ModelNotFoundException("Cart of customer not found");
         
 
+        
         var comboIds = cart.CartItems.Where(v => v.IsCombo).Select(c => c.VoucherId).ToList();
         
         var comboDic = await UnitOfWork.Get<Voucher>().Find(cam => comboIds.Contains(cam.Id))
