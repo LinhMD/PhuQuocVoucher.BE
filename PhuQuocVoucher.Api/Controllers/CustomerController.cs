@@ -15,6 +15,7 @@ using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
+using PhuQuocVoucher.Business.Dtos.QrCodeDto;
 using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
@@ -269,14 +270,14 @@ public class CustomerController : ControllerBase
     /// <returns>OrderView</returns>
     [Authorize(Roles = nameof(Role.Customer))]
     [HttpPost("cart/place-order")]
-    public async Task<ActionResult<OrderView>> PlaceOrder([FromClaim("CustomerId")]int cusId, [FromClaim("CartId")]  int cartId)
+    public async Task<ActionResult<OrderView>> PlaceOrder([FromClaim("CustomerId")]int cusId, [FromClaim("CartId")]  int cartId, int? sellerId)
     {
         //Get User Cart
         var cart = await _cartService.GetCartByCustomerAsync(cusId);
      
         if (!cart!.CartItems.Any()) return BadRequest("Cart did not have any item");
       
-        return Ok(await _orderService.PlaceOrderAsync(cart, cusId));
+        return Ok(await _orderService.PlaceOrderAsync(cart, cusId, sellerId));
     }
 
     
@@ -376,5 +377,23 @@ public class CustomerController : ControllerBase
         UpdateCart cart)
     {
         return Ok(await _cartService.CheckItem(cart));
+    }
+    
+    /// <summary>
+    /// get qr code of order
+    /// </summary>
+    /// <returns>QrCodeSView</returns>
+    [Authorize(Roles = nameof(Role.Customer))]
+    [HttpGet("order/qr-code")]
+    public async Task<ActionResult<List<QrCodeSView>>> GetQrCodeOfOrder(
+        int orderId, [FromClaim("CustomerId")] int? customerId)
+    {
+        
+        var id = await _work.Get<Order>()
+            .Find(order => order.CustomerId == customerId && order.Id == orderId)
+            .Select(o => o.Id)
+            .FirstOrDefaultAsync();
+        
+        return Ok(await _work.Get<QrCode>().Find<QrCodeSView>(code => code.OrderId == id).ToListAsync());
     }
 }

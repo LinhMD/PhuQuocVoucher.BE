@@ -27,9 +27,20 @@ public class CartService : ServiceCrud<Cart>, ICartService
     {
         var customer = await UnitOfWork.Get<Customer>().GetAsync(customerId);
         if (customer == null) throw new ModelNotFoundException($"Customer {customerId} not found!!!");
-        var cart = await Repository.Find<CartView>(c => c.CustomerId == customerId).FirstOrDefaultAsync();
-
-        return cart!;
+        var cartView = await Repository.Find<CartView>(c => c.CustomerId == customerId).FirstOrDefaultAsync();
+        if (cartView == null)
+        {
+            var cart = new Cart()
+            {
+                Customer = customer,
+                Status = ModelStatus.Active,
+                CreateAt = DateTime.Now,
+                CustomerId = customerId,
+                CartItems = new List<CartItem>()
+            };
+            await Repository.AddAsync(cart);
+        }
+        return cartView!;
     }
 
     public async Task<CartView> AddItemToCart(CreateCartItem item, int customerId)

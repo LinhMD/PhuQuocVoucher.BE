@@ -44,6 +44,8 @@ public class ComboView : BaseModel, IView<Voucher>, IDto
     public IList<Review> Reviews { get; set; }
     public IEnumerable<VoucherSView> Vouchers { get; set; }
 
+    public VoucherKPI? Kpi { get; set; }
+
     public ModelStatus Status { get; set; }
 
     public void InitMapper()

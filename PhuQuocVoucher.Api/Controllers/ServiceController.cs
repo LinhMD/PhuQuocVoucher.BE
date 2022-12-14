@@ -19,23 +19,47 @@ public class ServiceController : ControllerBase
 {
     private readonly IServiceService _providerService;
     private readonly IRepository<Service> _repository;
-    public ServiceController(IServiceService provider, IUnitOfWork work)
+    private readonly IKpiService _kpiService;
+    public ServiceController(IServiceService provider, IUnitOfWork work, IKpiService kpiService)
     {
         _providerService = provider;
+        _kpiService = kpiService;
         _repository = work.Get<Service>();
     }
-
+    
+    [HttpGet("admin")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetAdmin([FromQuery]FindService request, [FromQuery]PagingRequest paging, string? orderBy, [FromClaim("ProviderId")] int? providerId, DateTime? kpiStartDate, DateTime? kpiEndDate)
+    {
+        request.ProviderId = providerId;
+        var (models, total) = await _providerService.GetAsync<ServiceView>(new GetRequest<Service>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<Service>(),
+            PagingRequest = paging
+        });
+        var serviceId = models.Select(m => m.Id).ToList();
+        var serviceKpis = await _kpiService.GetServiceKpi(serviceId, kpiStartDate, kpiEndDate);
+        foreach (var serviceView in models)
+        {
+            serviceKpis.TryGetValue(serviceView.Id, out var kpi);
+            serviceView.Kpi = kpi ?? new ServiceKPI();
+        }
+        return Ok((models, total).ToPagingResponse(paging));
+    }
+    
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> Get([FromQuery]FindService request, [FromQuery]PagingRequest paging, string? orderBy, [FromClaim("ProviderId")] int? providerId)
     {
         request.ProviderId = providerId;
-        return Ok((await _providerService.GetAsync<ServiceView>(new GetRequest<Service>
+        var (models, total) = await _providerService.GetAsync<ServiceView>(new GetRequest<Service>
         {
             FindRequest = request,
             OrderRequest = orderBy.ToOrderRequest<Service>(),
             PagingRequest = paging
-        })).ToPagingResponse(paging));
+        });
+        return Ok((models, total).ToPagingResponse(paging));
     }
 
     [HttpPost]

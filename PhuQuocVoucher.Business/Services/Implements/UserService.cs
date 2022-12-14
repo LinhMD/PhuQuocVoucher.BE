@@ -69,8 +69,7 @@ public class UserService : ServiceCrud<User>, IUserService
                         CreateAt = DateTime.Now,
                         SellerName = user.UserName,
                         UserInfoId = user.Id,
-                        UserInfo = user,
-                        CommissionRate = 0.02f
+                        UserInfo = user
                     };
                     await UnitOfWork.Get<Seller>().AddAsync(seller);
                     break;

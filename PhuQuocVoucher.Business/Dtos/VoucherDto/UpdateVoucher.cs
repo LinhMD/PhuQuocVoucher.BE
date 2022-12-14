@@ -19,7 +19,7 @@ public class UpdateVoucher : UpdateDto, IUpdateRequest<Voucher>
     
     public string?  SocialPost { get; set; }
     
-    public long CommissionRate { get; set; }
+    public float CommissionRate { get; set; }
     
     public DateTime? StartDate { get; set; }
 

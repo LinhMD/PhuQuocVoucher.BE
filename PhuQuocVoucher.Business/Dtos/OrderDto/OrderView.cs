@@ -20,7 +20,7 @@ public class OrderView : BaseModel,IView<Order>, IDto
 
     public int? SellerId { get; set; }
     
-    public IList<QrCodeSView> QrCodes { get; set; }
+    public IList<QrCodeSimpleView> QrCodes { get; set; }
 
     public string? SellerName { get; set; }
 

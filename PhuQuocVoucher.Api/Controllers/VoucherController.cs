@@ -24,33 +24,48 @@ public class VoucherController : ControllerBase
 
     private readonly IRepository<Voucher> _repo;
 
-    private IUnitOfWork _work;
+    private readonly IUnitOfWork _work;
 
-    public VoucherController(IVoucherService voucherService, ILogger<VoucherController> logger, IUnitOfWork work)
+    private readonly IKpiService _kpiService;
+    public VoucherController(IVoucherService voucherService, ILogger<VoucherController> logger, IUnitOfWork work, IKpiService kpiService)
     {
         _voucherService = voucherService;
         _logger = logger;
         _work = work;
+        _kpiService = kpiService;
         _repo = work.Get<Voucher>();
     }
 
     [HttpGet("admin")]
-    public async Task<IActionResult> Get([FromQuery] FindVoucher request, [FromQuery] PagingRequest paging, string? orderBy,[FromClaim("ProviderId")] int? providerId)
+    public async Task<IActionResult> Get(
+        [FromQuery] FindVoucher request,
+        [FromQuery] PagingRequest paging, 
+        string? orderBy,
+        [FromClaim("ProviderId")] int? providerId,
+        DateTime? kpiStartDate, DateTime? kpiEndDate)
     {
         request.ProviderId = providerId ?? request.ProviderId;
-        return Ok((await _voucherService.GetAsync<VoucherView>(new GetRequest<Voucher>
+        var (models, total) = await _voucherService.GetAsync<VoucherView>(new GetRequest<Voucher>
         {
             FindRequest = request,
             OrderRequest = orderBy.ToOrderRequest<Voucher>(),
             PagingRequest = paging
-        })).ToPagingResponse(paging));
+        });
+        var voucherIds = models.Select(m => m.Id).ToList();
+        var voucherKpis = await _kpiService.GetVoucherKpi(voucherIds, kpiStartDate, kpiEndDate);
+        foreach (var voucher in models)
+        {
+            voucherKpis.TryGetValue(voucher.Id , out var kpi);
+            voucher.Kpi = kpi ?? new VoucherKPI();
+        }
+        return Ok((models, total).ToPagingResponse(paging));
     }
 
     [AllowAnonymous]
-    [HttpGet("{voucherId:int}/seller/{sellerId:int} ")]
-    public async Task<RedirectResult> GetVoucher(int voucherId, int sellerId)
+    [HttpGet("v/{voucherId:int}/seller/{sellerId:int} ")]
+    public IActionResult GetVoucher(int voucherId, int sellerId)
     {
-        (await Task.FromResult("heloo")).Dump();
+        "heloo".Dump();
         //todo: add voucher M:M seller
         return Redirect($"https://phuquoc-voucher.vercel.app/voucher-detail/{voucherId}/seller/{sellerId}");
     }
@@ -129,6 +144,7 @@ public class VoucherController : ControllerBase
                 ProviderId = voucher.ProviderId,
                 VoucherId = voucher.Id ,
                 ServiceId = voucher.ServiceId ?? 0,
+                ServiceTypeId = voucher.ServiceTypeId,
                 Status = ModelStatus.Active,
                 EndDate = voucher.EndDate ?? DateTime.Now,
                 StartDate = voucher.StartDate ?? DateTime.Now

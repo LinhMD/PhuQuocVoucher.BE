@@ -48,7 +48,7 @@ public class Voucher : BaseModel, IOrderAble
 
     public long VoucherValue { get; set; }
     
-    public long CommissionRate { get; set; }
+    public float CommissionRate { get; set; }
     
     public IList<VoucherTag> Tags { get; set; }
 

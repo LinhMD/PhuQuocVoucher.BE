@@ -23,8 +23,13 @@ public class Seller : BaseModel, IOrderAble
     public int UserInfoId { get; set; }
 
     public float CommissionRate { get; set; }
+    
+    public SellerRank? Rank { get; set; }
+
+    public int? RankId { get; set; }
 
     public IEnumerable<Order> HandleOrders { get; set; }
+
 
     public IEnumerable<Customer> Customers { get; set; }
 

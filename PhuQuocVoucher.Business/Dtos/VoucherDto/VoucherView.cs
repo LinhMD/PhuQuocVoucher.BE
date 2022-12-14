@@ -56,6 +56,8 @@ public class VoucherView : BaseModel, IView<Voucher>, IDto
 
     public ModelStatus Status { get; set; }
 
+    public VoucherKPI? Kpi { get; set; }
+
     public void InitMapper()
     {
         TypeAdapterConfig<Voucher, VoucherView>.NewConfig()
@@ -64,6 +66,6 @@ public class VoucherView : BaseModel, IView<Voucher>, IDto
             .Map(view => view.Inventory,
                 voucher => voucher.QrCodes.Count(qr => qr.QrCodeStatus == QrCodeStatus.Active))
             .Map(view => view.SoldNumber, voucher => voucher.QrCodes.Count(qr => qr.QrCodeStatus == QrCodeStatus.Commit || qr.QrCodeStatus == QrCodeStatus.Used))
-            .Map(view => view.Revenue, voucher => voucher.QrCodes.Select(q => q.SoldPrice).Sum());
+            .Map(view => view.Revenue, voucher => voucher.QrCodes.Count(qr => qr.QrCodeStatus == QrCodeStatus.Commit || qr.QrCodeStatus == QrCodeStatus.Used) * voucher.SoldPrice * (1 - voucher.CommissionRate));
     }
 }

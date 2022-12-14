@@ -1,8 +1,6 @@
 ﻿using System.Linq.Expressions;
 using CrudApiTemplate.OrderBy;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PhuQuocVoucher.Data.Repositories;
-using PhuQuocVoucher.Data.Repositories.Core;
 
 namespace PhuQuocVoucher.Data.Models;
 
@@ -30,7 +28,6 @@ public class Order : BaseModel, IOrderAble
     public Guid? PaymentRequestId { get; set; }
 
     public IList<QrCode> QrCodes { get; set; }
-
     public IList<OrderItem> OrderItems { get; set; }
     
     

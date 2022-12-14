@@ -13,7 +13,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
 
     public override IQueryable<Order> IncludeAll()
     {
-        return base.IncludeAll().Include(o => o.QrCodes);
+        return base.IncludeAll().Include(o => o.OrderItems).ThenInclude(item => item.QrCodes);
     }
 
     public Task<Order> UpdateOrderAsync(Order orderToUpdate, int id)

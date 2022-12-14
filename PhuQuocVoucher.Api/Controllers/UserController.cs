@@ -23,7 +23,7 @@ public class UserController : ControllerBase
 
     private readonly IRepository<User> _repository;
 
-    private IUnitOfWork _work;
+    private readonly IUnitOfWork _work;
 
     public UserController(IUserService userService, IUnitOfWork work)
     {
@@ -63,7 +63,7 @@ public class UserController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromBody] AdminUpdate request, int id)
     {
-        return Ok(await _userService.UpdateAsync(id, request));
+        return Ok(await _userService.UpdateUserAdmin(request, id));
     }
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)

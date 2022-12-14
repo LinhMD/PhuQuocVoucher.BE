@@ -38,7 +38,9 @@ public class SellerController : ControllerBase
 
     private readonly IUnitOfWork _work;
 
-    public SellerController(ISellerService sellerService, ILogger<SellerController> logger, IUnitOfWork work, IOrderService orderService, ICustomerService customerService, ICartService cartService)
+    private IKpiService _kpiService;
+
+    public SellerController(ISellerService sellerService, ILogger<SellerController> logger, IUnitOfWork work, IOrderService orderService, ICustomerService customerService, ICartService cartService, IKpiService kpiService)
     {
         _sellerService = sellerService;
         _logger = logger;
@@ -46,6 +48,7 @@ public class SellerController : ControllerBase
         _orderService = orderService;
         _customerService = customerService;
         _cartService = cartService;
+        _kpiService = kpiService;
         _repo = work.Get<Seller>();
     }
 
@@ -62,14 +65,27 @@ public class SellerController : ControllerBase
         [FromQuery] FindSeller request,
         [FromQuery] PagingRequest paging,
         [FromQuery] string? orderBy,
-        [FromQuery] DateTime? completeDateLowBound)
+        [FromQuery] DateTime? completeDateLowBound,
+        DateTime? kpiStartDate, DateTime? kpiEndDate)
     {
-        return Ok((await _sellerService.FindSellerAsync(new GetRequest<Seller>
+        var (sellerViews, total) = await _sellerService.FindSellerAsync(new GetRequest<Seller>
         {
             FindRequest = request,
             OrderRequest = orderBy.ToOrderRequest<Seller>(),
             PagingRequest = paging
-        }, completeDateLowBound)).ToPagingResponse(paging));
+        }, completeDateLowBound);
+
+        var sellerIds = sellerViews.Select(s => s.Id).ToList();
+
+        var sellerKpis = await _kpiService.GetSellerKpi(sellerIds, kpiStartDate, kpiEndDate);
+        
+        foreach (var seller in sellerViews)
+        {
+            sellerKpis.TryGetValue(seller.Id , out var kpi);
+            seller.Kpi = kpi ?? new SellerKPI();
+        }
+
+        return Ok((sellerViews, total).ToPagingResponse(paging));
     }
 
     [HttpPost]
@@ -249,7 +265,7 @@ public class SellerController : ControllerBase
     /// <param name="customerId"></param>
     /// <returns></returns>
     [HttpGet("customers/{customerId:int}/cart")]
-    [SwaggerResponse(200, "Cart view", typeof(CartView))]
+    [SwaggerResponse(200, "Cart view", typeof(CartView))] 
     [Authorize(Roles = nameof(Role.Seller))]
     public async Task<ActionResult<CartView>> GetCart(int customerId)
     {

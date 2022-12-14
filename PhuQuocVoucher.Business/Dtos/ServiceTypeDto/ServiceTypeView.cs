@@ -10,4 +10,6 @@ public class ServiceTypeView : BaseModel,  IView<ServiceType>, IDto
     public string Name { get; set; }
     
     public double?  DefaultCommissionRate { get; set; }
+
+    public ServiceTypeKPI? Kpi { get; set; }
 }

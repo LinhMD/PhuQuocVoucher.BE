@@ -8,7 +8,7 @@ namespace PhuQuocVoucher.Business.Dtos.ServiceDto;
 
 public class ServiceView : BaseModel, IView<Service>, IDto
 {
-    public int? Id { get; set; }
+    public int Id { get; set; }
 
     public string? Name { get; set; }
 
@@ -28,6 +28,8 @@ public class ServiceView : BaseModel, IView<Service>, IDto
 
     public ModelStatus Status { get; set; }
 
+    public ServiceKPI? Kpi { get; set; }
+    
     public void InitMapper()
     {
         TypeAdapterConfig<Service, ServiceView>.NewConfig()

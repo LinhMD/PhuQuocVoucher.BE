@@ -8,7 +8,7 @@ namespace PhuQuocVoucher.Business.Dtos.SellerDto;
 
 public class SellerView : BaseModel, IView<Seller>, IDto
 {
-    public int? Id { get; set; }
+    public int Id { get; set; }
 
     public DateTime? CreateAt { get; set; }
 
@@ -20,15 +20,13 @@ public class SellerView : BaseModel, IView<Seller>, IDto
 
     public float? CommissionRate { get; set; }
 
-    public double? Profit { get; set; }
-
     public IEnumerable<OrderView> Orders { get; set; }
+
+    public SellerKPI? Kpi { get; set; }
     
 
     public void InitMapper()
     {
-        TypeAdapterConfig<Seller, SellerView>.NewConfig().Map(
-            sv => sv.Profit,
-            s => s.HandleOrders.Select(o => o.TotalPrice).Sum());
+        TypeAdapterConfig<Seller, SellerView>.NewConfig();
     }
 }

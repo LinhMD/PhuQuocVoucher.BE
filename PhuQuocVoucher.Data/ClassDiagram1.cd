@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="PhuQuocVoucher.Data.Models.BaseModel">
+    <Position X="2.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAEAAIAAAAAAAAAAIAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Models\BaseModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.Blog">
+    <Position X="14.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACCAAAAEgAAAEAAAAAAQAAAAAAAAEAAAEAAAAAAAAA=</HashCode>
+      <FileName>Models\Blog.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.BlogPlace">
+    <Position X="12" Y="19" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAEAAAAAABAA=</HashCode>
+      <FileName>Models\BlogPlace.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.BlogTag">
+    <Position X="10" Y="19" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAKAAAAAAAhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Models\BlogTag.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.Cart">
+    <Position X="12" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAECAAAAgAAAAAAAAAAAQAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Cart.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.CartItem">
+    <Position X="7.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAASAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAggAgCAA=</HashCode>
+      <FileName>Models\CartItem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.ComboVoucher">
+    <Position X="3.75" Y="19" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAQAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Models\ComboVoucher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.Customer">
+    <Position X="10" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAECAEAAAAAAAAAAEAAAQAAAQAAAABEAAAAAAAAACAA=</HashCode>
+      <FileName>Models\Customer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.Order">
+    <Position X="3.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAECAAAAAAGCAAAAAAEAUAAAAAAAQRAAAAgAAAAECAA=</HashCode>
+      <FileName>Models\Order.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.OrderItem">
+    <Position X="5.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAESAAAAAACEAQAABAAAAAAAAAAAAQAAAAAAgAAgCAI=</HashCode>
+      <FileName>Models\OrderItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.PaymentDetail">
+    <Position X="14.25" Y="9.5" Width="1.5" />
+    <InheritanceLine Type="PhuQuocVoucher.Data.Models.BaseModel" FixedToPoint="true">
+      <Path>
+        <Point X="3" Y="4.132" />
+        <Point X="3" Y="9.2" />
+        <Point X="15" Y="9.2" />
+        <Point X="15" Y="9.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>EAEDAAAAAgEQAAQAAAgAUAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\PaymentDetail.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.Place">
+    <Position X="3.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAACAAAAAAAAAACAAAAAQAQAAEAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Place.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.QrCode">
+    <Position X="5.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAASACAIAAAEAQAABAAAQAAgAAQAQEAAEAAAAEAAAAI=</HashCode>
+      <FileName>Models\QrCode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.Review">
+    <Position X="7.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAECAAAEAAAAAAAAAAAAQAAAAAAAABEAAAAAAAAAAAI=</HashCode>
+      <FileName>Models\Review.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.Seller">
+    <Position X="10" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAECAAAAAAAAIAAAAAAAQAAAAAAAABEAAAAAAKAIAAA=</HashCode>
+      <FileName>Models\Seller.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.SellerActivity">
+    <Position X="12" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAaACBgAAAAAAAAAAIAQAAAAAAAQQAAAAAAAAACCAI=</HashCode>
+      <FileName>Models\SellerActivity.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.SellerRank">
+    <Position X="7.75" Y="19" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAQAAAAIAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>Models\SellerRank.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.Service">
+    <Position X="3.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAKAAAAAAAkAAAABAIAQAQAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Models\Service.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.ServiceProvider">
+    <Position X="5.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAACAAAAAAAAAAAAAAIAQAAAAAAAABECAAAAAABQAAA=</HashCode>
+      <FileName>Models\ServiceProvider.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.ServiceType">
+    <Position X="7.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAgAAAABAAAAAAAAQAQAAAAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>Models\ServiceType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.Tag">
+    <Position X="10" Y="14.75" Width="1.5" />
+    <InheritanceLine Type="PhuQuocVoucher.Data.Models.BaseModel" FixedToPoint="true">
+      <Path>
+        <Point X="3" Y="4.132" />
+        <Point X="3" Y="14.45" />
+        <Point X="11" Y="14.45" />
+        <Point X="11" Y="14.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAQAQAAEAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Models\Tag.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.User">
+    <Position X="12" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABCAAAAACIAAAAAEAAAQAAAAAAAAABAAQAAAgAAAAA=</HashCode>
+      <FileName>Models\User.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.Voucher">
+    <Position X="14.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACKAGAAAgGkIwgADAIAQBAgAgAAQEAAAAAAEkAgAAA=</HashCode>
+      <FileName>Models\Voucher.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PhuQuocVoucher.Data.Models.VoucherTag">
+    <Position X="5.75" Y="19" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM=</HashCode>
+      <FileName>Models\VoucherTag.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="PhuQuocVoucher.Data.Models.ModelStatus">
+    <Position X="1.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAgAAAgAAAAAAA=</HashCode>
+      <FileName>Models\BaseModel.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="PhuQuocVoucher.Data.Models.OrderStatus">
+    <Position X="1.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAgAAAAAACAAAAAAAAABAAAAAAAEA=</HashCode>
+      <FileName>Models\OrderStatus.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="PhuQuocVoucher.Data.Models.PaymentStatus">
+    <Position X="1.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAABAAIAAAAAA=</HashCode>
+      <FileName>Models\PaymentStatus.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="PhuQuocVoucher.Data.Models.QrCodeStatus">
+    <Position X="1.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgIAAAAEA=</HashCode>
+      <FileName>Models\QrCodeStatus.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="PhuQuocVoucher.Data.Models.Role">
+    <Position X="1.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAEAAAAAAAAAQAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Models\Role.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -20,15 +20,44 @@ public class ServiceTypeController : ControllerBase
 
     private readonly IRepository<ServiceType> _repo;
 
+    private readonly IKpiService _kpiService;
+
     public ServiceTypeController(IServiceTypeService serviceTypeService,
         ILogger<ServiceTypeController> logger,
-        IUnitOfWork work)
+        IUnitOfWork work, IKpiService kpiService)
     {
         _serviceTypeService = serviceTypeService;
         _logger = logger;
+        _kpiService = kpiService;
         _repo = work.Get<ServiceType>();
     }
+    
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAdmin(
+        [FromQuery] FindServiceType request,
+        [FromQuery] PagingRequest paging,
+        string? orderBy,
+        DateTime? kpiStartDate, DateTime? kpiEndDate)
+    {
+        var (models, total) = await _serviceTypeService.GetAsync<ServiceTypeView>(
+            new GetRequest<ServiceType>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<ServiceType>(),
+            PagingRequest = paging
+        });
 
+        var serviceTypeIds = models.Select(m => m.Id).ToList();
+        var serviceTypeKpis = await _kpiService.GetServiceTypeKpi(serviceTypeIds, kpiStartDate, kpiEndDate);
+        foreach (var serviceType in models)
+        {
+            serviceTypeKpis.TryGetValue(serviceType.Id , out var kpi);
+            serviceType.Kpi = kpi ?? new ServiceTypeKPI();
+        }
+
+        return Ok((models, total).ToPagingResponse(paging));
+    }
+    
     [HttpGet]
     public async Task<IActionResult> Get(
         [FromQuery] FindServiceType request,

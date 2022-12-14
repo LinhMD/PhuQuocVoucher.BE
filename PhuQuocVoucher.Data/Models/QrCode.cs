@@ -22,6 +22,8 @@ public class QrCode : BaseModel, IOrderAble
     public DateTime? StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
+
+    public DateTime? SoldDate { get; set; }
     public int? ProviderId { get; set; }
     
     [JsonIgnore]
@@ -29,15 +31,23 @@ public class QrCode : BaseModel, IOrderAble
 
     public Service Service { get; set; }
 
-    public long SoldPrice { get; set; }
+    public long ProviderRevenue { get; set; }
 
+    public long CommissionFee { get; set; }
+
+    public long SellerCommissionFee { get; set; }
+    
     public int ServiceId { get; set; }
+
+    public int? ServiceTypeId { get; set; }
+
+    public ServiceType? ServiceType { get; set; }
 
     public QrCodeStatus QrCodeStatus { get; set; }
     
     public DateTime? UseDate { get; set; }
 
-    public Order? Order { get; set; }
+    public int? OrderItemId { get; set; }
 
     public int? OrderId { get; set; }
     

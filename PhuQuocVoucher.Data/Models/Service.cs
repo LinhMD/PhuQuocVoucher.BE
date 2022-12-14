@@ -27,6 +27,8 @@ public class Service : BaseModel, IOrderAble
 
     public ServiceProvider? Provider { get; set; }
 
+    public string? UsePlace { get; set; }
+
     public int? ProviderId { get; set; }
     
     public void ConfigOrderBy()

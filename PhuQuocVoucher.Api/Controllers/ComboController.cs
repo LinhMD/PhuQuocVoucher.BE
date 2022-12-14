@@ -25,22 +25,32 @@ public class ComboController : ControllerBase
 
     private readonly IRepository<Voucher> _repo;
 
-    public ComboController(IComboService comboService, ILogger<ComboController> logger, IUnitOfWork work)
+    private readonly IKpiService _kpiService;
+    public ComboController(IComboService comboService, ILogger<ComboController> logger, IUnitOfWork work, IKpiService kpiService)
     {
         _comboService = comboService;
         _logger = logger;
+        _kpiService = kpiService;
         _repo = work.Get<Voucher>();
     }
 
     [HttpGet("admin")]
-    public async Task<ActionResult<ComboView>> Get([FromQuery] FindCombo request, [FromQuery] PagingRequest paging, string? orderBy)
+    public async Task<ActionResult<ComboView>> Get([FromQuery] FindCombo request, [FromQuery] PagingRequest paging, string? orderBy, DateTime? kpiStartDate, DateTime? kpiEndDate)
     {
-        return Ok((await _comboService.GetAsync<ComboView>(new GetRequest<Voucher>
+        var (models, total) = await _comboService.GetAsync<ComboView>(new GetRequest<Voucher>
         {
             FindRequest = request,
             OrderRequest = orderBy.ToOrderRequest<Voucher>(),
             PagingRequest = paging
-        })).ToPagingResponse(paging));
+        });
+        var comboIds = models.Select(m => m.Id).ToList();
+        var comboKpis = await _kpiService.GetVoucherKpi(comboIds, kpiStartDate, kpiEndDate);
+        foreach (var combo in models)
+        {
+            comboKpis.TryGetValue(combo.Id , out var kpi);
+            combo.Kpi = kpi;
+        }
+        return Ok((models, total).ToPagingResponse(paging));
     }
 
     /*[AllowAnonymous]

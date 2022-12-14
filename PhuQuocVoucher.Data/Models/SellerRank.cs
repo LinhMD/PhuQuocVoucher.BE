@@ -15,4 +15,5 @@ public class SellerRank
     
     public int EpxRequired { get; set; }
 
+    public IList<Seller> Sellers { get; set; }
 }

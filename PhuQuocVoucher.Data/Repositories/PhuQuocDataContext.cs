@@ -17,7 +17,7 @@ public class PhuQuocDataContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer(
-            _config["ConnectionStrings:local"],
+            _config["ConnectionStrings:PhuQuocDB_devops"],
             b => b.MigrationsAssembly("PhuQuocVoucher.Api")
                 .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
     }

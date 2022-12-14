@@ -292,6 +292,69 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.ToTable("Orders");
                 });
 
+            modelBuilder.Entity("PhuQuocVoucher.Data.Models.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<long>("CommissionFee")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCombo")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProviderId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("ProviderRevenue")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<long>("SellerCommission")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("SellerId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("SoldPrice")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VoucherId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProviderId");
+
+                    b.HasIndex("SellerId");
+
+                    b.HasIndex("VoucherId");
+
+                    b.ToTable("OrderItems");
+                });
+
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.PaymentDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -392,6 +455,9 @@ namespace PhuQuocVoucher.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<long>("CommissionFee")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime?>("CreateAt")
                         .HasColumnType("datetime2");
 
@@ -408,17 +474,29 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("OrderItemId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ProviderId")
                         .HasColumnType("int");
+
+                    b.Property<long>("ProviderRevenue")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("QrCodeStatus")
                         .HasColumnType("int");
 
+                    b.Property<long>("SellerCommissionFee")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
-                    b.Property<long>("SoldPrice")
-                        .HasColumnType("bigint");
+                    b.Property<int?>("ServiceTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("SoldDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
@@ -442,9 +520,13 @@ namespace PhuQuocVoucher.Api.Migrations
 
                     b.HasIndex("OrderId");
 
+                    b.HasIndex("OrderItemId");
+
                     b.HasIndex("ProviderId");
 
                     b.HasIndex("ServiceId");
+
+                    b.HasIndex("ServiceTypeId");
 
                     b.HasIndex("VoucherId");
 
@@ -510,6 +592,9 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<DateTime?>("DeleteAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("RankId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SellerName")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -525,6 +610,8 @@ namespace PhuQuocVoucher.Api.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RankId");
 
                     b.HasIndex("UserInfoId")
                         .IsUnique();
@@ -555,6 +642,9 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ServiceTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -576,9 +666,38 @@ namespace PhuQuocVoucher.Api.Migrations
 
                     b.HasIndex("ServiceId");
 
+                    b.HasIndex("ServiceTypeId");
+
                     b.HasIndex("VoucherId");
 
                     b.ToTable("Activities");
+                });
+
+            modelBuilder.Entity("PhuQuocVoucher.Data.Models.SellerRank", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<float>("CommissionRatePercent")
+                        .HasColumnType("real");
+
+                    b.Property<int>("EpxRequired")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Logo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Rank")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SellerRank");
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Service", b =>
@@ -618,6 +737,9 @@ namespace PhuQuocVoucher.Api.Migrations
 
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("UsePlace")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -682,8 +804,8 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<DateTime?>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<double?>("DefaultCommissionRate")
-                        .HasColumnType("float");
+                    b.Property<float?>("DefaultCommissionRate")
+                        .HasColumnType("real");
 
                     b.Property<DateTime?>("DeleteAt")
                         .HasColumnType("datetime2");
@@ -808,8 +930,8 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<string>("BannerImg")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("CommissionRate")
-                        .HasColumnType("bigint");
+                    b.Property<float>("CommissionRate")
+                        .HasColumnType("real");
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -831,9 +953,6 @@ namespace PhuQuocVoucher.Api.Migrations
 
                     b.Property<bool>("IsCombo")
                         .HasColumnType("bit");
-
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
 
                     b.Property<int?>("ProviderId")
                         .HasColumnType("int");
@@ -873,8 +992,6 @@ namespace PhuQuocVoucher.Api.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProviderId");
 
@@ -1034,6 +1151,39 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Navigation("Seller");
                 });
 
+            modelBuilder.Entity("PhuQuocVoucher.Data.Models.OrderItem", b =>
+                {
+                    b.HasOne("PhuQuocVoucher.Data.Models.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PhuQuocVoucher.Data.Models.ServiceProvider", "Provider")
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PhuQuocVoucher.Data.Models.Seller", "Seller")
+                        .WithMany()
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PhuQuocVoucher.Data.Models.Voucher", "Voucher")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("VoucherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Provider");
+
+                    b.Navigation("Seller");
+
+                    b.Navigation("Voucher");
+                });
+
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.PaymentDetail", b =>
                 {
                     b.HasOne("PhuQuocVoucher.Data.Models.Order", "Order")
@@ -1053,9 +1203,14 @@ namespace PhuQuocVoucher.Api.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.QrCode", b =>
                 {
-                    b.HasOne("PhuQuocVoucher.Data.Models.Order", "Order")
+                    b.HasOne("PhuQuocVoucher.Data.Models.Order", null)
                         .WithMany("QrCodes")
                         .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PhuQuocVoucher.Data.Models.OrderItem", null)
+                        .WithMany("QrCodes")
+                        .HasForeignKey("OrderItemId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("PhuQuocVoucher.Data.Models.ServiceProvider", "Provider")
@@ -1069,17 +1224,22 @@ namespace PhuQuocVoucher.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("PhuQuocVoucher.Data.Models.ServiceType", "ServiceType")
+                        .WithMany()
+                        .HasForeignKey("ServiceTypeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("PhuQuocVoucher.Data.Models.Voucher", "Voucher")
                         .WithMany("QrCodes")
                         .HasForeignKey("VoucherId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Order");
-
                     b.Navigation("Provider");
 
                     b.Navigation("Service");
+
+                    b.Navigation("ServiceType");
 
                     b.Navigation("Voucher");
                 });
@@ -1101,11 +1261,18 @@ namespace PhuQuocVoucher.Api.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Seller", b =>
                 {
+                    b.HasOne("PhuQuocVoucher.Data.Models.SellerRank", "Rank")
+                        .WithMany("Sellers")
+                        .HasForeignKey("RankId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("PhuQuocVoucher.Data.Models.User", "UserInfo")
                         .WithMany()
                         .HasForeignKey("UserInfoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Rank");
 
                     b.Navigation("UserInfo");
                 });
@@ -1113,7 +1280,7 @@ namespace PhuQuocVoucher.Api.Migrations
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.SellerActivity", b =>
                 {
                     b.HasOne("PhuQuocVoucher.Data.Models.Seller", "Seller")
-                        .WithMany()
+                        .WithMany("Activities")
                         .HasForeignKey("SellerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1121,6 +1288,12 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.Service", "Service")
                         .WithMany()
                         .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PhuQuocVoucher.Data.Models.ServiceType", "ServiceType")
+                        .WithMany()
+                        .HasForeignKey("ServiceTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1133,6 +1306,8 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Navigation("Seller");
 
                     b.Navigation("Service");
+
+                    b.Navigation("ServiceType");
 
                     b.Navigation("Voucher");
                 });
@@ -1185,11 +1360,6 @@ namespace PhuQuocVoucher.Api.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Voucher", b =>
                 {
-                    b.HasOne("PhuQuocVoucher.Data.Models.Order", null)
-                        .WithMany("Vouchers")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PhuQuocVoucher.Data.Models.ServiceProvider", "Provider")
                         .WithMany("vouchers")
                         .HasForeignKey("ProviderId")
@@ -1259,11 +1429,16 @@ namespace PhuQuocVoucher.Api.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Order", b =>
                 {
+                    b.Navigation("OrderItems");
+
                     b.Navigation("PaymentDetail");
 
                     b.Navigation("QrCodes");
+                });
 
-                    b.Navigation("Vouchers");
+            modelBuilder.Entity("PhuQuocVoucher.Data.Models.OrderItem", b =>
+                {
+                    b.Navigation("QrCodes");
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Place", b =>
@@ -1275,9 +1450,16 @@ namespace PhuQuocVoucher.Api.Migrations
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Seller", b =>
                 {
+                    b.Navigation("Activities");
+
                     b.Navigation("Customers");
 
                     b.Navigation("HandleOrders");
+                });
+
+            modelBuilder.Entity("PhuQuocVoucher.Data.Models.SellerRank", b =>
+                {
+                    b.Navigation("Sellers");
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.ServiceProvider", b =>
@@ -1297,6 +1479,8 @@ namespace PhuQuocVoucher.Api.Migrations
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Voucher", b =>
                 {
                     b.Navigation("Combos");
+
+                    b.Navigation("OrderItems");
 
                     b.Navigation("QrCodes");
 

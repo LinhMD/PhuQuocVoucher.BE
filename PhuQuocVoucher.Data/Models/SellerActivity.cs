@@ -18,6 +18,10 @@ public class SellerActivity : BaseModel, IOrderAble
 
     public Service Service { get; set; }
 
+    public int ServiceTypeId { get; set; }
+
+    public ServiceType ServiceType { get; set; }
+
     public int ServiceId { get; set; }
 
     public int ClickRate { get; set; }

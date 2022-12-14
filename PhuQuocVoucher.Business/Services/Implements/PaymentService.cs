@@ -136,6 +136,7 @@ public class PaymentService
             orderQrCode.QrCodeStatus = QrCodeStatus.Commit;
         }
         order.OrderStatus = OrderStatus.Completed;
+        order.CompleteDate = DateTime.Now;
         await _work.CompleteAsync();
         if(order.SellerId == null)
             await _orderService.SendOrderEmailToCustomer(order.Id);
@@ -176,12 +177,14 @@ public class PaymentService
         foreach (var qrCode in qrCodes)
         {
             qrCode.QrCodeStatus = QrCodeStatus.Active;
-            qrCode.SoldPrice = 0;
-            qrCode.Order = null;
+            qrCode.OrderItemId = null;
             qrCode.OrderId = null;
+            qrCode.CommissionFee = 0;
+            qrCode.SellerCommissionFee = 0;
+            qrCode.ProviderRevenue = 0;
+            qrCode.SoldDate = null;
         }
 
-        order.QrCodes = new List<QrCode>();
         order.OrderStatus = OrderStatus.Failed;
         await _work.CompleteAsync();
         

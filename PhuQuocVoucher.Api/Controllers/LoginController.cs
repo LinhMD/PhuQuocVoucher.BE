@@ -278,7 +278,6 @@ public class LoginController : ControllerBase
             Status = ModelStatus.Active,
             UserInfoId = u.Id,
             SellerName = u.UserName,
-            CommissionRate = 0.05F,
             CreateAt = DateTime.Now
         }).ToList();
         

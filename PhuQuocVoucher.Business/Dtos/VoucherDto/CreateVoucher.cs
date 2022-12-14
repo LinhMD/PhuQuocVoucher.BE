@@ -27,7 +27,7 @@ public class CreateVoucher : CreateDto, ICreateRequest<Voucher>
     public string?  SocialPost { get; set; }
     
     
-    public long CommissionRate { get; set; }
+    public float CommissionRate { get; set; }
     public IList<int> TagIds { get; set; }
 
     public long SoldPrice { get; set; }

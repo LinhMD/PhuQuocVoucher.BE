@@ -19,7 +19,7 @@ public class ServiceType : BaseModel, IOrderAble
 
     public int? ParentTypeId { get; set; }
     
-    public double?  DefaultCommissionRate { get; set; }
+    public float?  DefaultCommissionRate { get; set; }
     public void ConfigOrderBy()
     {
         SetUpOrderBy<ServiceType>();
