@@ -342,6 +342,6 @@ public class SellerController : ControllerBase
             voucher.Kpi = kpi ?? new VoucherKPI();
         }
         return Ok(voucherSViews);
-    }
+    }   
     
 }

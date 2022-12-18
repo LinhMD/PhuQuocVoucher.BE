@@ -45,14 +45,14 @@ public class ComboService : ServiceCrud<Voucher>, IComboService
             var endDateMin = vouchers.Select(v => v.EndDate).Min();
             var minInventory = vouchers.Select(v => v.Inventory).Min();
             
-            if (combo.StartDate < beginDateMax || combo.EndDate > endDateMin)
+            if (!(combo.StartDate > beginDateMax && combo.EndDate < endDateMin))
             {
-                throw new ModelValueInvalidException("Combo effective date invalid");
+                throw new ModelValueInvalidException($"Ngày hiệu lực của Combo phải sau ngày {beginDateMax} và trước ngày {endDateMin}");
             }
             
             if (combo.Inventory > minInventory )
             {
-                throw new ModelValueInvalidException("Combo inventory invalid");
+                throw new ModelValueInvalidException($"Số lượng bán ra của combo phải nhỏ hơn {minInventory}");
             }
             
             var tags = await UnitOfWork.Get<Tag>().Find(t => createCombo.TagIds.Contains(t.Id)).ToListAsync();

@@ -79,6 +79,7 @@ public abstract class ServiceCrud<TModel> : IServiceCrud<TModel> where TModel : 
         }
         return model;
     }
+    
     public async Task<TModel> UpdateAsync(int id, IUpdateRequest<TModel> updateRequest)
     {
         var model = await GetAsync(id);

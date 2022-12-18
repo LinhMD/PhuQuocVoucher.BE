@@ -2,6 +2,7 @@
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Services;
+using CrudApiTemplate.Utilities;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -31,10 +32,12 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
             voucher.Status = ModelStatus.New;
             var serviceTypeId = await UnitOfWork.Get<Service>().Find(service =>  service.Id == createVoucher.ServiceId).Select(s => s.ServiceTypeId).FirstOrDefaultAsync();
             voucher.ServiceTypeId = serviceTypeId;
+            var service = await UnitOfWork.Get<ServiceType>().Find(service => service.Id == serviceTypeId).FirstOrDefaultAsync();
+            
+            if (service?.DefaultCommissionRate > voucher.CommissionRate)
+                throw new ModelValueInvalidException($"Tỉ lệ hoa hồng thấp nhất của dịch vụ {service.Name} là {service.DefaultCommissionRate}");
             
             var tags = await UnitOfWork.Get<Tag>().Find(t => createVoucher.TagIds.Contains(t.Id)).ToListAsync();
-            
-            
 
             await UnitOfWork.Get<Voucher>().AddAsync(voucher);
             
@@ -66,6 +69,36 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
             throw new DbQueryException(e.Message, DbError.Create);
         }
     }
+    
+    public async Task<VoucherView> UpdateVoucher(UpdateVoucher updateVoucher, int id)
+    {
+        try
+        {
+            var voucher = await UnitOfWork.Get<Voucher>().Find(v => v.Id == id).FirstOrDefaultAsync() ?? throw new ModelNotFoundException($"voucher not found with id {id}");
+
+            var serviceType = await UnitOfWork.Get<ServiceType>().Find(service => service.Id == voucher.ServiceTypeId).FirstOrDefaultAsync();
+            
+            if (serviceType?.DefaultCommissionRate > updateVoucher.CommissionRate)
+                throw new ModelValueInvalidException($"Tỉ lệ hoa hồng thấp nhất của dịch vụ {serviceType.Name} là {serviceType.DefaultCommissionRate}");
+            
+            (updateVoucher as IUpdateRequest<Voucher>).UpdateModel(ref voucher, UnitOfWork);
+            
+            if (updateVoucher.TagIds != null)
+            {
+                await UpdateTag(updateVoucher.TagIds, voucher.Id);
+            }
+            
+            voucher.Validate();
+            await UnitOfWork.CompleteAsync();
+            
+            return await UnitOfWork.Get<Voucher>().Find<VoucherView>(v => v.Id == id).FirstOrDefaultAsync() ?? throw new ModelNotFoundException($"voucher not found with id {id}");
+        }
+        catch (Exception e)
+        {
+            e.StackTrace.Dump();
+            throw new DbQueryException(e.Message, DbError.Create);
+        }
+    }
 
     public async Task<VoucherView> UpdateTag(IList<int> tagIds, int voucherId)
     {
@@ -82,7 +115,7 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
         return voucher.Adapt<VoucherView>();
     }
 
-    public async Task UpdateVoucherInventoryList(IList<int> voucherIds)
+    public async Task UpdateVoucherInventoryList(IList<int> voucherIds, Dictionary<int, int>? comboQuantity = null)
     {
         try
         {
@@ -96,7 +129,10 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
 
             foreach (var combo in realCombos)
             {
-                combo.Inventory = dictionary[combo.Id] < combo.Inventory ? dictionary[combo.Id] : combo.Inventory;
+                if (comboQuantity == null) continue;
+                var newInventory = combo.Inventory - comboQuantity[combo.Id];
+                combo.Inventory = dictionary[combo.Id] < newInventory ? dictionary[combo.Id] : newInventory;
+
             }
             await Repository.CommitAsync();
         }

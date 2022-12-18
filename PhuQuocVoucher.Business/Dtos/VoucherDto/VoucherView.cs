@@ -1,6 +1,7 @@
 ﻿using CrudApiTemplate.View;
 using Mapster;
 using PhuQuocVoucher.Business.Dtos.ProviderDto;
+using PhuQuocVoucher.Business.Dtos.ReviewDto;
 using PhuQuocVoucher.Business.Dtos.ServiceDto;
 using PhuQuocVoucher.Business.Dtos.ServiceTypeDto;
 using PhuQuocVoucher.Business.Dtos.TagDto;
@@ -52,15 +53,18 @@ public class VoucherView : BaseModel, IView<Voucher>, IDto
 
     public IEnumerable<TagView> Tags { get; set; }
 
-    public IList<Review> Reviews { get; set; }
+    public IList<ReviewView> Reviews { get; set; }
 
     public ModelStatus Status { get; set; }
 
     public VoucherKPI? Kpi { get; set; }
+    
+    public float CommissionRate { get; set; }
 
     public void InitMapper()
     {
         TypeAdapterConfig<Voucher, VoucherView>.NewConfig()
+            .Map(view => view.Reviews, voucher => voucher.Reviews)
             .Map(view => view.Tags, voucher => voucher.Tags.Select(tag => tag.Tag))
             .Map(view => view.ServiceType, v => v.Service == null ? null : v.Service.ServiceType)
             .Map(view => view.Inventory,

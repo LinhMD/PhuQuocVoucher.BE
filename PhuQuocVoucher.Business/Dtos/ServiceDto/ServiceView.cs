@@ -17,7 +17,7 @@ public class ServiceView : BaseModel, IView<Service>, IDto
     public int? ServiceTypeId { get; set; }
     public ServiceTypeView? ServiceType { get; set; }
 
-    public double CommissionRate { get; set; }
+    public float CommissionRate { get; set; }
     public string? LocationName { get; set; }
 
     public int? ServiceLocationId { get; set; }
@@ -34,6 +34,7 @@ public class ServiceView : BaseModel, IView<Service>, IDto
     public void InitMapper()
     {
         TypeAdapterConfig<Service, ServiceView>.NewConfig()
+            .Map(view => view.CommissionRate, service => service.ServiceType.DefaultCommissionRate)
             .Map(view => view.LocationName, service => service.ServiceLocation.Name)
             .Map(view => view.ServiceType, service => service.ServiceType);
     }

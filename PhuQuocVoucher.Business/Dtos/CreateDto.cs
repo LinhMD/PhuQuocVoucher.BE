@@ -6,7 +6,7 @@ public class CreateDto : IDto
 {
     public DateTime CreateAt { get; } = DateTime.Now;
 
-    public ModelStatus Status { get; set; } =  ModelStatus.Active;
+    public ModelStatus Status  =>  ModelStatus.Active;
 
     public virtual void InitMapper()
     {

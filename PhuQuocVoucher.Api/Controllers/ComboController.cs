@@ -77,7 +77,16 @@ public class ComboController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ComboView>> Create([FromBody] CreateCombo request)
     {
-        return Ok(await _comboService.CreateCombo(request));
+        try
+        {
+            var comboView = await _comboService.CreateCombo(request);
+            return Ok(comboView);
+        }
+        catch (ModelNotFoundException e)
+        {
+            return StatusCode(430, e.Message);
+        }
+        return BadRequest();
     }
 
     [AllowAnonymous]

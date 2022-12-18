@@ -4,14 +4,18 @@ using PhuQuocVoucher.Data.Models;
 
 namespace PhuQuocVoucher.Business.Dtos.VoucherDto;
 
-public class CreateVoucher : CreateDto, ICreateRequest<Voucher>
+public class CreateVoucher :  ICreateRequest<Voucher>
 {
     [Required] public string VoucherName { get; set; }
 
     public DateTime? StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
+    
+    public DateTime CreateAt { get; } = DateTime.Now;
 
+    public ModelStatus Status  { get; set; } =  ModelStatus.Active;
+    
     [Required] public int ServiceId { get; set; }
 
     public int? ProviderId { get; set; }

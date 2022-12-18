@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Runtime.InteropServices;
 using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
@@ -8,18 +7,12 @@ using CrudApiTemplate.Utilities;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using PhuQuocVoucher.Api.Ultility;
 using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 using PhuQuocVoucher.Data.Repositories.Core;
-using System;
-using System.Collections;
-using System.Drawing;
 using System.Net.Mail;
-using IronBarCode;
-using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.MailDto;
 using QRCoder;
 
@@ -156,7 +149,6 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             if (item.IsCombo)
             {
                 var combo = combos[item.VoucherId];
-                --combo.Inventory;
                 var sellerCommission = 0L;
                 var providerRevenue = 0L;
                 var voucherIds = comboDic[item.VoucherId];
@@ -235,7 +227,10 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         
         order.TotalPrice = total;
         await UnitOfWork.CompleteAsync();
-        await _voucherService.UpdateVoucherInventoryList(vouchersIds);
+        var comboQuantity = order.OrderItems.Where(o => o.IsCombo).Select(o => new {o.VoucherId, o.Quantity})
+            .GroupBy(o => o.VoucherId)
+            .ToDictionary(o => o.Key, o => o.Select(i => i.Quantity).Sum());
+        await _voucherService.UpdateVoucherInventoryList(vouchersIds, comboQuantity);
         return order.Adapt<OrderView>();
     }
 

@@ -16,7 +16,6 @@ public class UpdateBlog : UpdateDto, IUpdateRequest<Blog>
     public List<int>? PlaceIds { get; set; }
 
     public List<int>? TagIds { get; set; }
-
-
+    
     public ModelStatus? Status { get; set; }
 }

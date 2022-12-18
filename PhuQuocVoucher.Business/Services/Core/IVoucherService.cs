@@ -12,5 +12,7 @@ public interface IVoucherService : IServiceCrud<Voucher>
 
     public Task UpdateInventory();
 
-    public Task UpdateVoucherInventoryList(IList<int> voucherIds);
+    public Task<VoucherView> UpdateVoucher(UpdateVoucher updateVoucher, int id);
+
+    public Task UpdateVoucherInventoryList(IList<int> voucherIds, Dictionary<int, int>? comboQuantity = null);
 }

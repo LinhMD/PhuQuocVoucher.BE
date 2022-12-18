@@ -103,9 +103,15 @@ public class VoucherController : ControllerBase
     public async Task<IActionResult> Update([FromBody] UpdateVoucher request, int id, [FromClaim("ProviderId")] int? providerId)
     {
         
-        var voucherIds = await _repo.Find(v => v.ProviderId == providerId).Select(v => v.Id).ToListAsync();
-        if (providerId == null || voucherIds.Contains(id))
-            return Ok(await _voucherService.UpdateAsync(id, request));
+        var voucher = await _repo.Find(v => (v.ProviderId == providerId || providerId == null)  && v.Id == id).FirstOrDefaultAsync();
+
+        if (voucher is {Status: ModelStatus.New} && providerId != null)
+        {
+            return this.StatusCode(412, voucher);
+        }
+        
+        if (voucher != null )
+            return Ok(await _voucherService.UpdateVoucher(request, id));
         
         return BadRequest();
     }

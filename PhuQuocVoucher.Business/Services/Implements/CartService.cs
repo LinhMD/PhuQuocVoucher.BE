@@ -197,10 +197,10 @@ public class CartService : ServiceCrud<Cart>, ICartService
         
         inventory.AddRange(await UnitOfWork.Get<Voucher>()
             .Find(c => dict.Keys.Contains(c.Id) && c.IsCombo)
-            .Select(c => new {c.Id, Inventory= c.Vouchers.Select(v => v.Voucher.Inventory).Min()})
+            .Select(c => new {c.Id, InventoryMin = c.Vouchers.Select(v => v.Voucher.Inventory).Min(), c.Inventory})
             .Select(value => new RemainVoucherInventory
             {
-                RemainInventory = value.Inventory,
+                RemainInventory = value.Inventory > value.InventoryMin ? value.InventoryMin : value.Inventory,
                 VoucherId = value.Id
             }).ToListAsync());
         var notFoundVoucher = dict.Keys.Except(inventory.Select(i => i.VoucherId)).ToList();

@@ -43,7 +43,7 @@ public class KpiService : IKpiService
     {
         var qrCodes = await _work.Get<QrCode>()
             .Find(qr =>
-                serviceTypeIds.Contains(qr.ServiceTypeId ?? -1)
+                serviceTypeIds.Contains(qr.ServiceTypeId ?? 0)
                 && (qr.QrCodeStatus == QrCodeStatus.Commit || qr.QrCodeStatus == QrCodeStatus.Used)
                 && qr.SoldDate >= startDate && qr.SoldDate <= endDate)
             .Select(s => new{QrCode = s, s.Service.ServiceTypeId})
@@ -90,7 +90,7 @@ public class KpiService : IKpiService
         var qrCodesByServiceId = qrCodes.GroupBy(s => s.SellerId);
         var voucherKpis = qrCodesByServiceId.Select(g => new SellerKPI()
         {
-            CommissionFee = g.Select(item => item.CommissionFee).Where(i => i > 0).Sum(),
+            CommissionFee = g.Select(item => item.SellerCommission).Where(i => i > 0).Sum(),
             SellerId = g.Key ?? 0,
             CloseOrder = g.Select(item => item.OrderId).Distinct().Count()
         }).ToDictionary(s => s.SellerId, s => s);

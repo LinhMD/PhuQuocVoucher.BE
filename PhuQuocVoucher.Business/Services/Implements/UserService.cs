@@ -146,6 +146,10 @@ public class UserService : ServiceCrud<User>, IUserService
         {
             user.PhoneNumber = update.PhoneNumber;
         }
+        if (update.Status != null)
+        {
+            user.Status = update.Status ?? ModelStatus.Active;
+        }
 
         if (provider == null)
         {

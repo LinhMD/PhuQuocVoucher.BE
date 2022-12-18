@@ -20,6 +20,8 @@ public class UpdateVoucher : UpdateDto, IUpdateRequest<Voucher>
     public string?  SocialPost { get; set; }
     
     public long? VoucherValue { get; set; }
+
+    public IList<int>? TagIds { get; set; }
     
     public float? CommissionRate { get; set; }
 
