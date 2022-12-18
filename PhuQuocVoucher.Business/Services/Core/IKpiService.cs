@@ -1,4 +1,5 @@
-﻿using PhuQuocVoucher.Business.Dtos.SellerDto;
+﻿using PhuQuocVoucher.Business.Dtos.ProviderDto;
+using PhuQuocVoucher.Business.Dtos.SellerDto;
 using PhuQuocVoucher.Business.Dtos.ServiceDto;
 using PhuQuocVoucher.Business.Dtos.ServiceTypeDto;
 using PhuQuocVoucher.Business.Dtos.VoucherDto;
@@ -17,4 +18,11 @@ public interface IKpiService
 
     public Task<Dictionary<int, ServiceTypeKPI>> GetServiceTypeKpi(IList<int> serviceTypeIds, DateTime? startDate,
         DateTime? endDate);
+
+
+    public Task<Dictionary<int, VoucherKPI>> GetVoucherKpiOfSeller(int sellerId, DateTime? startDate, DateTime? endDate);
+
+    public  Task<Dictionary<int, ProviderKpi>> GetProviderKpi(IList<int> providerIds, DateTime? startDate,
+        DateTime? endDate);
+
 }

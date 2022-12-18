@@ -11,16 +11,17 @@ public class CreateService : CreateDto, ICreateRequest<Service>
 
     [Required] public string Description { get; set; }
 
-    [Required] public int TypeId { get; set; }
+    [Required] public int ServiceTypeId { get; set; }
+
 
     [Required] public int ServiceLocationId { get; set; }
     
     [Required] public double CommissionRate { get; set; }
     [Required] public int ProviderId { get; set; }
-
+    
+    public string? UsePlace { get; set; }
     public override void InitMapper()
     {
-        TypeAdapterConfig<CreateService, Service>.NewConfig()
-            .Map(service => service.ServiceTypeId, create => create.TypeId);
+        TypeAdapterConfig<CreateService, Service>.NewConfig();
     }
 }

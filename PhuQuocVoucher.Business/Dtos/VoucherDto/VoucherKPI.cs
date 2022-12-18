@@ -10,5 +10,6 @@ public class VoucherKPI
 
     public long SellerCommissionFee { get; set; }
 
+    public int VoucherSold { get; set; }
     public int VoucherId { get; set; }
 }

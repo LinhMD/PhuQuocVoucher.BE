@@ -24,9 +24,11 @@ public class Seller : BaseModel, IOrderAble
 
     public float CommissionRate { get; set; }
     
-    public SellerRank? Rank { get; set; }
+    public SellerRank Rank { get; set; }
 
-    public int? RankId { get; set; }
+    public int RankId { get; set; }
+
+    public int Exp { get; set; }
 
     public IEnumerable<Order> HandleOrders { get; set; }
 

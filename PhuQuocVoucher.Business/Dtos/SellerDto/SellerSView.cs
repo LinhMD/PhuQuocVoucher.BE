@@ -15,11 +15,17 @@ public class SellerSView : BaseModel,IView<Seller>, IDto
     public float? CommissionRate { get; set; }
 
     public double? Profit { get; set; }
-
+    
+    public int Exp { get; set; }
+    public string Rank { get; set; }
+    
     public void InitMapper()
     {
         TypeAdapterConfig<Seller, SellerSView>.NewConfig().Map(
             sv => sv.Profit,
-            s => s.HandleOrders.Select(o => o.TotalPrice).Sum());
+            s => s.HandleOrders.Select(o => o.TotalPrice).Sum())
+            .Map(
+                sv => sv.Rank,
+                s => s.Rank.Rank);
     }
 }

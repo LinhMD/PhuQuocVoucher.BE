@@ -31,10 +31,9 @@ public class FindVoucher : IFindRequest<Voucher>
     [BiggerThan(nameof(BaseModel.CreateAt))] public DateTime? CreateAt_startTime { get; set; }
 
     [LessThan(nameof(BaseModel.CreateAt))] public DateTime? CrateAt_endTime { get; set; }
-
-    [LessThan(nameof(Voucher.StartDate))]
+    
     [BiggerThan(nameof(Voucher.EndDate))]
-    public DateTime? Date { get; set; } = DateTime.Today;
+    public DateTime? Date { get; set; } = DateTime.Today.Subtract(new TimeSpan(1, 0, 0, 0));
     
     
     [BiggerThan(nameof(Voucher.StartDate))]

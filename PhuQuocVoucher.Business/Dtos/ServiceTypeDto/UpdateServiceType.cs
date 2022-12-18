@@ -10,7 +10,7 @@ public class UpdateServiceType : UpdateDto, IUpdateRequest<ServiceType>
 
     public int? ParentTypeId { get; set; }
 
-    public double? DefaultCommissionRate { get; set; }
+    public float? DefaultCommissionRate { get; set; }
 
     public ModelStatus? Status { get; set; }
 }

@@ -2,7 +2,7 @@
 
 namespace PhuQuocVoucher.Data.Models;
 
-public class SellerRank
+public class SellerRank : BaseModel
 {
     public int Id { get; set; }
 

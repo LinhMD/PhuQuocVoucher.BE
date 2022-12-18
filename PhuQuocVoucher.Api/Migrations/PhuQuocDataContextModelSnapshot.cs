@@ -477,7 +477,7 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<int?>("OrderItemId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProviderId")
+                    b.Property<int>("ProviderId")
                         .HasColumnType("int");
 
                     b.Property<long>("ProviderRevenue")
@@ -592,7 +592,10 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<DateTime?>("DeleteAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("RankId")
+                    b.Property<int>("Exp")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RankId")
                         .HasColumnType("int");
 
                     b.Property<string>("SellerName")
@@ -684,6 +687,12 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<float>("CommissionRatePercent")
                         .HasColumnType("real");
 
+                    b.Property<DateTime?>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("EpxRequired")
                         .HasColumnType("int");
 
@@ -694,6 +703,12 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.Property<string>("Rank")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -1216,7 +1231,8 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.ServiceProvider", "Provider")
                         .WithMany()
                         .HasForeignKey("ProviderId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.Service", "Service")
                         .WithMany()
@@ -1251,12 +1267,14 @@ namespace PhuQuocVoucher.Api.Migrations
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("PhuQuocVoucher.Data.Models.Voucher", null)
+                    b.HasOne("PhuQuocVoucher.Data.Models.Voucher", "Voucher")
                         .WithMany("Reviews")
                         .HasForeignKey("VoucherId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Customer");
+
+                    b.Navigation("Voucher");
                 });
 
             modelBuilder.Entity("PhuQuocVoucher.Data.Models.Seller", b =>
@@ -1264,7 +1282,8 @@ namespace PhuQuocVoucher.Api.Migrations
                     b.HasOne("PhuQuocVoucher.Data.Models.SellerRank", "Rank")
                         .WithMany("Sellers")
                         .HasForeignKey("RankId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("PhuQuocVoucher.Data.Models.User", "UserInfo")
                         .WithMany()

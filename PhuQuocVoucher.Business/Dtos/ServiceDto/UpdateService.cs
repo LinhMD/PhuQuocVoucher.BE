@@ -12,6 +12,8 @@ public class UpdateService : UpdateDto, IUpdateRequest<Service>
     public int? TypeId { get; set; }
 
     public int? ServiceLocationId { get; set; }
+    
+    public string? UsePlace { get; set; }
 
     public ModelStatus? Status { get; set; }
 }

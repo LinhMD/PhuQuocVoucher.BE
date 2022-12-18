@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using PhuQuocVoucher.Business.Dtos.MailDto;
 using PhuQuocVoucher.Business.Dtos.MomoDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
+using PhuQuocVoucher.Business.Dtos.RankDto;
 using PhuQuocVoucher.Business.Dtos.SellerDto;
 using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Business.Services.Core;
@@ -51,11 +52,21 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
             Orders = s.HandleOrders
                 .Where(o => (o.CompleteDate >= completeDateLowBound))
                 .Select(o => o.Adapt<OrderView>()),
-            CommissionRate = s.Rank.CommissionRatePercent,
+            CommissionRate = s.Rank!.CommissionRatePercent,
             SellerName = s.SellerName,
             UserInfo = s.UserInfo.Adapt<UserView>(),
             UserInfoId = s.UserInfoId,
-            Status = s.Status
+            Status = s.Status,
+            Rank = new RankView()
+            {
+                Id = s.Rank.Id,
+                Logo = s.Rank.Logo,
+                Rank = s.Rank.Rank,
+                EpxRequired = s.Rank.EpxRequired,
+                CommissionRatePercent = s.Rank.CommissionRatePercent
+            },
+            Exp = s.Exp,
+            CreateAt = s.CreateAt
         });
 
         return (await sellerViews.ToListAsync(), total);
@@ -69,7 +80,7 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
 
     public async Task<SellerKpiView> GetSellerKpis(int sellerId, int year)
     {
-        /*var orderItems = (await UnitOfWork.Get<OrderItem>()
+        var orderItems = (await UnitOfWork.Get<OrderItem>()
             .Find(item => item.CreateAt != null && 
                           item.SellerId == sellerId && 
                           item.CreateAt.Value.Year == year && 
@@ -77,10 +88,10 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
             .Select(item => new
             {
                 item.CreateAt.Value.Date.Month,
-                item.SellerRate
+                item.SellerCommission
             })
             .ToListAsync()).GroupBy(order => order.Month)
-            .ToDictionary( g => g.Key, g => g.ToList().Sum(arg => arg.SellerRate));*/
+            .ToDictionary( g => g.Key, g => g.ToList().Sum(arg => arg.SellerCommission));
         
         
         var orders = (await UnitOfWork.Get<Order>()
@@ -116,7 +127,8 @@ public class SellerService : ServiceCrud<Seller>, ISellerService
         {
             CloseOrderPerMonth = orders,
             SellerId = sellerId,
-            NoOfNewCustomerPerMonth = customers
+            NoOfNewCustomerPerMonth = customers,
+            RevenuesPerMonths = orderItems
         };
         return sellerKpi;
     }

@@ -159,13 +159,21 @@ public class CartService : ServiceCrud<Cart>, ICartService
         });
 
         var inventory = await UnitOfWork.Get<Voucher>()
-            .Find(c => dict.ContainsKey(c.Id))
+            .Find(c => dict.Keys.Contains(c.Id) && !c.IsCombo)
             .Select(c => new {c.Id, c.Inventory}).Select(value => new RemainVoucherInventory
             {
                 RemainInventory = value.Inventory,
                 VoucherId = value.Id
             }).ToListAsync();
-
+        
+        inventory.AddRange(await UnitOfWork.Get<Voucher>()
+            .Find(c => dict.Keys.Contains(c.Id) && c.IsCombo)
+            .Select(c => new {c.Id, Inventory= c.Vouchers.Select(v => v.Voucher.Inventory).Min()})
+            .Select(value => new RemainVoucherInventory
+            {
+                RemainInventory = value.Inventory,
+                VoucherId = value.Id
+            }).ToListAsync());
         return inventory;
     }
 
@@ -180,12 +188,21 @@ public class CartService : ServiceCrud<Cart>, ICartService
         });
 
         var inventory = await UnitOfWork.Get<Voucher>()
-            .Find(c => dict.Keys.Contains(c.Id))
+            .Find(c => dict.Keys.Contains(c.Id) && !c.IsCombo)
             .Select(c => new {c.Id, c.Inventory}).Select(value => new RemainVoucherInventory
             {
                 RemainInventory = value.Inventory,
                 VoucherId = value.Id
             }).ToListAsync();
+        
+        inventory.AddRange(await UnitOfWork.Get<Voucher>()
+            .Find(c => dict.Keys.Contains(c.Id) && c.IsCombo)
+            .Select(c => new {c.Id, Inventory= c.Vouchers.Select(v => v.Voucher.Inventory).Min()})
+            .Select(value => new RemainVoucherInventory
+            {
+                RemainInventory = value.Inventory,
+                VoucherId = value.Id
+            }).ToListAsync());
         var notFoundVoucher = dict.Keys.Except(inventory.Select(i => i.VoucherId)).ToList();
         /*
         if (notFoundVoucher.Any())

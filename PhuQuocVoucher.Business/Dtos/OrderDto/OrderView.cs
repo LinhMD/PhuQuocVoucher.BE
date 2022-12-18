@@ -26,9 +26,15 @@ public class OrderView : BaseModel,IView<Order>, IDto
 
     public PaymentDetailView? PaymentDetail { get; set; }
 
+    public long CommissionFee { get; set; }
+
+    public long SellerCommission { get; set; }
+
     public void InitMapper()
     {
         TypeAdapterConfig<Order, OrderView>.NewConfig()
-            .Map(view => view.SellerName, order => order.Seller!.SellerName);
+            .Map(view => view.SellerName, order => order.Seller!.SellerName)
+            .Map(view => view.CommissionFee, order => order.OrderItems.Select(item => item.CommissionFee).Sum())
+            .Map(view => view.SellerCommission, order => order.OrderItems.Select(item => item.SellerCommission).Sum());
     }
 }

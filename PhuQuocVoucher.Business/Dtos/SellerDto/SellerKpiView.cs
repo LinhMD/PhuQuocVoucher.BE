@@ -8,5 +8,5 @@ public class SellerKpiView
 
     public Dictionary<int, int> NoOfNewCustomerPerMonth { get; set; }
 
-    public Dictionary<int, double> RevenuesPerMonths { get; set; }
+    public Dictionary<int, long> RevenuesPerMonths { get; set; }
 }

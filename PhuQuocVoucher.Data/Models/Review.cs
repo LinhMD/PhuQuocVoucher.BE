@@ -16,6 +16,8 @@ public class Review : BaseModel, IOrderAble
 
     public int? VoucherId { get; set; }
 
+    public Voucher? Voucher { get; set; }
+
     public int? CustomerId { get; set; }
 
     public Customer? Customer { get; set; }

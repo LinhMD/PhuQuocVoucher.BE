@@ -27,7 +27,8 @@ public class ServiceView : BaseModel, IView<Service>, IDto
     public int ProviderId { get; set; }
 
     public ModelStatus Status { get; set; }
-
+    
+    public string? UsePlace { get; set; }
     public ServiceKPI? Kpi { get; set; }
     
     public void InitMapper()

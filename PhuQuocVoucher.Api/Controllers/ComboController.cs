@@ -48,7 +48,7 @@ public class ComboController : ControllerBase
         foreach (var combo in models)
         {
             comboKpis.TryGetValue(combo.Id , out var kpi);
-            combo.Kpi = kpi;
+            combo.Kpi = kpi ?? new VoucherKPI();
         }
         return Ok((models, total).ToPagingResponse(paging));
     }

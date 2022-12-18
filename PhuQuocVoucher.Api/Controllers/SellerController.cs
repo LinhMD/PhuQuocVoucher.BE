@@ -13,7 +13,9 @@ using PhuQuocVoucher.Business.Dtos.CartDto;
 using PhuQuocVoucher.Business.Dtos.CartItemDto;
 using PhuQuocVoucher.Business.Dtos.CustomerDto;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
+using PhuQuocVoucher.Business.Dtos.RankDto;
 using PhuQuocVoucher.Business.Dtos.SellerDto;
+using PhuQuocVoucher.Business.Dtos.VoucherDto;
 using PhuQuocVoucher.Business.Services.Core;
 using PhuQuocVoucher.Data.Models;
 using Swashbuckle.AspNetCore.Annotations;
@@ -38,7 +40,7 @@ public class SellerController : ControllerBase
 
     private readonly IUnitOfWork _work;
 
-    private IKpiService _kpiService;
+    private readonly IKpiService _kpiService;
 
     public SellerController(ISellerService sellerService, ILogger<SellerController> logger, IUnitOfWork work, IOrderService orderService, ICustomerService customerService, ICartService cartService, IKpiService kpiService)
     {
@@ -113,12 +115,15 @@ public class SellerController : ControllerBase
     [SwaggerResponse(200,"Seller view", typeof(SellerView))]
     public async Task<ActionResult<SellerView>> GetCurrent([FromClaim("SellerId")]int id)
     {
-        return Ok(await _repo.Find<SellerView>(seller => seller.Id == id).FirstOrDefaultAsync() ??
-                  throw new ModelNotFoundException($"Not Found {nameof(Seller)} with id {id}"));
+        var seller = await _repo.Find<SellerView>(seller => seller.Id == id).FirstOrDefaultAsync() ??
+                                  throw new ModelNotFoundException($"Not Found {nameof(Seller)} with id {id}");
+        var nextRank = await _work.Get<SellerRank>().Find<RankView>(rank => rank.EpxRequired >= seller.Exp).OrderBy(rank => rank.EpxRequired).FirstOrDefaultAsync();
+        seller.NextRank = nextRank;
+        return Ok(seller);
     }
     
 
-    [HttpPut("{id:int}")]
+    [HttpPut("{id:int}")] 
     [SwaggerResponse(200,"Seller", typeof(Seller))]
     public async Task<ActionResult<Seller>> Update([FromBody] UpdateSeller request, int id)
     {
@@ -324,10 +329,19 @@ public class SellerController : ControllerBase
         return Ok(kpiPerMonth);
     }
     
-    [SwaggerResponse(200, "KPI",typeof(OrderView))]
-    [HttpGet("kpi-admin")]
-    public async Task<IActionResult> KPIAdmin(int sellerId, [Range(2000, 2100)]int year)
+    [SwaggerResponse(200, "KPI",typeof(VoucherSView))]
+    [HttpGet("kpi-voucher")]
+    public async Task<ActionResult<List<VoucherSView>>> KpiPerVoucher([FromClaim("SellerId")]int sellerId, DateTime? kpiStartDate, DateTime? kpiEndDate)
     {
-        return Ok((await _sellerService.GetSellerKpis(sellerId, year)));
+        var voucherKpiOfSeller = await _kpiService.GetVoucherKpiOfSeller(sellerId, kpiStartDate, kpiEndDate);
+        var voucherIds = voucherKpiOfSeller.Keys;
+        var voucherSViews = await _work.Get<Voucher>().Find<VoucherSView>(v => voucherIds.Contains(v.Id)).ToListAsync();
+        foreach (var voucher in voucherSViews)
+        {
+            voucherKpiOfSeller.TryGetValue(voucher.Id , out var kpi);
+            voucher.Kpi = kpi ?? new VoucherKPI();
+        }
+        return Ok(voucherSViews);
     }
+    
 }

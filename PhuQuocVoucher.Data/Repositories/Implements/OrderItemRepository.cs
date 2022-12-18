@@ -10,4 +10,8 @@ public class OrderItemRepository : Repository<OrderItem> , IOrderItemRepository
     public OrderItemRepository(DbContext context) : base(context)
     {
     }
+    public override IQueryable<OrderItem> IncludeAll()
+    {
+        return base.IncludeAll().Include(o => o.QrCodes);
+    }
 }

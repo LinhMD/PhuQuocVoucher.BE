@@ -31,6 +31,7 @@ public static class ServicesInitDi
         serviceCollection.AddScoped<IComboService, ComboService>();
         serviceCollection.AddScoped<IQrCodeService, QrCodeService>();
         serviceCollection.AddScoped<IKpiService, KpiService>();
+        serviceCollection.AddScoped<IRankService, RankService>();
         
         serviceCollection.AddScoped<MomoSetting>();
         serviceCollection.AddScoped<PaymentService>();

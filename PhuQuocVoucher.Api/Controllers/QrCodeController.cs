@@ -99,7 +99,7 @@ public class QrCodeController : ControllerBase
             QrCodeStatus = QrCodeStatus.Active,
             CreateAt = DateTime.Now,
             HashCode = qr,
-            ProviderId = voucher?.ProviderId,
+            ProviderId = voucher?.ProviderId ?? 0,
             VoucherId = voucherId,
             ServiceId = voucher?.ServiceId ?? 0,
             Status = ModelStatus.Active,

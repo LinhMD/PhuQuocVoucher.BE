@@ -31,7 +31,7 @@ public class ReviewController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] FindReview request, [FromQuery] PagingRequest paging, string? orderBy)
     {
-        return Ok((await _reviewService.GetAsync(new GetRequest<Review>
+        return Ok((await _reviewService.GetAsync<ReviewView>(new GetRequest<Review>
         {
             FindRequest = request,
             OrderRequest = new OrderRequest<Review>(),
@@ -48,7 +48,7 @@ public class ReviewController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
-        return Ok(await _repo.Find(review => review.Id == id).FirstOrDefaultAsync() ??
+        return Ok(await _repo.Find<ReviewView>(review => review.Id == id).FirstOrDefaultAsync() ??
                   throw new ModelNotFoundException($"Not Found {nameof(Review)} with id {id}"));
     }
 

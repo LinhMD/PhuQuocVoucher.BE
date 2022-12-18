@@ -18,5 +18,5 @@ public interface IOrderService : IServiceCrud<Order>{
 
     public Task<(string email, List<Attachment>? attachments)> RenderOrderToHtml(Order order);
 
-    public Task SendOrderEmailToCustomer(int orderId);
+    public Task<string> SendOrderEmailToCustomer(int orderId);
 }

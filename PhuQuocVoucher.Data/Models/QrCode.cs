@@ -24,10 +24,10 @@ public class QrCode : BaseModel, IOrderAble
     public DateTime? EndDate { get; set; }
 
     public DateTime? SoldDate { get; set; }
-    public int? ProviderId { get; set; }
+    public int ProviderId { get; set; }
     
     [JsonIgnore]
-    public ServiceProvider? Provider { get; set; }
+    public ServiceProvider Provider { get; set; }
 
     public Service Service { get; set; }
 

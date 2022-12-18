@@ -19,7 +19,8 @@ public class ServiceSView : BaseModel, IView<Service>, IDto
     public string? LocationName { get; set; }
 
     public int? ServiceLocationId { get; set; }
-
+    
+    public string? UsePlace { get; set; }
 
     public double CommissionRate { get; set; }
     public string? ProviderName { get; set; }

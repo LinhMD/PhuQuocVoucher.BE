@@ -37,6 +37,7 @@ public class VoucherSView : BaseModel, IView<Voucher>, IDto
     
     public bool IsCombo { get; set; }
 
+    public VoucherKPI? Kpi { get; set; }
 
     public void InitMapper()
     {

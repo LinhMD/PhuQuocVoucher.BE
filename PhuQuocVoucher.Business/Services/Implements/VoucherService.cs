@@ -43,7 +43,7 @@ public class VoucherService : ServiceCrud<Voucher>, IVoucherService
                 QrCodeStatus = QrCodeStatus.Active,
                 CreateAt = DateTime.Now,
                 HashCode = Guid.NewGuid().ToString(),
-                ProviderId = voucher.ProviderId,
+                ProviderId = ((int) voucher.ProviderId)!,
                 VoucherId = voucher.Id ,
                 ServiceId = voucher.ServiceId ?? 0,
                 Status = ModelStatus.Active,

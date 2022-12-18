@@ -64,8 +64,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 .ProjectToType<OrderView>()
                 .Paging(request).ToListAsync();
         }
-       
-
+        
         return (result, total);
     }
     
@@ -90,6 +89,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         var seller = await UnitOfWork.Get<Seller>().Find(s => s.Id == sellerId).Select(s => new{s.Rank.CommissionRatePercent}).FirstOrDefaultAsync();
 
         var vouchersIds = cart.CartItems.Where(v => !v.IsCombo).Select(c => c.VoucherId).ToList();
+        
         var comboIds = cart.CartItems.Where(v => v.IsCombo).Select(c => c.VoucherId).ToList();
         
         var providerDic = await UnitOfWork.Get<Voucher>()
@@ -103,7 +103,8 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             }).ToDictionaryAsync(c => c.Id, c => c.voucherInventorys);
         var combos = await UnitOfWork.Get<Voucher>().Find(cam => comboIds.Contains(cam.Id))
             .ToDictionaryAsync(c => c.Id, c => c);
-
+        vouchersIds.AddRange(comboIds);
+        
         vouchersIds.AddRange(comboDic.Values.Aggregate(new List<int>(), (vouch, comb) =>
         {
             vouch.AddRange(comb);
@@ -111,7 +112,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         }));
         
         var uniqueVouchers = vouchersIds.Distinct().ToList();
-
+        vouchersIds = vouchersIds.Distinct().ToList();
         var qrcodeDic = (await UnitOfWork.Get<QrCode>()
             .Find(v => uniqueVouchers.Contains(v.VoucherId) && v.QrCodeStatus == QrCodeStatus.Active)
             .ToListAsync())
@@ -120,10 +121,9 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                 g => g.Key, 
                 g => new Stack<QrCode>(g.ToList()));
 
-        var vouchersId = cart.CartItems.Select(item => item.VoucherId).ToList();
         var voucherDic = await UnitOfWork
             .Get<Voucher>()
-            .Find(v => vouchersId.Contains(v.Id))
+            .Find(v => vouchersIds.Contains(v.Id))
             .Select(v => new {v.Id, v.SoldPrice, v.CommissionRate})
             .ToDictionaryAsync(v => v.Id, v => v);
 
@@ -167,18 +167,20 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                     for (var i = 0; i < item.Quantity; i++)
                     {
                         var qrCode = qrCodeStack.Pop();
+                        
                         qrCode.OrderItemId = item.Id;
                         qrCode.OrderId = order.Id;
-                        qrCode.CommissionFee = (long) (voucherDic[voucherId].SoldPrice *
-                                                       voucherDic[voucherId].CommissionRate);
+                        var commissionFee = (long) (voucherDic[voucherId].SoldPrice *
+                                                    voucherDic[voucherId].CommissionRate);
                         if (seller != null)
                         {
-                            qrCode.SellerCommissionFee = (long) (seller.CommissionRatePercent * qrCode.CommissionFee);
+                            qrCode.SellerCommissionFee = (long) (seller.CommissionRatePercent * commissionFee);
                             sellerCommission += qrCode.SellerCommissionFee;
                         }
 
-                        qrCode.ProviderRevenue = voucherDic[voucherId].SoldPrice - qrCode.CommissionFee;
+                        qrCode.ProviderRevenue = voucherDic[voucherId].SoldPrice - commissionFee;
                         providerRevenue += qrCode.ProviderRevenue;
+                        qrCode.CommissionFee = commissionFee - qrCode.SellerCommissionFee;
                         item.QrCodes.Add(qrCode);
                         qrCodes.Add(qrCode);
                     }
@@ -186,8 +188,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
 
                 item.SellerCommission = sellerCommission;
                 item.ProviderRevenue = providerRevenue;
-                item.CommissionFee = (item.SoldPrice * item.Quantity) -
-                                     item.QrCodes.Select(qr => qr.SellerCommissionFee + qr.ProviderRevenue).Sum();
+                item.CommissionFee = voucherDic[item.VoucherId].SoldPrice * item.Quantity - item.QrCodes.Select(qr => qr.ProviderRevenue + qr.SellerCommissionFee).Sum();
             }
             else
             {
@@ -199,20 +200,20 @@ public class OrderService : ServiceCrud<Order>, IOrderService
                     var qrCode = qrCodeStack.Pop();
                     qrCode.OrderItemId = item.Id;
                     qrCode.OrderId = order.Id;
-                    qrCode.CommissionFee = (long) (voucherDic[item.VoucherId].SoldPrice *
+                    var commissionFee = (long) (voucherDic[item.VoucherId].SoldPrice *
                                                    voucherDic[item.VoucherId].CommissionRate);
                     if (seller != null)
                     {
-                        qrCode.SellerCommissionFee = (long) (seller.CommissionRatePercent * qrCode.CommissionFee);
+                        qrCode.SellerCommissionFee = (long) (seller.CommissionRatePercent * commissionFee);
                         sellerCommission += qrCode.SellerCommissionFee;
                     }
 
-                    qrCode.ProviderRevenue = voucherDic[item.VoucherId].SoldPrice - qrCode.CommissionFee;
+                    qrCode.ProviderRevenue = voucherDic[item.VoucherId].SoldPrice - commissionFee;
                     providerRevenue += qrCode.ProviderRevenue;
+                    qrCode.CommissionFee = commissionFee - qrCode.SellerCommissionFee;
                     item.QrCodes.Add(qrCode);
                     qrCodes.Add(qrCode);
                 }
-                
                 item.SellerCommission = sellerCommission;
                 item.ProviderRevenue = providerRevenue;
                 item.CommissionFee = item.QrCodes.Select(qr => qr.CommissionFee).Sum();
@@ -229,11 +230,12 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         foreach (var qrCode in qrCodes)
         {
             qrCode.QrCodeStatus = QrCodeStatus.Pending;
+            qrCode.SoldDate = DateTime.Today;
         }
         
         order.TotalPrice = total;
         await UnitOfWork.CompleteAsync();
-        await _voucherService.UpdateVoucherInventoryList(vouchersId);
+        await _voucherService.UpdateVoucherInventoryList(vouchersIds);
         return order.Adapt<OrderView>();
     }
 
@@ -287,22 +289,30 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         filePath = Directory.GetCurrentDirectory() + $"\\MailTemplate\\OrderItem_QRCode.html";
         using var orderItemStream = new StreamReader(filePath);
         var htmlFormatOrderItem = await orderItemStream.ReadToEndAsync();
-        var qrCodes = order.OrderItems.Select(item => item.QrCodes).Aggregate(new List<QrCode>(), (accum, codes) =>
+        var qrCodes = await UnitOfWork.Get<QrCode>().Find(code => code.OrderId == order.Id).Select(item => new
         {
-            accum.AddRange(codes);
-            return accum;
-        });
+            ServiceName = item.Service.Name,
+            item.HashCode,
+            item.Id,
+            item.Provider!.ProviderName,
+            item.Provider!.Address,
+            item.Voucher.StartDate,
+            item.Voucher.EndDate,
+            item.Voucher.SoldPrice,
+            item.Voucher.VoucherValue
+        }).ToListAsync();
+        
         var orderItemValues = string.Join("", qrCodes.Select(item => new Dictionary<string, string>()
         {
-            {"ServiceName", item.Service.Name},
+            {"ServiceName", item.ServiceName},
+            {"QRCodeId", item.Id.ToString()},
             {"HashCode", item.HashCode},
-            {"VoucherId", item.Id.ToString()},
-            {"ProviderName", item.Provider?.ProviderName ?? string.Empty},
-            {"ProviderAddress", item.Provider?.Address ?? string.Empty },
-            {"FromDate", item.Voucher.StartDate?.ToString("dd/MM/yyyy") ?? string.Empty},
-            {"ToDate", item.Voucher.EndDate?.ToString("dd/MM/yyyy") ?? string.Empty},
-            {"UseDate", item.UseDate?.ToString("dd/MM/yyyy") ?? string.Empty},
-            {"Price", item.Voucher.SoldPrice.ToString(CultureInfo.InvariantCulture)}
+            {"ProviderName", item.ProviderName ?? string.Empty},
+            {"ProviderAddress", item.Address ?? string.Empty },
+            {"FromDate", item.StartDate?.ToString("dd/MM/yyyy") ?? string.Empty},
+            {"ToDate", item.EndDate?.ToString("dd/MM/yyyy") ?? string.Empty},
+            {"Value", item.VoucherValue.ToString()},
+            {"Price", item.SoldPrice.ToString(CultureInfo.InvariantCulture)}
         })
             .Select(item => item.Aggregate(htmlFormatOrderItem, 
                 (current, dict) 
@@ -315,7 +325,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
         return (mailOrderPrint.Replace("[OrderItemRow]", orderItemValues), attachments) ;
     }
 
-    public async Task SendOrderEmailToCustomer(int orderId)
+    public async Task<string> SendOrderEmailToCustomer(int orderId)
     {
         var order = await Repository.Find(o => o.Id == orderId).FirstOrDefaultAsync() ??
                     throw new ModelNotFoundException($"Order not found with Id {orderId}");
@@ -331,5 +341,7 @@ public class OrderService : ServiceCrud<Order>, IOrderService
             Attachments = attachments
         };
         _mailingService.SendEmailAsync(mailRequest, true);
+
+        return email;
     }
 }

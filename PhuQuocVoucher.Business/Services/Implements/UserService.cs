@@ -63,13 +63,18 @@ public class UserService : ServiceCrud<User>, IUserService
                 }
                 case Role.Seller: 
                 {
+                    var rank = await UnitOfWork.Get<SellerRank>().Find(s => true).OrderBy(o => o.EpxRequired).FirstOrDefaultAsync();
+                    if (rank == null) throw new ModelNotFoundException("seller rank missing from database");
                     var seller = new Seller()
                     {
                         Status = ModelStatus.Active,
                         CreateAt = DateTime.Now,
                         SellerName = user.UserName,
                         UserInfoId = user.Id,
-                        UserInfo = user
+                        UserInfo = user,
+                        Rank = rank,
+                        RankId = rank.Id,
+                        CommissionRate = rank.CommissionRatePercent
                     };
                     await UnitOfWork.Get<Seller>().AddAsync(seller);
                     break;

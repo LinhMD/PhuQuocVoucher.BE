@@ -67,7 +67,7 @@ public class ServiceController : ControllerBase
     {
         request.ProviderId = providerId ?? request.ProviderId;
         return Ok(await _providerService.CreateAsync(request));
-    }
+    } 
 
     [AllowAnonymous]
     [HttpGet("{id:int}")]

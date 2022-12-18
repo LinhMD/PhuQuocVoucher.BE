@@ -23,13 +23,39 @@ public class ProviderController : ControllerBase
     private readonly IProviderService _providerService;
     private readonly IRepository<ServiceProvider> _repository;
     private readonly IUnitOfWork _work;
-    public ProviderController(IProviderService provider, IUnitOfWork work)
+    private readonly IKpiService _kpiService;
+
+    public ProviderController(IProviderService provider, IUnitOfWork work, IKpiService kpiService)
     {
         _providerService = provider;
         _work = work;
+        _kpiService = kpiService;
         _repository = work.Get<ServiceProvider>();
     }
+    
+    [HttpGet("Admin")]
+    public async Task<IActionResult> GetAdmin([FromQuery]FindProvider request, [FromQuery]PagingRequest paging, string? orderBy,
+        DateTime? kpiStartDate, DateTime? kpiEndDate)
+    {
+        var (models, total) = await _providerService.GetAsync<ProviderView>(new GetRequest<ServiceProvider>
+        {
+            FindRequest = request,
+            OrderRequest = orderBy.ToOrderRequest<ServiceProvider>(),
+            PagingRequest = paging
+        });
+        var providerIds = models.Select(s => s.Id).ToList();
 
+        var providerKpis = await _kpiService.GetProviderKpi(providerIds, kpiStartDate, kpiEndDate);
+        
+        foreach (var provider in models)
+        {
+            providerKpis.TryGetValue(provider.Id , out var kpi);
+            provider.Kpi = kpi ?? new ProviderKpi();
+        }
+        
+        return Ok((models, total).ToPagingResponse(paging));
+    }
+    
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> Get([FromQuery]FindProvider request, [FromQuery]PagingRequest paging, string? orderBy)
@@ -104,6 +130,8 @@ public class ProviderController : ControllerBase
             });
         
         qrCode.QrCodeStatus = QrCodeStatus.Used;
+        qrCode.UseDate = DateTime.Now;
+        
         await _work.CompleteAsync();
         
         return Ok(new

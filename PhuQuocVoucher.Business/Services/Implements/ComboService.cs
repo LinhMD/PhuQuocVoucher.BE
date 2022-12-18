@@ -38,6 +38,22 @@ public class ComboService : ServiceCrud<Voucher>, IComboService
         try
         {
             var combo = (createCombo as ICreateRequest<Voucher>).CreateNew(UnitOfWork);
+
+            var vouchers = await UnitOfWork.Get<Voucher>().Find(v => createCombo.VoucherIds.Contains(v.Id)).ToListAsync();
+
+            var beginDateMax = vouchers.Select(v => v.StartDate).Max();
+            var endDateMin = vouchers.Select(v => v.EndDate).Min();
+            var minInventory = vouchers.Select(v => v.Inventory).Min();
+            
+            if (combo.StartDate < beginDateMax || combo.EndDate > endDateMin)
+            {
+                throw new ModelValueInvalidException("Combo effective date invalid");
+            }
+            
+            if (combo.Inventory > minInventory )
+            {
+                throw new ModelValueInvalidException("Combo inventory invalid");
+            }
             
             var tags = await UnitOfWork.Get<Tag>().Find(t => createCombo.TagIds.Contains(t.Id)).ToListAsync();
             

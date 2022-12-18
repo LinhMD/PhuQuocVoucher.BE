@@ -13,14 +13,16 @@ public class UpdateVoucher : UpdateDto, IUpdateRequest<Voucher>
 
     public string? Summary { get; set; }
     
-    public double? SellPrice { get; set; }
+    public long? SoldPrice { get; set; }
 
     public string? Content { get; set; }
     
     public string?  SocialPost { get; set; }
     
-    public float CommissionRate { get; set; }
+    public long? VoucherValue { get; set; }
     
+    public float? CommissionRate { get; set; }
+
     public DateTime? StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }

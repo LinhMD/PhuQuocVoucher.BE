@@ -32,7 +32,6 @@ public class FindCombo : IFindRequest<Voucher>
 
     [LessThan(nameof(BaseModel.CreateAt))] public DateTime? CrateAt_endTime { get; set; }
 
-    [LessThan(nameof(Voucher.StartDate))]
     [BiggerThan(nameof(Voucher.EndDate))]
     public DateTime? Date { get; set; } 
     

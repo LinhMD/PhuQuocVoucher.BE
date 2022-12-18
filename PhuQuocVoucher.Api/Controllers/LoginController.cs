@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using CrudApiTemplate.CustomBinding;
+using CrudApiTemplate.CustomException;
 using CrudApiTemplate.Repository;
 using CrudApiTemplate.Request;
 using CrudApiTemplate.Utilities;
@@ -35,6 +36,7 @@ public class LoginController : ControllerBase
     private readonly PqUnitOfWork _work;
 
     private readonly IUserService _userService;
+    
     private readonly IMailingService _mailing;
     
     private readonly ICartService _cartService;
@@ -172,20 +174,6 @@ public class LoginController : ControllerBase
         
         var userView = await _userService.SignUpAsync(customerSignUp.UserInfo, hash, salt, ModelStatus.Disable);
         
-        var customer = new Customer()
-        {
-            Status = ModelStatus.Active,
-            UserInfoId = userView.Id,
-            CustomerName = customerSignUp.CustomerName,
-            CreateAt = DateTime.Now
-        };
-        
-        await _work.Get<Customer>().AddAsync(customer);
-
-        
-        var cart = await _cartService.GetCartByCustomerAsync(customer.Id);
-
-        customer.CartId = cart.Id;
         await _mailing.SendEmailAsync(new MailTemplateRequest
         {
             values = new Dictionary<string, string>
@@ -201,7 +189,6 @@ public class LoginController : ControllerBase
             FileTemplateName = "ActivateAccount"
         });
 
-        await _work.CompleteAsync();
         return Ok();
     }
 
@@ -209,7 +196,7 @@ public class LoginController : ControllerBase
     public async Task<RedirectResult> ActivateAccount(int userId)
     {
         var user = await _work.Get<User>().Find(u => u.Id == userId).FirstOrDefaultAsync();
-        if (user == null) return RedirectPermanent("https://www.google.com/maps");
+        if (user == null) return RedirectPermanent("https://phuquoc-voucher.vercel.app/login");
         user.Status = ModelStatus.Active;
         await _work.CompleteAsync();
         return RedirectPermanent("https://phuquoc-voucher.vercel.app/login");
@@ -233,7 +220,33 @@ public class LoginController : ControllerBase
         await _work.Users.CommitAsync();
         return Ok(user.Adapt<UserView>());
     }
+    
+    [HttpPost("mail-forgot")]
+    public async Task<IActionResult> ForgotPassword(string email)
+    {
+        var user = await _work.Users.Find(u => u.Email == email && u.Status == ModelStatus.Active).FirstOrDefaultAsync();
 
+        if (user == null) return BadRequest("User not found");
+        var generateJwt = LoginHelper.GenerateJwt(user, _config, await GetAdditionalClaims(user));
+        
+        await _mailing.SendEmailAsync(new MailTemplateRequest
+        {
+            values = new Dictionary<string, string>
+            {
+                {"role", user.Role.ToString()},
+                {"jwt", generateJwt},
+                {"UserName", user.UserName}
+            },
+            MailRequest = new MailRequest
+            {
+                Subject = "Activate account",
+                ToEmail = user.Email
+            },
+            FileTemplateName = "CreatePassword"
+        });
+        return Ok(user.Adapt<UserView>());
+    }
+    
     [HttpPost]
     public async Task<IActionResult> LoginWithPassword(LoginRequest request)
     {
@@ -272,13 +285,18 @@ public class LoginController : ControllerBase
             ProviderName = u.UserName,
             CreateAt = DateTime.Now
         }).ToList();
-        
+
+        var rank = await _work.Get<SellerRank>().Find(s => true).OrderBy(o => o.EpxRequired).FirstOrDefaultAsync();
+        if (rank == null) throw new ModelNotFoundException("seller rank missing from database");
         var sellers = createdUsers.Where(u => u.Role == Role.Seller).Select(u => new Seller()
         {
             Status = ModelStatus.Active,
             UserInfoId = u.Id,
             SellerName = u.UserName,
-            CreateAt = DateTime.Now
+            CreateAt = DateTime.Now,
+            RankId = rank.Id,
+            Rank = rank,
+            CommissionRate = rank.CommissionRatePercent
         }).ToList();
         
         await _work.Get<Seller>().AddAllAsync(sellers);

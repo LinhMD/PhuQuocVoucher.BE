@@ -103,8 +103,8 @@ public class VoucherController : ControllerBase
     public async Task<IActionResult> Update([FromBody] UpdateVoucher request, int id, [FromClaim("ProviderId")] int? providerId)
     {
         
-        var voucherIds = await _repo.Find(v => providerId == null ||  v.ProviderId == providerId).Select(v => v.Id).ToListAsync();
-        if (voucherIds.Contains(id))
+        var voucherIds = await _repo.Find(v => v.ProviderId == providerId).Select(v => v.Id).ToListAsync();
+        if (providerId == null || voucherIds.Contains(id))
             return Ok(await _voucherService.UpdateAsync(id, request));
         
         return BadRequest();
@@ -141,7 +141,7 @@ public class VoucherController : ControllerBase
                 QrCodeStatus = QrCodeStatus.Active,
                 CreateAt = DateTime.Now,
                 HashCode = Guid.NewGuid().ToString(),
-                ProviderId = voucher.ProviderId,
+                ProviderId =  voucher.ProviderId ?? 0,
                 VoucherId = voucher.Id ,
                 ServiceId = voucher.ServiceId ?? 0,
                 ServiceTypeId = voucher.ServiceTypeId,

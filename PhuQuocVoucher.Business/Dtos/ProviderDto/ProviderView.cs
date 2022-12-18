@@ -21,6 +21,8 @@ public class ProviderView : IView<ServiceProvider>, IDto
 
     public ModelStatus Status { get; set; }
 
+    public ProviderKpi? Kpi { get; set; }
+
     public void InitMapper()
     {
         TypeAdapterConfig<ServiceProvider, ProviderView>.NewConfig();

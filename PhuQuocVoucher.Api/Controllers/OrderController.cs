@@ -85,7 +85,6 @@ public class OrderController : ControllerBase
     [HttpGet("{id:int}/send-email")]
     public async Task<IActionResult> SendEmailOrder(int id)
     {
-        await _orderService.SendOrderEmailToCustomer(id);
-        return Ok();
+        return Ok(await _orderService.SendOrderEmailToCustomer(id));
     }
 }

@@ -68,7 +68,7 @@ public class PaymentService
 
         await _work.Get<PaymentDetail>().AddAsync(payment);
 
-        var rawHash = $"accessKey={_momoSetting.AccessKey}&amount={order.TotalPrice}&extraData={extraData}&ipnUrl={_momoSetting.IpnCallback}&orderId={payment.Id + "_l"}&orderInfo={orderInfo}&partnerCode={_momoSetting.PartnerCode}&redirectUrl={redirectUrl}&requestId={requestId}&requestType={requestType}";
+        var rawHash = $"accessKey={_momoSetting.AccessKey}&amount={order.TotalPrice}&extraData={extraData}&ipnUrl={_momoSetting.IpnCallback}&orderId={payment.Id + "_s"}&orderInfo={orderInfo}&partnerCode={_momoSetting.PartnerCode}&redirectUrl={redirectUrl}&requestId={requestId}&requestType={requestType}";
 
         var signature = MoMoSecurity.SignSha256(rawHash, secretKey!);
         
@@ -81,7 +81,7 @@ public class PaymentService
             {"storeId", "Phu QuocVoucher"},
             {"requestId", requestId},
             {"amount", order.TotalPrice},
-            {"orderId", payment.Id + "_l"}, //cheating
+            {"orderId", payment.Id + "_s"}, //cheating
             {"orderInfo", orderInfo},
             {"redirectUrl", redirectUrl},
             {"ipnUrl", ipnUrl},
@@ -111,14 +111,19 @@ public class PaymentService
 
     public async Task UpdateStatusWhenSuccessAsync(MomoIPNRequest request)
     {
-        
-        if (request.ResultCode != 9000 && request.ResultCode != 0 )
-            throw new ModelValueInvalidException("Something went wrong when processing payment");
+
 
         
         var paymentId = int.Parse(request.OrderId.Split("_")[0]);
         var order = await _work.Get<Order>().IncludeAll().Where(order => order.PaymentDetailId == paymentId).FirstOrDefaultAsync();
 
+        if (request.ResultCode != 9000 && request.ResultCode != 0)
+        {
+            if (order != null) 
+                await PaymentFailed(paymentId, order.Id);
+            return;
+        }
+        
         if (order == null)
             throw new ModelNotFoundException($"Order not found with id {request.OrderId}");
         
@@ -137,6 +142,25 @@ public class PaymentService
         }
         order.OrderStatus = OrderStatus.Completed;
         order.CompleteDate = DateTime.Now;
+        
+        var seller = await _work.Get<Seller>().Find(s => s.Id == order.SellerId).FirstOrDefaultAsync();
+
+        if (seller != null)
+        {
+            seller.Exp += (int) (order.TotalPrice / 10000);
+            var rank = await _work.Get<SellerRank>()
+                .Find(r => r.EpxRequired <= seller.Exp)
+                .OrderByDescending(r => r.EpxRequired)
+                .FirstOrDefaultAsync();
+            
+            if (rank != null && seller.RankId != rank.Id)
+            {
+                seller.Rank = rank;
+                seller.RankId = rank.Id;
+                seller.CommissionRate = rank.CommissionRatePercent;
+            }
+        }
+        
         await _work.CompleteAsync();
         if(order.SellerId == null)
             await _orderService.SendOrderEmailToCustomer(order.Id);
@@ -193,7 +217,7 @@ public class PaymentService
     public async Task<MomoConfirmResponse> ConfirmPaymentAsync(PaymentDetail payment)
     {
         var partnerCode = _momoSetting.PartnerCode;
-        var orderId = payment.Id + "_l";
+        var orderId = payment.Id + "_s";
         var requestId = payment.RequestId;
         var amount = payment.TotalAmount;
         var requestType = "capture";

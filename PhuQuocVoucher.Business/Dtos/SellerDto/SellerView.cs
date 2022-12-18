@@ -1,6 +1,7 @@
 ﻿using CrudApiTemplate.View;
 using Mapster;
 using PhuQuocVoucher.Business.Dtos.OrderDto;
+using PhuQuocVoucher.Business.Dtos.RankDto;
 using PhuQuocVoucher.Business.Dtos.UserDto;
 using PhuQuocVoucher.Data.Models;
 
@@ -23,10 +24,15 @@ public class SellerView : BaseModel, IView<Seller>, IDto
     public IEnumerable<OrderView> Orders { get; set; }
 
     public SellerKPI? Kpi { get; set; }
+
+    public RankView? Rank { get; set; }
     
+    public RankView? NextRank { get; set; }
+    
+    public int Exp { get; set; }
 
     public void InitMapper()
     {
-        TypeAdapterConfig<Seller, SellerView>.NewConfig();
+        TypeAdapterConfig<Seller, SellerView>.NewConfig().Map(view => view.CommissionRate , seller => seller.Rank.CommissionRatePercent);
     }
 }
